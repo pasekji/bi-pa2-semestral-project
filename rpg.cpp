@@ -35,11 +35,11 @@ class CGameObject
         }
         virtual int getAction() = 0;
         virtual bool interactWith(CGameObject * target) = 0;
+        void objectRender();
         WINDOW * m_objectSpace;
         int m_posY, m_posX, m_posX_Max, m_posY_Max;
         char m_objectForm;
     
-
 };
 
 class CCharacter : public CGameObject
@@ -49,14 +49,11 @@ class CCharacter : public CGameObject
         void moveDown();
         void moveLeft();
         void moveRight();
-        void characterRender();
 
         CCharacter(WINDOW* objectSpace, int posY, int posX) : CGameObject(objectSpace, posY, posX)
         {}
 
-    private:
-        float m_speed = 1;
-
+        float m_speed;
 };
 
 class CPlayer : public CCharacter
@@ -69,11 +66,12 @@ class CPlayer : public CCharacter
         CPlayer(WINDOW* objectSpace, int posY, int posX) : CCharacter(objectSpace, posY, posX)
         {
             m_objectForm = '^';
+            m_speed = 1;
             keypad(m_objectSpace, true);
         }
 
     private:
-        float m_speed = 1;
+        
 };
 
 void CPlayer::changeForm(const char& objectForm)
@@ -86,15 +84,19 @@ void CCharacter::moveUp()
     mvwaddch(m_objectSpace, m_posY, m_posX, ' ');
     m_posY -= m_speed;
     if (m_posY < 1)
+    {
         m_posY = 1;
+    }
 }
 
 void CCharacter::moveDown()
 {
     mvwaddch(m_objectSpace, m_posY, m_posX, ' ');
     m_posY += m_speed;
-    if (m_posY > m_posY_Max - 2)                // because of the border -> border is m_posY_Max - 1, so one spot before the border is m_posY_Max - 2
+    if (m_posY > m_posY_Max - 2)            // because of the border -> border is m_posY_Max - 1, so one spot before the border is m_posY_Max - 2
+    {                                   
         m_posY = m_posY_Max - 2;
+    }
 }
 
 void CCharacter::moveLeft()
@@ -102,7 +104,9 @@ void CCharacter::moveLeft()
     mvwaddch(m_objectSpace, m_posY, m_posX, ' ');
     m_posX -= (m_speed + 1);
     if (m_posX < 1)
+    {
         m_posX = 1;
+    }
 }
 
 void CCharacter::moveRight()
@@ -110,7 +114,9 @@ void CCharacter::moveRight()
     mvwaddch(m_objectSpace, m_posY, m_posX, ' ');
     m_posX += (m_speed + 1);
     if (m_posX > m_posX_Max - 2)
+    {
         m_posX = m_posX_Max - 2;
+    }
 }
 
 int CPlayer::getAction()
@@ -140,7 +146,7 @@ int CPlayer::getAction()
     return move;
 }
 
-void CCharacter::characterRender()
+void CGameObject::objectRender()
 { 
     mvwaddch(m_objectSpace, m_posY, m_posX, m_objectForm);
 }
@@ -191,7 +197,7 @@ void CGame::spawnPlayer()
 
     do
     {
-        p->characterRender();
+        p->objectRender();
         wrefresh(m_Window);
     } while (p->getAction() != 'x');
     
