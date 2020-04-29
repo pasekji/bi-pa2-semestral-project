@@ -10,19 +10,37 @@
 
 using namespace std;
 
+
+class CInput
+{
+    public:
+        CInput(WINDOW * window) : m_mainWindow(window)
+        {}
+        WINDOW* m_mainWindow; 
+        int readInput()
+        {
+            latestInput = wgetch(m_mainWindow);
+            return latestInput;
+        }
+        int latestInput;
+};
+
 class CGame
 {
     public:
         CGame() = default;
         void run();
-        friend class CGameMap;
-        
+        CInput * getInput()
+        {
+            return m_Input;
+        }
     private:
         void initGame();
         void endGame();
         void renderSpace();
         void spawnPlayer();
         WINDOW* m_Window;
+        CInput* m_Input;
         int m_yMax, m_xMax;
 };
 
@@ -63,15 +81,33 @@ class CPlayer : public CCharacter
         int getAction() override;
         bool interactWith(CGameObject* target) override;
     
-        CPlayer(WINDOW* objectSpace, int posY, int posX) : CCharacter(objectSpace, posY, posX)
+        CPlayer(WINDOW* objectSpace, CInput * input, int posY, int posX) : CCharacter(objectSpace, posY, posX)
         {
+            m_playerInput = input;
             m_objectForm = '^';
             m_speed = 1;
             keypad(m_objectSpace, true);
         }
 
     private:
+        CInput * m_playerInput;
         
+};
+
+class CEnemy : public CCharacter
+{
+    public:
+        void enemyDead();
+        int getAction() override;
+        bool interactWith(CGameObject* target) override;
+
+        // enemy demo testing constructor
+        CEnemy(WINDOW* objectSpace, int posY, int posX) : CCharacter(objectSpace, posY, posX)
+        {
+            m_objectForm = '~';
+            m_speed = 1;
+            keypad(m_objectSpace, true);
+        }
 };
 
 void CPlayer::changeForm(const char& objectForm)
@@ -121,7 +157,7 @@ void CCharacter::moveRight()
 
 int CPlayer::getAction()
 {
-    int move = wgetch(m_objectSpace);
+    int move = m_playerInput->readInput();
     switch (move) 
     {
         case KEY_UP:
@@ -169,6 +205,7 @@ void CGame::initGame()
 
     // get screen size
     getmaxyx(stdscr, m_yMax, m_xMax);
+
 }
 
 void CGame::run() 
@@ -185,6 +222,7 @@ void CGame::renderSpace()
 {
     // create a window for player
     m_Window = newwin(ROOM_HEIGHT, ROOM_WIDTH, (m_yMax - ROOM_HEIGHT) / 2, (m_xMax - ROOM_WIDTH) / 2);
+    m_Input = new CInput(m_Window);
     box(m_Window, 0, 0);
     refresh();
     wrefresh(m_Window);
@@ -192,7 +230,7 @@ void CGame::renderSpace()
 
 void CGame::spawnPlayer()
 {
-    CPlayer* p = new CPlayer(m_Window, (ROOM_HEIGHT - 2) / 2, (ROOM_WIDTH - 2) / 2);
+    CPlayer* p = new CPlayer(m_Window, m_Input, (ROOM_HEIGHT - 2) / 2, (ROOM_WIDTH - 2) / 2);
     wrefresh(m_Window);
 
     do
