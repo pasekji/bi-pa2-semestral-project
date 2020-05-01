@@ -34,15 +34,19 @@ class CGame
         {
             return m_Input;
         }
+        WINDOW* m_Window;
+
     private:
         void initGame();
         void endGame();
         void renderSpace();
         void spawnPlayer();
-        WINDOW* m_Window;
+        void spawnEnemy();
         CInput* m_Input;
         int m_yMax, m_xMax;
 };
+
+CGame game;
 
 class CGameObject 
 {
@@ -72,6 +76,7 @@ class CCharacter : public CGameObject
         {}
 
         float m_speed;
+        CInput* m_timer;
 };
 
 class CPlayer : public CCharacter
@@ -106,9 +111,30 @@ class CEnemy : public CCharacter
         {
             m_objectForm = '~';
             m_speed = 1;
+            m_timer = game.getInput();
             keypad(m_objectSpace, true);
         }
 };
+
+int CEnemy::getAction()
+{
+    if(m_timer->latestInput != 'x')
+    {                                   // for testing only
+        moveUp();
+        objectRender();
+        wrefresh(game.m_Window);
+        moveDown();
+        objectRender();
+        wrefresh(game.m_Window);
+        moveLeft();
+        objectRender();
+        wrefresh(game.m_Window);
+        moveRight();
+        objectRender();
+        wrefresh(game.m_Window);
+    }
+    return 0;
+}
 
 void CPlayer::changeForm(const char& objectForm)
 {
@@ -193,6 +219,12 @@ bool CPlayer::interactWith(CGameObject * targer)
     return false;
 }
 
+bool CEnemy::interactWith(CGameObject * targer)
+{
+    //TODO
+    return false;
+}
+
 void CGame::initGame() 
 {
     setlocale(LC_ALL, "");
@@ -202,6 +234,7 @@ void CGame::initGame()
     noecho();
     cbreak();
     curs_set(0);
+    halfdelay(20);
 
     // get screen size
     getmaxyx(stdscr, m_yMax, m_xMax);
@@ -215,6 +248,7 @@ void CGame::run()
 
     // just for test 
     renderSpace();
+    spawnEnemy();
     spawnPlayer();
 }
 
@@ -243,6 +277,20 @@ void CGame::spawnPlayer()
    
 }
 
+// udelat tak, že playerinput nebo move spustí getActionForObjects na vektoru včech pohyblivých objektů ve hře a poté zavolá jednoduchý refresh jednou 
+// po desetine sekudy bude vracen ERR a akce vyse zmineny se opakuje 
+// akce spoustena hned pod wgetch 
+
+void CGame::spawnEnemy()
+{
+    CEnemy* e = new CEnemy(m_Window, 20, 40);
+    wrefresh(m_Window);
+    while (true)
+        e->getAction();
+
+    
+}
+
 void CGame::endGame()
 {
     curs_set(0);
@@ -250,9 +298,9 @@ void CGame::endGame()
     endwin();
 }
 
+
 int main(int argc, char ** argv)
 {
-    CGame game;
     game.run();
 
     return 0;
