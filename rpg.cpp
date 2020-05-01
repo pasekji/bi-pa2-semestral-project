@@ -4,49 +4,12 @@
 #include <ctime>
 #include <iostream>
 #include <locale.h>
+#include <vector>
 
 #define ROOM_HEIGHT 50 
 #define ROOM_WIDTH 100
 
 using namespace std;
-
-
-class CInput
-{
-    public:
-        CInput(WINDOW * window) : m_mainWindow(window)
-        {}
-        WINDOW* m_mainWindow; 
-        int readInput()
-        {
-            latestInput = wgetch(m_mainWindow);
-            return latestInput;
-        }
-        int latestInput;
-};
-
-class CGame
-{
-    public:
-        CGame() = default;
-        void run();
-        CInput * getInput()
-        {
-            return m_Input;
-        }
-        WINDOW* m_Window;
-
-    private:
-        void initGame();
-        void endGame();
-        void renderSpace();
-        void spawnPlayer();
-        void spawnEnemy();
-        CInput* m_Input;
-        int m_yMax, m_xMax;
-};
-
-CGame game;
 
 class CGameObject 
 {
@@ -75,9 +38,67 @@ class CCharacter : public CGameObject
         CCharacter(WINDOW* objectSpace, int posY, int posX) : CGameObject(objectSpace, posY, posX)
         {}
 
-        float m_speed;
-        CInput* m_timer;
+        int m_speed;
 };
+
+class CGame
+{
+    public:
+        CGame() = default;
+        void run();
+        WINDOW* m_Window;
+        friend class CCharacter;
+        bool colisionDetect(int & p_posY, int & p_posX);
+
+    private:
+        void initGame();
+        void endGame();
+        void renderSpace();
+        void spawnPlayer();
+        void spawnEnemy();
+        void renderMoveableObjects();       // samotne znovu vykresleni
+        void moveableDoAction();            // vyvolej nahodnou akci, ktera zmeni vlastnosti instance napr. posX++ (jednu)
+        void initObjects();                 // run spawning all objects
+        vector<CCharacter*> moveableObjects;
+        vector<CCharacter*> imoveableObjects; // test only 
+
+        int m_yMax, m_xMax;
+};
+CGame game;
+
+bool CGame::colisionDetect(int & p_posY, int & p_posX)
+{
+    // imoveable objects as well 
+
+    for (auto i: moveableObjects)
+    {
+        if(pair(i->m_posY, i->m_posX) == pair(p_posY, p_posX))
+            return true;
+    }
+    return false;
+
+}
+
+void CGame::initObjects()
+{
+    spawnEnemy();
+}
+
+void CGame::renderMoveableObjects()
+{
+    for(auto i: moveableObjects)
+    {
+        i->objectRender();
+    }
+}
+
+void CGame::moveableDoAction()
+{
+    for(auto i: moveableObjects)
+    {
+        i->getAction();
+    }
+}
 
 class CPlayer : public CCharacter
 {
@@ -86,16 +107,14 @@ class CPlayer : public CCharacter
         int getAction() override;
         bool interactWith(CGameObject* target) override;
     
-        CPlayer(WINDOW* objectSpace, CInput * input, int posY, int posX) : CCharacter(objectSpace, posY, posX)
+        CPlayer(WINDOW* objectSpace, int posY, int posX) : CCharacter(objectSpace, posY, posX)
         {
-            m_playerInput = input;
             m_objectForm = '^';
             m_speed = 1;
             keypad(m_objectSpace, true);
         }
 
     private:
-        CInput * m_playerInput;
         
 };
 
@@ -111,29 +130,38 @@ class CEnemy : public CCharacter
         {
             m_objectForm = '~';
             m_speed = 1;
-            m_timer = game.getInput();
             keypad(m_objectSpace, true);
         }
 };
 
-int CEnemy::getAction()
+int CEnemy::getAction()     // just demo testing
 {
-    if(m_timer->latestInput != 'x')
-    {                                   // for testing only
-        moveUp();
-        objectRender();
-        wrefresh(game.m_Window);
-        moveDown();
-        objectRender();
-        wrefresh(game.m_Window);
-        moveLeft();
-        objectRender();
-        wrefresh(game.m_Window);
-        moveRight();
-        objectRender();
-        wrefresh(game.m_Window);
+    int action = rand() % 5;
+    int tmppos;
+    switch (action) 
+    {
+        case 0:
+            break;
+        case 1:
+            if(!game.colisionDetect(tmppos = m_posY - m_speed, m_posX))
+                moveUp();
+            break;
+        case 2:
+            if(!game.colisionDetect(tmppos = m_posY + m_speed, m_posX))
+                moveDown();
+            break;
+        case 3:
+            if(!game.colisionDetect(m_posY, tmppos = m_posX - (m_speed + 1)))
+                moveLeft();
+            break;
+        case 4:
+            if(!game.colisionDetect(m_posY, tmppos = m_posX + (m_speed + 1)))
+                moveRight();
+        default:
+            break;
     }
-    return 0;
+
+    return action;
 }
 
 void CPlayer::changeForm(const char& objectForm)
@@ -183,23 +211,28 @@ void CCharacter::moveRight()
 
 int CPlayer::getAction()
 {
-    int move = m_playerInput->readInput();
+    int move = wgetch(m_objectSpace);
+    int tmppos;
     switch (move) 
     {
         case KEY_UP:
-            moveUp();
+            if(!game.colisionDetect(tmppos = m_posY - m_speed, m_posX))
+                moveUp();
             changeForm('^');
             break;
         case KEY_DOWN:
-            moveDown();
+            if(!game.colisionDetect(tmppos = m_posY + m_speed, m_posX))
+                moveDown();
             changeForm('v');
             break;
         case KEY_LEFT:
-            moveLeft();
+            if(!game.colisionDetect(m_posY, tmppos = m_posX - (m_speed + 1)))
+                moveLeft();
             changeForm('<');
             break;
         case KEY_RIGHT:
-            moveRight();
+            if(!game.colisionDetect(m_posY, tmppos = m_posX + (m_speed + 1)))
+                moveRight();
             changeForm('>');
             break;
         default:
@@ -213,13 +246,13 @@ void CGameObject::objectRender()
     mvwaddch(m_objectSpace, m_posY, m_posX, m_objectForm);
 }
 
-bool CPlayer::interactWith(CGameObject * targer)
+bool CPlayer::interactWith(CGameObject * target)
 {
     //TODO
     return false;
 }
 
-bool CEnemy::interactWith(CGameObject * targer)
+bool CEnemy::interactWith(CGameObject * target)
 {
     //TODO
     return false;
@@ -234,7 +267,7 @@ void CGame::initGame()
     noecho();
     cbreak();
     curs_set(0);
-    halfdelay(20);
+    halfdelay(1);
 
     // get screen size
     getmaxyx(stdscr, m_yMax, m_xMax);
@@ -248,7 +281,6 @@ void CGame::run()
 
     // just for test 
     renderSpace();
-    spawnEnemy();
     spawnPlayer();
 }
 
@@ -256,7 +288,6 @@ void CGame::renderSpace()
 {
     // create a window for player
     m_Window = newwin(ROOM_HEIGHT, ROOM_WIDTH, (m_yMax - ROOM_HEIGHT) / 2, (m_xMax - ROOM_WIDTH) / 2);
-    m_Input = new CInput(m_Window);
     box(m_Window, 0, 0);
     refresh();
     wrefresh(m_Window);
@@ -264,12 +295,16 @@ void CGame::renderSpace()
 
 void CGame::spawnPlayer()
 {
-    CPlayer* p = new CPlayer(m_Window, m_Input, (ROOM_HEIGHT - 2) / 2, (ROOM_WIDTH - 2) / 2);
+    CPlayer* p = new CPlayer(m_Window, (ROOM_HEIGHT - 2) / 2, (ROOM_WIDTH - 2) / 2);
+    moveableObjects.push_back(p);
+    initObjects();
     wrefresh(m_Window);
 
     do
     {
         p->objectRender();
+        moveableDoAction();
+        renderMoveableObjects();
         wrefresh(m_Window);
     } while (p->getAction() != 'x');
     
@@ -277,18 +312,10 @@ void CGame::spawnPlayer()
    
 }
 
-// udelat tak, že playerinput nebo move spustí getActionForObjects na vektoru včech pohyblivých objektů ve hře a poté zavolá jednoduchý refresh jednou 
-// po desetine sekudy bude vracen ERR a akce vyse zmineny se opakuje 
-// akce spoustena hned pod wgetch 
-
 void CGame::spawnEnemy()
 {
-    CEnemy* e = new CEnemy(m_Window, 20, 40);
-    wrefresh(m_Window);
-    while (true)
-        e->getAction();
-
-    
+    CEnemy* e = new CEnemy(m_Window, 20, (ROOM_WIDTH - 2) / 2);
+    moveableObjects.push_back(e);
 }
 
 void CGame::endGame()
@@ -297,7 +324,6 @@ void CGame::endGame()
     refresh();
     endwin();
 }
-
 
 int main(int argc, char ** argv)
 {
