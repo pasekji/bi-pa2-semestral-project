@@ -9,12 +9,19 @@
 #define ROOM_HEIGHT 50 
 #define ROOM_WIDTH 100
 
+char WALL = '#';
+char VOID = '+';
+
 using namespace std;
 
 class CGameObject 
 {
     public:
         CGameObject(WINDOW * objectSpace, int posY, int posX) : m_objectSpace(objectSpace), m_posY(posY), m_posX(posX)
+        {
+            getmaxyx(m_objectSpace, m_posY_Max, m_posX_Max);
+        }
+        CGameObject(WINDOW * objectSpace, int posY, int posX, char & objectForm) : m_objectSpace(objectSpace), m_posY(posY), m_posX(posX), m_objectForm(objectForm)
         {
             getmaxyx(m_objectSpace, m_posY_Max, m_posX_Max);
         }
@@ -47,46 +54,73 @@ class CGame
         CGame() = default;
         void run();
         WINDOW* m_Window;
-        friend class CCharacter;
         bool colisionDetect(int & p_posY, int & p_posX);
 
     private:
         void initGame();
         void endGame();
         void renderSpace();
-        void spawnPlayer();
-        void spawnEnemy();
-        void renderMoveableObjects();       // samotne znovu vykresleni
-        void moveableDoAction();            // vyvolej nahodnou akci, ktera zmeni vlastnosti instance napr. posX++ (jednu)
-        void initObjects();                 // run spawning all objects
+        void spawnPlayer();                         // (int posY, int posX)
+        void spawnEnemy(int posY, int posX);
+        void spawnProp(int posY, int posX, char & objectForm);
+        void renderObjects();                   // samotne znovu vykresleni
+        void moveableDoAction();                // vyvolej nahodnou akci, ktera zmeni vlastnosti instance napr. posX++ (jednu)
+        void demo_loadMap();                    // run spawning all objects - loadMap sub
         vector<CCharacter*> moveableObjects;
-        vector<CCharacter*> imoveableObjects; // test only 
+        vector<CGameObject*> imoveableObjects; // test only 
 
         int m_yMax, m_xMax;
 };
+
+class CProp : public virtual CGameObject
+{
+    public:
+        CProp(WINDOW* objectSpace, int posY, int posX, char & objectForm) : CGameObject(objectSpace, posY, posX)
+        {
+            m_objectForm = objectForm;
+        }
+
+        int getAction() { return 0; };
+        bool interactWith(CGameObject * target){ return false; };
+
+};
+
 CGame game;
 
 bool CGame::colisionDetect(int & p_posY, int & p_posX)
 {
-    // imoveable objects as well 
-
     for (auto i: moveableObjects)
     {
         if(pair(i->m_posY, i->m_posX) == pair(p_posY, p_posX))
             return true;
     }
+
+    for (auto i: imoveableObjects)
+    {
+        if(pair(i->m_posY, i->m_posX) == pair(p_posY, p_posX))
+            return true;
+    }
+
     return false;
-
 }
 
-void CGame::initObjects()
+void CGame::demo_loadMap()
 {
-    spawnEnemy();
+    spawnEnemy(20, (ROOM_WIDTH - 2) / 2);
+    spawnProp(25, 95, WALL);
+    spawnProp(25, 94, WALL);
+    spawnProp(25, 93, WALL);
+
 }
 
-void CGame::renderMoveableObjects()
+void CGame::renderObjects()
 {
     for(auto i: moveableObjects)
+    {
+        i->objectRender();
+    }
+    
+    for(auto i: imoveableObjects)
     {
         i->objectRender();
     }
@@ -295,27 +329,33 @@ void CGame::renderSpace()
 
 void CGame::spawnPlayer()
 {
-    CPlayer* p = new CPlayer(m_Window, (ROOM_HEIGHT - 2) / 2, (ROOM_WIDTH - 2) / 2);
-    moveableObjects.push_back(p);
-    initObjects();
+    CPlayer* player = new CPlayer(m_Window, (ROOM_HEIGHT - 2) / 2, (ROOM_WIDTH - 2) / 2);
+    moveableObjects.push_back(player);
+    demo_loadMap();
     wrefresh(m_Window);
 
     do
     {
-        p->objectRender();
+        player->objectRender();
         moveableDoAction();
-        renderMoveableObjects();
+        renderObjects();
         wrefresh(m_Window);
-    } while (p->getAction() != 'x');
+    } while (player->getAction() != 'x');
     
     endGame();
-   
+
 }
 
-void CGame::spawnEnemy()
+void CGame::spawnEnemy(int posY, int posX)
 {
-    CEnemy* e = new CEnemy(m_Window, 20, (ROOM_WIDTH - 2) / 2);
-    moveableObjects.push_back(e);
+    CEnemy* enemy = new CEnemy(m_Window, posY, posX);
+    moveableObjects.push_back(enemy);
+}
+
+void CGame::spawnProp(int posY, int posX, char & objectForm)
+{
+    CProp* prop = new CProp(m_Window, posY, posX, objectForm);
+    imoveableObjects.push_back(prop);
 }
 
 void CGame::endGame()
