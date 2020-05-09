@@ -5,6 +5,8 @@
 #include <iostream>
 #include <locale.h>
 #include <vector>
+#include <map>
+
 
 #define ROOM_HEIGHT 50 
 #define ROOM_WIDTH 100
@@ -48,31 +50,60 @@ class CCharacter : public CGameObject
         int m_speed;
 };
 
+class CDoor;
+
+class CMap
+{
+    public:
+        CMap() = default;
+        void loadMap();
+        void demo_loadMap();                    // run spawning all objects - loadMap sub
+        bool loadMapFromFile(const string & pathToFile);
+        bool openDoor(CDoor*);
+        bool goToMap(CMap*);
+        bool colisionDetect(int & p_posY, int & p_posX);
+        int m_width, m_height;
+        int m_yMax, m_xMax;
+        WINDOW* m_mapWindow;
+
+    private:
+        string m_pathToFile;
+        CDoor* m_upperLayer;
+        vector<CCharacter*> m_moveableObjects;
+        vector<CGameObject*> m_imoveableObjects;
+        map<pair<int, int>, CGameObject*> m_targets;
+        map<CDoor, CMap*> m_layers;                     // current layer must be included too
+        void spawnPlayer(int posY, int posX);           // (int posY, int posX)
+        void spawnEnemy(int posY, int posX);
+        void spawnProp(int posY, int posX, char & objectForm);
+        void renderObjects();                           // samotne znovu vykresleni
+        void moveableDoAction();                        // vyvolej nahodnou akci, ktera zmeni vlastnosti instance napr. posX++ (jednu)
+    
+};
+
+void CMap::loadMap()
+{
+    spawnPlayer((ROOM_HEIGHT - 2) / 2, (ROOM_WIDTH - 2) / 2);
+}
+
 class CGame
 {
     public:
         CGame() = default;
-        void run();
+        int m_yMax, m_xMax;
         WINDOW* m_Window;
-        bool colisionDetect(int & p_posY, int & p_posX);
+        CMap* m_currentMap = new CMap;
+        void run();
+        void endGame();
 
     private:
         void initGame();
-        void endGame();
         void renderSpace();
-        void spawnPlayer();                         // (int posY, int posX)
-        void spawnEnemy(int posY, int posX);
-        void spawnProp(int posY, int posX, char & objectForm);
-        void renderObjects();                   // samotne znovu vykresleni
-        void moveableDoAction();                // vyvolej nahodnou akci, ktera zmeni vlastnosti instance napr. posX++ (jednu)
-        void demo_loadMap();                    // run spawning all objects - loadMap sub
-        vector<CCharacter*> moveableObjects;
-        vector<CGameObject*> imoveableObjects; // test only 
+        void initMap();
 
-        int m_yMax, m_xMax;
 };
 
-class CProp : public virtual CGameObject
+class CProp : public CGameObject
 {
     public:
         CProp(WINDOW* objectSpace, int posY, int posX, char & objectForm) : CGameObject(objectSpace, posY, posX)
@@ -85,17 +116,25 @@ class CProp : public virtual CGameObject
 
 };
 
+class CDoor : public CGameObject
+{
+    public:
+        int getAction() { return 0; };
+        bool interactWith(CGameObject * target){ return false; };
+};
+
+
 CGame game;
 
-bool CGame::colisionDetect(int & p_posY, int & p_posX)
+bool CMap::colisionDetect(int & p_posY, int & p_posX)
 {
-    for (auto i: moveableObjects)
+    for (auto i: m_moveableObjects)
     {
         if(pair(i->m_posY, i->m_posX) == pair(p_posY, p_posX))
             return true;
     }
 
-    for (auto i: imoveableObjects)
+    for (auto i: m_imoveableObjects)
     {
         if(pair(i->m_posY, i->m_posX) == pair(p_posY, p_posX))
             return true;
@@ -104,7 +143,7 @@ bool CGame::colisionDetect(int & p_posY, int & p_posX)
     return false;
 }
 
-void CGame::demo_loadMap()
+void CMap::demo_loadMap()
 {
     spawnEnemy(20, (ROOM_WIDTH - 2) / 2);
     spawnProp(25, 95, WALL);
@@ -113,22 +152,22 @@ void CGame::demo_loadMap()
 
 }
 
-void CGame::renderObjects()
+void CMap::renderObjects()
 {
-    for(auto i: moveableObjects)
+    for(auto i: m_moveableObjects)
     {
         i->objectRender();
     }
-    
-    for(auto i: imoveableObjects)
+
+    for(auto i: m_imoveableObjects)
     {
         i->objectRender();
     }
 }
 
-void CGame::moveableDoAction()
+void CMap::moveableDoAction()
 {
-    for(auto i: moveableObjects)
+    for(auto i: m_moveableObjects)
     {
         i->getAction();
     }
@@ -164,7 +203,6 @@ class CEnemy : public CCharacter
         {
             m_objectForm = '~';
             m_speed = 1;
-            keypad(m_objectSpace, true);
         }
 };
 
@@ -177,19 +215,19 @@ int CEnemy::getAction()     // just demo testing
         case 0:
             break;
         case 1:
-            if(!game.colisionDetect(tmppos = m_posY - m_speed, m_posX))
+            if(!game.m_currentMap->colisionDetect(tmppos = m_posY - m_speed, m_posX))
                 moveUp();
             break;
         case 2:
-            if(!game.colisionDetect(tmppos = m_posY + m_speed, m_posX))
+            if(!game.m_currentMap->colisionDetect(tmppos = m_posY + m_speed, m_posX))
                 moveDown();
             break;
         case 3:
-            if(!game.colisionDetect(m_posY, tmppos = m_posX - (m_speed + 1)))
+            if(!game.m_currentMap->colisionDetect(m_posY, tmppos = m_posX - (m_speed + 1)))
                 moveLeft();
             break;
         case 4:
-            if(!game.colisionDetect(m_posY, tmppos = m_posX + (m_speed + 1)))
+            if(!game.m_currentMap->colisionDetect(m_posY, tmppos = m_posX + (m_speed + 1)))
                 moveRight();
         default:
             break;
@@ -250,22 +288,22 @@ int CPlayer::getAction()
     switch (move) 
     {
         case KEY_UP:
-            if(!game.colisionDetect(tmppos = m_posY - m_speed, m_posX))
+            if(!game.m_currentMap->colisionDetect(tmppos = m_posY - m_speed, m_posX))
                 moveUp();
             changeForm('^');
             break;
         case KEY_DOWN:
-            if(!game.colisionDetect(tmppos = m_posY + m_speed, m_posX))
+            if(!game.m_currentMap->colisionDetect(tmppos = m_posY + m_speed, m_posX))
                 moveDown();
             changeForm('v');
             break;
         case KEY_LEFT:
-            if(!game.colisionDetect(m_posY, tmppos = m_posX - (m_speed + 1)))
+            if(!game.m_currentMap->colisionDetect(m_posY, tmppos = m_posX - (m_speed + 1)))
                 moveLeft();
             changeForm('<');
             break;
         case KEY_RIGHT:
-            if(!game.colisionDetect(m_posY, tmppos = m_posX + (m_speed + 1)))
+            if(!game.m_currentMap->colisionDetect(m_posY, tmppos = m_posX + (m_speed + 1)))
                 moveRight();
             changeForm('>');
             break;
@@ -313,9 +351,17 @@ void CGame::run()
     initGame();
     // TODO : render menu etc etc...
 
-    // just for test 
+    // just for test
+    initMap();
+
+}
+
+void CGame::initMap()
+{
+    // load paramets Y,X if box or not and pass to renderSpace for new WINDOW
     renderSpace();
-    spawnPlayer();
+    m_currentMap->m_mapWindow = m_Window;
+    m_currentMap->loadMap();
 }
 
 void CGame::renderSpace() 
@@ -327,35 +373,35 @@ void CGame::renderSpace()
     wrefresh(m_Window);
 }
 
-void CGame::spawnPlayer()
+void CMap::spawnPlayer(int posY, int posX)
 {
-    CPlayer* player = new CPlayer(m_Window, (ROOM_HEIGHT - 2) / 2, (ROOM_WIDTH - 2) / 2);
-    moveableObjects.push_back(player);
+    CPlayer* player = new CPlayer(m_mapWindow, posY, posX);
+    m_moveableObjects.push_back(player);
     demo_loadMap();
-    wrefresh(m_Window);
+    wrefresh(m_mapWindow);
 
     do
     {
         player->objectRender();
         moveableDoAction();
         renderObjects();
-        wrefresh(m_Window);
+        wrefresh(m_mapWindow);
     } while (player->getAction() != 'x');
     
-    endGame();
+    game.endGame();
 
 }
 
-void CGame::spawnEnemy(int posY, int posX)
+void CMap::spawnEnemy(int posY, int posX)
 {
-    CEnemy* enemy = new CEnemy(m_Window, posY, posX);
-    moveableObjects.push_back(enemy);
+    CEnemy* enemy = new CEnemy(m_mapWindow, posY, posX);
+    m_moveableObjects.push_back(enemy);
 }
 
-void CGame::spawnProp(int posY, int posX, char & objectForm)
+void CMap::spawnProp(int posY, int posX, char & objectForm)
 {
-    CProp* prop = new CProp(m_Window, posY, posX, objectForm);
-    imoveableObjects.push_back(prop);
+    CProp* prop = new CProp(m_mapWindow, posY, posX, objectForm);
+    m_imoveableObjects.push_back(prop);
 }
 
 void CGame::endGame()
