@@ -6,6 +6,7 @@
 #include <locale.h>
 #include <vector>
 #include <map>
+#include <set>
 
 
 #define ROOM_HEIGHT 50 
@@ -27,8 +28,16 @@ class CGameObject
         {
             getmaxyx(m_objectSpace, m_posY_Max, m_posX_Max);
         }
-        virtual int getAction() = 0;
-        virtual bool interactWith(CGameObject * target) = 0;
+        virtual ~CGameObject()
+        {}
+        virtual int getAction()
+        {
+            return 0;
+        }
+        virtual bool interactWith()
+        {
+            return false;
+        }
         void objectRender();
         WINDOW * m_objectSpace;
         int m_posY, m_posX, m_posX_Max, m_posY_Max;
@@ -38,7 +47,7 @@ class CGameObject
 
 class CCharacter : public CGameObject
 {
-    public:    
+    protected:    
         void moveUp();
         void moveDown();
         void moveLeft();
@@ -46,6 +55,8 @@ class CCharacter : public CGameObject
 
         CCharacter(WINDOW* objectSpace, int posY, int posX) : CGameObject(objectSpace, posY, posX)
         {}
+        ~CCharacter(){}
+
 
         int m_speed;
 };
@@ -56,8 +67,9 @@ class CMap
 {
     public:
         CMap() = default;
-        void loadMap();
-        void demo_loadMap();                    // run spawning all objects - loadMap sub
+        ~CMap();    
+        void loadMap();                                 // load all objects in map and render
+        void demo_loadMap();                            // demo loadMap() for testing only
         bool loadMapFromFile(const string & pathToFile);
         bool openDoor(CDoor*);
         bool goToMap(CMap*);
@@ -81,7 +93,7 @@ class CMap
     
 };
 
-void CMap::loadMap()
+void CMap::loadMap()            
 {
     spawnPlayer((ROOM_HEIGHT - 2) / 2, (ROOM_WIDTH - 2) / 2);
 }
@@ -90,6 +102,7 @@ class CGame
 {
     public:
         CGame() = default;
+        ~CGame() = default;
         int m_yMax, m_xMax;
         WINDOW* m_Window;
         CMap* m_currentMap = new CMap;
@@ -110,19 +123,22 @@ class CProp : public CGameObject
         {
             m_objectForm = objectForm;
         }
-
-        int getAction() { return 0; };
-        bool interactWith(CGameObject * target){ return false; };
+        ~CProp()
+        {}
 
 };
 
 class CDoor : public CGameObject
 {
     public:
-        int getAction() { return 0; };
-        bool interactWith(CGameObject * target){ return false; };
-};
+        CDoor(WINDOW* objectSpace, int posY, int posX, char & objectForm) : CGameObject(objectSpace, posY, posX)
+        {
+            m_objectForm = objectForm;
+        }
+        ~CDoor()
+        {}
 
+};
 
 CGame game;
 
@@ -173,12 +189,42 @@ void CMap::moveableDoAction()
     }
 }
 
+class CItem;
+
+class CChest : public CGameObject
+{
+    public:
+        CChest(WINDOW* objectSpace, int posY, int posX, size_t size) : CGameObject(objectSpace, posY, posX)
+        {
+            m_objectForm = 'H';
+            m_size = size;
+            for (size_t i = 0; i < m_size; ++i)
+            {
+                m_keys.push_back(i);
+                m_contents[i];
+            }
+
+            it = m_keys.begin();
+        }
+        vector<size_t>::iterator it;
+        bool is_empty();
+        bool is_full();
+        void loadContents();
+        void popItem();
+        void pushItem(CItem * item);
+
+        private:
+            size_t m_size;
+            vector<size_t> m_keys;
+            map<size_t, CItem*> m_contents;
+};
+
 class CPlayer : public CCharacter
 {
     public:
         void changeForm(const char& objectForm);
         int getAction() override;
-        bool interactWith(CGameObject* target) override;
+        bool interactWith() override;
     
         CPlayer(WINDOW* objectSpace, int posY, int posX) : CCharacter(objectSpace, posY, posX)
         {
@@ -187,8 +233,14 @@ class CPlayer : public CCharacter
             keypad(m_objectSpace, true);
         }
 
-    private:
-        
+        ~CPlayer()
+        {}
+
+    protected:
+        int health;
+        int energy;
+        int chanceOfBlock;
+
 };
 
 class CEnemy : public CCharacter
@@ -196,7 +248,7 @@ class CEnemy : public CCharacter
     public:
         void enemyDead();
         int getAction() override;
-        bool interactWith(CGameObject* target) override;
+        bool interactWith() override;
 
         // enemy demo testing constructor
         CEnemy(WINDOW* objectSpace, int posY, int posX) : CCharacter(objectSpace, posY, posX)
@@ -204,6 +256,9 @@ class CEnemy : public CCharacter
             m_objectForm = '~';
             m_speed = 1;
         }
+
+        ~CEnemy()
+        {}
 };
 
 int CEnemy::getAction()     // just demo testing
@@ -318,13 +373,13 @@ void CGameObject::objectRender()
     mvwaddch(m_objectSpace, m_posY, m_posX, m_objectForm);
 }
 
-bool CPlayer::interactWith(CGameObject * target)
+bool CPlayer::interactWith()
 {
     //TODO
     return false;
 }
 
-bool CEnemy::interactWith(CGameObject * target)
+bool CEnemy::interactWith()
 {
     //TODO
     return false;
