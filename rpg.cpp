@@ -7,6 +7,8 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <array>
+#include <stack>
 
 
 #define ROOM_HEIGHT 50 
@@ -112,6 +114,8 @@ class CGame
         CMap* m_currentMap = new CMap;
         void run();
         void endGame();
+        bool saveGame();
+        bool loadGame();
 
     private:
         void initGame();
@@ -214,7 +218,7 @@ class CItem
 class CWeapon : public CItem
 {
     public:
-        CWeapon(const string & name, const string & lable, size_t price, size_t useability, size_t damage, size_t chance_of_hit, player_class compatible) : CItem(WEAPON, name, lable, price, useability)
+        CWeapon(const string & name, const string & lable, size_t price, size_t useability, int damage, int chance_of_hit, player_class compatible) : CItem(WEAPON, name, lable, price, useability)
         {
             m_damage = damage;
             m_chance_of_hit = chance_of_hit;
@@ -226,14 +230,14 @@ class CWeapon : public CItem
 
     private:
         player_class m_compatible;
-        size_t m_damage;
-        size_t m_chance_of_hit;
+        int m_damage;
+        int m_chance_of_hit;
 };
 
 class CArmor : public CItem
 {
     public:
-        CArmor(const string & name, const string & lable, size_t price, size_t useability, size_t armor, size_t chance_of_block, body_part body) : CItem(ARMOR, name, lable, price, useability)
+        CArmor(const string & name, const string & lable, size_t price, size_t useability, int armor, int chance_of_block, body_part body) : CItem(ARMOR, name, lable, price, useability)
         {
             m_armor = armor;
             m_chance_of_block = chance_of_block;
@@ -245,41 +249,77 @@ class CArmor : public CItem
 
     private:
         body_part m_body;
-        size_t m_armor;
-        size_t m_chance_of_block;
+        int m_armor;
+        int m_chance_of_block;
 };
 
-class CConsumable : public CItem
+class CConsumable : public CItem        // could be stackable
 {
     public:
-        CConsumable(const string & name, const string & lable, size_t price, size_t useability, size_t healthSource, size_t energySource, int sideEffect) : CItem(CONSUMABLE, name, lable, price, useability)
+        CConsumable(const string & name, const string & lable, const string & id, size_t price, size_t useability, int healthSource, int energySource, int sideEffect) : CItem(CONSUMABLE, name, lable, price, useability)
         {
             m_healthSource = healthSource;
             m_energySource = energySource;
             m_sideEffect = sideEffect;
+            m_id = id;
         }
         ~CConsumable()
         {}
         bool itemApply();
+        string m_id;
 
     private:
-        size_t m_healthSource;
-        size_t m_energySource;
+        int m_healthSource;
+        int m_energySource;
         int m_sideEffect;           // item could be toxic -> negative values
 
 };
 
-class CMisc : public CItem
+class CMisc : public CItem          // could be stackable
 {
     public:
-        CMisc(const string & name, const string & lable, size_t price) : CItem(MISC, name, lable, price, 0)
-        {}
+        CMisc(const string & name, const string & lable, const string & id, size_t price) : CItem(MISC, name, lable, price, 0)
+        {
+            m_id = id;
+        }
         ~CMisc()
         {}
-        bool itemApply()            // these items can't be applied
+        bool itemApply()            // these items can't be applied f.e. - bone 
         {
             return false;
         }
+        string m_id;
+
+};
+
+class CInventory            // map of stacks
+{
+    public:
+        CInventory(size_t size) : m_size(size)
+        {
+            for (size_t i = 0; i < m_size; ++i)
+            {
+                m_keys.push_back(i);
+                m_contents[i];
+            }
+
+            m_it = m_keys.begin();
+        }
+
+        void incrementItr();
+        void decrementItr();
+        void useItem();
+        void dumpItem();
+        void pickUpItem(CItem * item);
+        void loadItemsAfterSave();
+        void saveItems();
+        void getSize();
+
+    private:
+        size_t m_size;
+        vector<size_t> m_keys;
+        vector<size_t>::iterator m_it;
+        map<size_t, pair<string, stack<CItem*>>> m_contents;
 
 };
 
@@ -296,32 +336,35 @@ class CChest : public CGameObject
                 m_contents[i];
             }
 
-            it = m_keys.begin();
+            m_it = m_keys.begin();
         }
-        vector<size_t>::iterator it;
+        vector<size_t>::iterator m_it;
         bool is_empty();
         bool is_full();
         void loadContents();
         void popItem();
         void pushItem(CItem * item);
 
-        private:
-            size_t m_size;
-            vector<size_t> m_keys;
-            map<size_t, CItem*> m_contents;
+    private:
+        size_t m_size;
+        vector<size_t> m_keys;
+        map<size_t, CItem*> m_contents;
 };
 
 class CPlayer : public CCharacter
 {
     public:
+        CInventory* m_inventory;
         void changeForm(const char& objectForm);
         int getAction() override;
         bool interactWith() override;
     
-        CPlayer(WINDOW* objectSpace, int posY, int posX) : CCharacter(objectSpace, posY, posX)
+        CPlayer(WINDOW* objectSpace, int posY, int posX, size_t inventorySize) : CCharacter(objectSpace, posY, posX)
         {
             m_objectForm = '^';
             m_speed = 1;
+            m_inventorySize = inventorySize;
+            m_inventory = new CInventory(m_inventorySize);
             keypad(m_objectSpace, true);
         }
 
@@ -329,6 +372,7 @@ class CPlayer : public CCharacter
         {}
 
     protected:
+        size_t m_inventorySize;
         int health;
         int energy;
         int chanceOfBlock;
