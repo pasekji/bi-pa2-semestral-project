@@ -12,6 +12,10 @@
 #define ROOM_HEIGHT 50 
 #define ROOM_WIDTH 100
 
+enum body_part {HEAD, TORSO, ARMS, LEGS, HANDS, FEET};
+enum item_type {WEAPON, ARMOR, CONSUMABLE, MISC};
+enum player_class {PALADIN, MAGE, ROGUE};
+
 char WALL = '#';
 char VOID = '+';
 
@@ -131,9 +135,9 @@ class CProp : public CGameObject
 class CDoor : public CGameObject
 {
     public:
-        CDoor(WINDOW* objectSpace, int posY, int posX, char & objectForm) : CGameObject(objectSpace, posY, posX)
+        CDoor(WINDOW* objectSpace, int posY, int posX) : CGameObject(objectSpace, posY, posX)
         {
-            m_objectForm = objectForm;
+            m_objectForm = 'D';
         }
         ~CDoor()
         {}
@@ -189,7 +193,95 @@ void CMap::moveableDoAction()
     }
 }
 
-class CItem;
+class CItem
+{
+    protected:
+        item_type m_type;
+        string m_name;
+        string m_lable;
+        size_t m_price;
+        size_t m_useability;            // count of possible uses
+
+        virtual bool itemApply() = 0;
+
+        CItem(item_type type, const string & name, const string & lable, size_t price, size_t useability) : m_type(type), m_name(name), m_lable(lable), m_price(price), m_useability(useability)
+        {}
+        virtual ~CItem()
+        {}
+
+};
+
+class CWeapon : public CItem
+{
+    public:
+        CWeapon(const string & name, const string & lable, size_t price, size_t useability, size_t damage, size_t chance_of_hit, player_class compatible) : CItem(WEAPON, name, lable, price, useability)
+        {
+            m_damage = damage;
+            m_chance_of_hit = chance_of_hit;
+            m_compatible = compatible;
+        }
+        ~CWeapon()
+        {}
+        bool itemApply();
+
+    private:
+        player_class m_compatible;
+        size_t m_damage;
+        size_t m_chance_of_hit;
+};
+
+class CArmor : public CItem
+{
+    public:
+        CArmor(const string & name, const string & lable, size_t price, size_t useability, size_t armor, size_t chance_of_block, body_part body) : CItem(ARMOR, name, lable, price, useability)
+        {
+            m_armor = armor;
+            m_chance_of_block = chance_of_block;
+            m_body = body;
+        }
+        ~CArmor()
+        {}
+        bool itemApply();
+
+    private:
+        body_part m_body;
+        size_t m_armor;
+        size_t m_chance_of_block;
+};
+
+class CConsumable : public CItem
+{
+    public:
+        CConsumable(const string & name, const string & lable, size_t price, size_t useability, size_t healthSource, size_t energySource, int sideEffect) : CItem(CONSUMABLE, name, lable, price, useability)
+        {
+            m_healthSource = healthSource;
+            m_energySource = energySource;
+            m_sideEffect = sideEffect;
+        }
+        ~CConsumable()
+        {}
+        bool itemApply();
+
+    private:
+        size_t m_healthSource;
+        size_t m_energySource;
+        int m_sideEffect;           // item could be toxic -> negative values
+
+};
+
+class CMisc : public CItem
+{
+    public:
+        CMisc(const string & name, const string & lable, size_t price) : CItem(MISC, name, lable, price, 0)
+        {}
+        ~CMisc()
+        {}
+        bool itemApply()            // these items can't be applied
+        {
+            return false;
+        }
+
+};
 
 class CChest : public CGameObject
 {
