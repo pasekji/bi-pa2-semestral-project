@@ -17,6 +17,7 @@
 enum body_part {HEAD, TORSO, ARMS, LEGS, HANDS, FEET};
 enum item_type {WEAPON, ARMOR, CONSUMABLE, MISC};
 enum player_class {PALADIN, MAGE, ROGUE};
+enum enemy_type {UNDEAD, GHOUL, HELLHOUND, DRYAD, BASILISK, SIREN};    // UNDEAD - F ,BASILISK - ~ , GHOUL - G, HELLHOUND - E, DRYAD - Y, SIREN - %
 
 char WALL = '#';
 char VOID = '+';
@@ -63,7 +64,6 @@ class CCharacter : public CGameObject
         {}
         ~CCharacter(){}
 
-
         int m_speed;
 };
 
@@ -91,8 +91,8 @@ class CMap
         vector<CGameObject*> m_imoveableObjects;
         map<pair<int, int>, CGameObject*> m_targets;
         map<CDoor, CMap*> m_layers;                     // current layer must be included too
-        void spawnPlayer(int posY, int posX);           // (int posY, int posX)
-        void spawnEnemy(int posY, int posX);
+        void spawnPlayer(int posY, int posX, player_class playerClass);           // (int posY, int posX)
+        void spawnEnemy(int posY, int posX, enemy_type type);
         void spawnProp(int posY, int posX, char & objectForm);
         void renderObjects();                           // samotne znovu vykresleni
         void moveableDoAction();                        // vyvolej nahodnou akci, ktera zmeni vlastnosti instance napr. posX++ (jednu)
@@ -101,7 +101,7 @@ class CMap
 
 void CMap::loadMap()            
 {
-    spawnPlayer((ROOM_HEIGHT - 2) / 2, (ROOM_WIDTH - 2) / 2);
+    spawnPlayer((ROOM_HEIGHT - 2) / 2, (ROOM_WIDTH - 2) / 2, PALADIN);
 }
 
 class CGame
@@ -169,7 +169,7 @@ bool CMap::colisionDetect(int & p_posY, int & p_posX)
 
 void CMap::demo_loadMap()
 {
-    spawnEnemy(20, (ROOM_WIDTH - 2) / 2);
+    spawnEnemy(20, (ROOM_WIDTH - 2) / 2, BASILISK);
     spawnProp(25, 95, WALL);
     spawnProp(25, 94, WALL);
     spawnProp(25, 93, WALL);
@@ -231,7 +231,7 @@ class CWeapon : public CItem
     private:
         player_class m_compatible;
         int m_damage;
-        int m_chance_of_hit;
+        float m_chance_of_hit;
 };
 
 class CArmor : public CItem
@@ -250,7 +250,7 @@ class CArmor : public CItem
     private:
         body_part m_body;
         int m_armor;
-        int m_chance_of_block;
+        float m_chance_of_block;
 };
 
 class CConsumable : public CItem        // could be stackable
@@ -354,16 +354,30 @@ class CChest : public CGameObject
 class CPlayer : public CCharacter
 {
     public:
+        player_class m_class;
         CInventory* m_inventory;
         void changeForm(const char& objectForm);
-        int getAction() override;
-        bool interactWith() override;
-    
-        CPlayer(WINDOW* objectSpace, int posY, int posX, size_t inventorySize) : CCharacter(objectSpace, posY, posX)
+        
+        CPlayer(WINDOW* objectSpace, int posY, int posX, player_class playerClass) : CCharacter(objectSpace, posY, posX)
         {
             m_objectForm = '^';
             m_speed = 1;
-            m_inventorySize = inventorySize;
+            m_class = playerClass;
+
+            switch (playerClass)
+            {
+                case PALADIN:
+                    m_inventorySize = 20;
+                    break;
+                case MAGE:
+                    m_inventorySize = 15;
+                    break;
+                case ROGUE:
+                    m_inventorySize = 10;
+                    break;
+                default:
+                    break;
+            }
             m_inventory = new CInventory(m_inventorySize);
             keypad(m_objectSpace, true);
         }
@@ -373,23 +387,103 @@ class CPlayer : public CCharacter
 
     protected:
         size_t m_inventorySize;
-        int health;
-        int energy;
-        int chanceOfBlock;
+        int m_health;
+        int m_energy;
+        float m_chanceOfBlock;
 
+};
+
+class CPlayerPaladin : public CPlayer
+{  
+    public:
+        int getAction() override;
+        bool interactWith() override;
+        CPlayerPaladin(WINDOW* objectSpace, int posY, int posX) : CPlayer(objectSpace, posY, posX, PALADIN)
+        {}
+
+        ~CPlayerPaladin()
+        {}
+
+    private:
+        int m_strength;
+        float m_chanceOfCriticalAttack;
+        bool paladinPrimaryAttack();
+        bool paladinSpecialAbility();           // knockout the enemy for x rounds ?? 
+};
+
+class CPlayerMage : public CPlayer
+{  
+    public:
+        int getAction() override;
+        bool interactWith() override;
+        CPlayerMage(WINDOW* objectSpace, int posY, int posX) : CPlayer(objectSpace, posY, posX, MAGE)
+        {}
+
+        ~CPlayerMage()
+        {}
+
+    private:
+        int m_mana;
+        float m_chanceOfCriticalAttack;
+        bool magePrimaryAttack();
+        bool mageSecondaryAttack();
+        bool mageSpecialAbility();
+};
+
+class CPlayerRogue : public CPlayer
+{
+    public:
+        int getAction() override;
+        bool interactWith() override;
+        CPlayerRogue(WINDOW* objectSpace, int posY, int posX) : CPlayer(objectSpace, posY, posX, ROGUE)
+        {}
+
+        ~CPlayerRogue()
+        {}
+    
+    private:
+        int m_agility;
+        float m_chanceOfDoubleHit;
+        bool roguePrimaryAttack();
+        void rogueSpecialAbility();     // jump over x spaces in direction of player
 };
 
 class CEnemy : public CCharacter
 {
     public:
+        enemy_type m_type;
         void enemyDead();
         int getAction() override;
         bool interactWith() override;
 
         // enemy demo testing constructor
-        CEnemy(WINDOW* objectSpace, int posY, int posX) : CCharacter(objectSpace, posY, posX)
+        CEnemy(WINDOW* objectSpace, int posY, int posX, enemy_type type) : CCharacter(objectSpace, posY, posX)
         {
-            m_objectForm = '~';
+            switch (type)
+            {
+                case BASILISK:
+                    m_objectForm = '~';
+                    m_type = BASILISK;
+                    break;
+                case UNDEAD:
+                    m_objectForm = 'F';
+                    m_type = UNDEAD;
+                    break;
+                case GHOUL:
+                    m_objectForm = 'G';
+                    m_type = GHOUL;
+                case HELLHOUND:
+                    m_objectForm = 'E';
+                    m_type = HELLHOUND;
+                case DRYAD:
+                    m_objectForm = 'Y';
+                    m_type = DRYAD;
+                case SIREN:
+                    m_objectForm = '%';
+                    m_type = SIREN;
+                default:
+                    break;
+            }
             m_speed = 1;
         }
 
@@ -472,7 +566,7 @@ void CCharacter::moveRight()
     }
 }
 
-int CPlayer::getAction()
+int CPlayerPaladin::getAction()
 {
     int move = wgetch(m_objectSpace);
     int tmppos;
@@ -509,7 +603,7 @@ void CGameObject::objectRender()
     mvwaddch(m_objectSpace, m_posY, m_posX, m_objectForm);
 }
 
-bool CPlayer::interactWith()
+bool CPlayerPaladin::interactWith()
 {
     //TODO
     return false;
@@ -564,9 +658,21 @@ void CGame::renderSpace()
     wrefresh(m_Window);
 }
 
-void CMap::spawnPlayer(int posY, int posX)
+void CMap::spawnPlayer(int posY, int posX, player_class playerClass)
 {
-    CPlayer* player = new CPlayer(m_mapWindow, posY, posX);
+    CPlayer* player;
+    switch (playerClass)
+    {
+        case PALADIN:
+            player = new CPlayerPaladin(m_mapWindow, posY, posX);
+            break;
+        case MAGE:
+            break;
+        case ROGUE:
+            break;
+        default:
+            break;
+    }
     m_moveableObjects.push_back(player);
     demo_loadMap();
     wrefresh(m_mapWindow);
@@ -583,9 +689,9 @@ void CMap::spawnPlayer(int posY, int posX)
 
 }
 
-void CMap::spawnEnemy(int posY, int posX)
+void CMap::spawnEnemy(int posY, int posX, enemy_type type)
 {
-    CEnemy* enemy = new CEnemy(m_mapWindow, posY, posX);
+    CEnemy* enemy = new CEnemy(m_mapWindow, posY, posX, type);
     m_moveableObjects.push_back(enemy);
 }
 
