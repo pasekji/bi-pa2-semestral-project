@@ -9,7 +9,7 @@
 #include <set>
 #include <array>
 #include <stack>
-
+#include <list>
 
 #define ROOM_HEIGHT 50 
 #define ROOM_WIDTH 100
@@ -18,6 +18,8 @@ enum body_part {HEAD, TORSO, ARMS, LEGS, HANDS, FEET};
 enum item_type {WEAPON, ARMOR, CONSUMABLE, MISC};
 enum player_class {PALADIN, MAGE, ROGUE};
 enum enemy_type {UNDEAD, GHOUL, HELLHOUND, DRYAD, BASILISK, SIREN};    // UNDEAD - F ,BASILISK - ~ , GHOUL - G, HELLHOUND - E, DRYAD - Y, SIREN - %
+enum attack_type {SLAIN, KICK, SPELL, BITE};                           // todo 
+enum event_type {ATTACK, TALK, ITEM_PICKUP, ITEM_DISCARD, EQUIP, DEQUIP, GOTO};
 
 char WALL = '#';
 char VOID = '+';
@@ -65,6 +67,9 @@ class CCharacter : public CGameObject
         ~CCharacter(){}
 
         int m_speed;
+        int m_health;
+        int m_energy;
+        float m_chanceOfBlock;
 };
 
 class CDoor;
@@ -86,6 +91,7 @@ class CMap
 
     private:
         string m_pathToFile;
+        string m_locationName;
         CDoor* m_upperLayer;
         vector<CCharacter*> m_moveableObjects;
         vector<CGameObject*> m_imoveableObjects;
@@ -94,8 +100,8 @@ class CMap
         void spawnPlayer(int posY, int posX, player_class playerClass);           // (int posY, int posX)
         void spawnEnemy(int posY, int posX, enemy_type type);
         void spawnProp(int posY, int posX, char & objectForm);
-        void renderObjects();                           // samotne znovu vykresleni
-        void moveableDoAction();                        // vyvolej nahodnou akci, ktera zmeni vlastnosti instance napr. posX++ (jednu)
+        void renderObjects();                           // only new render of objects
+        void moveableDoAction();                        // invoke action to change properties of instance. posX++ (once)
     
 };
 
@@ -104,12 +110,14 @@ void CMap::loadMap()
     spawnPlayer((ROOM_HEIGHT - 2) / 2, (ROOM_WIDTH - 2) / 2, PALADIN);
 }
 
+class CEvent;
 class CGame
 {
     public:
         CGame() = default;
         ~CGame() = default;
         int m_yMax, m_xMax;
+        list<CEvent*> event_list;
         WINDOW* m_Window;
         CMap* m_currentMap = new CMap;
         void run();
@@ -310,7 +318,7 @@ class CInventory            // map of stacks
         void decrementItr();
         void useItem();
         void dumpItem();
-        void pickUpItem(CItem * item);
+        void pickUpItem();
         void loadItemsAfterSave();
         void saveItems();
         void getSize();
@@ -356,6 +364,7 @@ class CPlayer : public CCharacter
     public:
         player_class m_class;
         CInventory* m_inventory;
+        map<body_part, CArmor*> m_armor;
         void changeForm(const char& objectForm);
         
         CPlayer(WINDOW* objectSpace, int posY, int posX, player_class playerClass) : CCharacter(objectSpace, posY, posX)
@@ -387,9 +396,7 @@ class CPlayer : public CCharacter
 
     protected:
         size_t m_inventorySize;
-        int m_health;
-        int m_energy;
-        float m_chanceOfBlock;
+        string m_playerName;
 
 };
 
@@ -407,6 +414,7 @@ class CPlayerPaladin : public CPlayer
     private:
         int m_strength;
         float m_chanceOfCriticalAttack;
+        attack_type m_primaryAttackType;
         bool paladinPrimaryAttack();
         bool paladinSpecialAbility();           // knockout the enemy for x rounds ?? 
 };
@@ -425,6 +433,8 @@ class CPlayerMage : public CPlayer
     private:
         int m_mana;
         float m_chanceOfCriticalAttack;
+        attack_type m_primaryAttackType;
+        attack_type m_secondaryAttackType;
         bool magePrimaryAttack();
         bool mageSecondaryAttack();
         bool mageSpecialAbility();
@@ -444,6 +454,7 @@ class CPlayerRogue : public CPlayer
     private:
         int m_agility;
         float m_chanceOfDoubleHit;
+        attack_type m_primaryAttackType;
         bool roguePrimaryAttack();
         void rogueSpecialAbility();     // jump over x spaces in direction of player
 };
@@ -489,6 +500,148 @@ class CEnemy : public CCharacter
 
         ~CEnemy()
         {}
+
+    private:
+        int m_force;
+        attack_type m_primaryAttackType;
+        CChest * m_loot;                            // will generate loot chest after death
+        bool primaryAttack();
+
+};
+
+class CEvent
+{
+    public:
+        CEvent(CGameObject* source, CGameObject* target, event_type type) : m_source(source), m_target(target), m_type(type)
+        {}
+        virtual ~CEvent();
+        virtual void print() const;
+        virtual void updateObjects();
+        void pushToDisplay() const;
+        CGameObject* m_source;
+        CGameObject* m_target;
+        event_type m_type;
+};
+
+class CAttack : public CEvent
+{
+    public:
+        CAttack(CGameObject* source, CGameObject* target, attack_type attackType) : CEvent(source, target, ATTACK)
+        {}
+        ~CAttack()
+        {}
+        void print() const override;
+        void updateObjects() override;
+
+    private:
+        attack_type m_attackType;
+        int m_force;
+        int m_healthLost;
+        bool m_hit;
+};
+
+class CTalk : public CEvent
+{
+    public:
+        CTalk(CGameObject* source, CGameObject* target) : CEvent(source, target, TALK)
+        {}
+        ~CTalk()
+        {}
+        void print() const override;
+        void updateObjects() override;
+
+    private:
+        string m_greeting;
+        string m_answer;
+
+};
+
+class CPickup : public CEvent
+{
+    public:
+        CPickup(CPlayer* source, CGameObject* target) : CEvent(source, target, ITEM_PICKUP)
+        {}
+        ~CPickup()
+        {}
+        void print() const override;
+        void updateObjects() override;
+    
+    private:
+        CItem* m_item;
+        bool m_success;
+
+};
+
+class CDiscard : public CEvent
+{
+    public:
+        CDiscard(CPlayer* source, CGameObject* target, CItem* item) : CEvent(source, target, ITEM_DISCARD)
+        {
+            m_item = item;
+        }
+        CDiscard(CPlayer* source, CItem* item) : CEvent(source, nullptr, ITEM_DISCARD)
+        {
+            m_item = item;
+        }
+        ~CDiscard()
+        {}
+        void print() const override;
+        void updateObjects() override;
+        
+    private:
+        CItem* m_item;
+        bool m_success;
+
+};
+
+class CEquip : public CEvent
+{
+    public:
+        CEquip(CPlayer* source, CItem* item) : CEvent(source, nullptr, EQUIP)
+        {
+            m_item = item;
+        }
+        ~CEquip()
+        {}
+        void print() const override;
+        void updateObjects() override;
+
+    private:
+        CItem* m_item;
+        bool m_success;
+};
+
+class CDequip : public CEvent
+{
+    public:
+        CDequip(CPlayer* source, CItem* item) : CEvent(source, nullptr, DEQUIP)
+        {
+            m_item = item;
+        }
+        ~CDequip()
+        {}
+        void print() const override;
+        void updateObjects() override;
+
+    private:
+        CItem* m_item;
+        bool m_success;
+};
+
+class CGoto : public CEvent
+{
+    public:
+        CGoto(CPlayer* source, CDoor* door) : CEvent(source, door, GOTO)
+        {}
+        ~CGoto()
+        {}
+        void print() const override;
+        void updateObjects() override;
+
+    private:
+        CDoor* m_door;
+        CMap* m_mapFrom;
+        CMap* m_mapTo;
 };
 
 int CEnemy::getAction()     // just demo testing
