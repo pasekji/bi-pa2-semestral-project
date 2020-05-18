@@ -162,13 +162,13 @@ bool CMap::colisionDetect(int & p_posY, int & p_posX)
 {
     for (auto i: m_moveableObjects)
     {
-        if(pair(i->m_posY, i->m_posX) == pair(p_posY, p_posX))
+        if(make_pair(i->m_posY, i->m_posX) == make_pair(p_posY, p_posX))
             return true;
     }
 
     for (auto i: m_imoveableObjects)
     {
-        if(pair(i->m_posY, i->m_posX) == pair(p_posY, p_posX))
+        if(make_pair(i->m_posY, i->m_posX) == make_pair(p_posY, p_posX))
             return true;
     }
 
@@ -199,7 +199,7 @@ void CMap::renderObjects()
 
 void CMap::moveableDoAction()
 {
-    for(auto i: m_moveableObjects)
+    for(auto i: m_moveableObjects)      // do action except first position -> player position <- no need 
     {
         i->getAction();
     }
