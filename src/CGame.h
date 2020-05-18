@@ -3,6 +3,7 @@
 
 #include <list>
 #include <ncurses.h>
+#include <unistd.h>
 #include "CEvent.h"
 #include "CMap.h"
 
@@ -13,7 +14,7 @@ class CGame
         ~CGame() = default;
         int m_yMax, m_xMax;
         std::list<CEvent*> event_list;
-        CMap* m_currentMap;
+        CMap* m_currentMap = new CMap;
         WINDOW* m_Window;
         void run();
         void endGame();
