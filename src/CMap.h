@@ -16,13 +16,14 @@ class CMap
 {
     public:
         CMap() = default;
-        ~CMap();    
+        ~CMap() = default;    
         void loadMap();                                 // load all objects in map and render
         void demo_loadMap();                            // demo loadMap() for testing only
         bool loadMapFromFile(const std::string & pathToFile);
         bool openDoor(CDoor*);
         bool goToMap(CMap*);
         bool colisionDetect(int & p_posY, int & p_posX);
+        void staticCamera(direction & dir);
         int m_width, m_height;
         int m_yMax, m_xMax;
         WINDOW* m_mapWindow;
@@ -40,6 +41,10 @@ class CMap
         void spawnProp(int posY, int posX, char & objectForm);
         void renderObjects();                           // only new render of objects
         void moveableDoAction();                        // invoke action to change properties of instance. posX++ (once)
+        void camera_objectsUp();
+        void camera_objectsDown();
+        void camera_objectsLeft();
+        void camera_objectsRight();
     
 };
 

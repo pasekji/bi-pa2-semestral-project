@@ -7,6 +7,10 @@ extern char WALL;
 
 void CMap::loadMap()            
 {
+    m_xMax = 1000;
+    m_yMax = 1000;
+
+    // no predef ROOM_HEIGHT othr. will be used 
     spawnPlayer((ROOM_HEIGHT - 2) / 2, (ROOM_WIDTH - 2) / 2, PALADIN);
 }
 
@@ -29,10 +33,12 @@ bool CMap::colisionDetect(int & p_posY, int & p_posX)
 
 void CMap::demo_loadMap()
 {
-    spawnEnemy(20, (ROOM_WIDTH - 2) / 2, BASILISK);
-    spawnProp(25, 95, WALL);
-    spawnProp(25, 94, WALL);
-    spawnProp(25, 93, WALL);
+
+    // no predef ROOM_HEIGHT or othr. will be used 
+    spawnEnemy(((ROOM_HEIGHT - (ROOM_HEIGHT/5))/2), (ROOM_WIDTH - 2) / 2, BASILISK);
+    spawnProp((ROOM_HEIGHT/2), (ROOM_WIDTH - (ROOM_WIDTH/20)), WALL);
+    spawnProp((ROOM_HEIGHT/2), (ROOM_WIDTH - (ROOM_WIDTH/20) - 1), WALL);
+    spawnProp((ROOM_HEIGHT/2), (ROOM_WIDTH - (ROOM_WIDTH/20) - 2), WALL);
 
 }
 
@@ -98,4 +104,85 @@ void CMap::spawnProp(int posY, int posX, char & objectForm)
 {
     CProp* prop = new CProp(m_mapWindow, posY, posX, objectForm);
     m_imoveableObjects.push_back(prop);
+}
+
+void CMap::staticCamera(direction & dir)
+{
+    switch (dir)
+    {
+        case UP:
+            camera_objectsDown();
+            renderObjects();
+            break;
+    
+        case DOWN:
+            camera_objectsUp();
+            renderObjects();
+            break;
+        
+        case LEFT:
+            camera_objectsRight();
+            renderObjects();
+            break;
+
+        case RIGHT:
+            camera_objectsLeft();
+            renderObjects();
+            break;
+        
+        default:
+            break;
+    }
+}
+
+void CMap::camera_objectsDown()
+{
+    for(auto i: m_moveableObjects)
+    {
+        i->cameraDown();
+    }
+
+    for(auto i: m_imoveableObjects)
+    {
+        i->cameraDown();
+    }
+}
+
+void CMap::camera_objectsUp()
+{
+    for(auto i: m_moveableObjects)
+    {
+        i->cameraUp();
+    }
+
+    for(auto i: m_imoveableObjects)
+    {
+        i->cameraUp();
+    }
+}
+
+void CMap::camera_objectsRight()
+{
+    for(auto i: m_moveableObjects)
+    {
+        i->cameraRight();
+    }
+
+    for(auto i: m_imoveableObjects)
+    {
+        i->cameraRight();
+    }
+}
+
+void CMap::camera_objectsLeft()
+{
+    for(auto i: m_moveableObjects)
+    {
+        i->cameraLeft();
+    }
+
+    for(auto i: m_imoveableObjects)
+    {
+        i->cameraLeft();
+    }   
 }

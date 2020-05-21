@@ -16,6 +16,11 @@ class CGame
         std::list<CEvent*> event_list;
         CMap* m_currentMap = new CMap;
         WINDOW* m_Window;
+        WINDOW* m_eventWindow;
+        WINDOW* m_effectWindow;
+        WINDOW* m_objectWindow;
+        WINDOW* m_playerWindow;
+        WINDOW* m_inventoryWindow;
         void run();
         void endGame();
         bool saveGame();
@@ -24,6 +29,7 @@ class CGame
     private:
         void initGame();
         void renderSpace();
+        void renderBars();
         void initMap();
 
 };
