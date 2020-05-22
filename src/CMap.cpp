@@ -7,11 +7,8 @@ extern char WALL;
 
 void CMap::loadMap()            
 {
-    m_xMax = 1000;
-    m_yMax = 1000;
-
     // no predef ROOM_HEIGHT othr. will be used 
-    spawnPlayer((ROOM_HEIGHT - 2) / 2, (ROOM_WIDTH - 2) / 2, PALADIN);
+    spawnPlayer(((int)(game.m_yMax * 0.99) - 2) / 2, ((int)(game.m_xMax * 0.633) - 2) / 2, PALADIN);
 }
 
 bool CMap::colisionDetect(int & p_posY, int & p_posX)
