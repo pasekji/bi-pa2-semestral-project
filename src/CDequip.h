@@ -7,7 +7,7 @@
 class CDequip : public CEvent
 {
     public:
-        CDequip(CPlayer* source, CItem* item) : CEvent(source, nullptr, DEQUIP)
+        CDequip(CPlayer* source, CItem* item) : CEvent(source, nullptr)
         {
             m_item = item;
         }

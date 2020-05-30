@@ -7,11 +7,11 @@
 class CDiscard : public CEvent
 {
     public:
-        CDiscard(CPlayer* source, CGameObject* target, CItem* item) : CEvent(source, target, ITEM_DISCARD)
+        CDiscard(CPlayer* source, CGameObject* target, CItem* item) : CEvent(source, target)
         {
             m_item = item;
         }
-        CDiscard(CPlayer* source, CItem* item) : CEvent(source, nullptr, ITEM_DISCARD)
+        CDiscard(CPlayer* source, CItem* item) : CEvent(source, nullptr)
         {
             m_item = item;
         }

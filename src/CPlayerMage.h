@@ -8,8 +8,11 @@ class CPlayerMage : public CPlayer
     public:
         int getAction() override;
         bool interactWith() override;
-        CPlayerMage(WINDOW* objectSpace, int posY, int posX) : CPlayer(objectSpace, posY, posX, MAGE)
-        {}
+        CPlayerMage(WINDOW* objectSpace, int posY, int posX) : CPlayer(objectSpace, posY, posX)
+        {
+            m_inventorySize = 15;
+            m_inventory = new CInventory(m_inventorySize);
+        }
 
         ~CPlayerMage()
         {}

@@ -8,9 +8,7 @@ class CPlayerPaladin : public CPlayer
     public:
         int getAction() override;
         bool interactWith() override;
-        CPlayerPaladin(WINDOW* objectSpace, int posY, int posX) : CPlayer(objectSpace, posY, posX, PALADIN)
-        {}
-
+        CPlayerPaladin(WINDOW* objectSpace, int posY, int posX);
         ~CPlayerPaladin()
         {}
 

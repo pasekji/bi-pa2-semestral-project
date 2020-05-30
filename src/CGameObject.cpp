@@ -1,12 +1,11 @@
 #include "CGameObject.h"
 #include "CGame.h"
 
-extern CGame game;
 
 CGameObject::CGameObject(WINDOW * objectSpace, int posY, int posX) : m_objectSpace(objectSpace), m_posY(posY), m_posX(posX)
 {}
 
-CGameObject::CGameObject(WINDOW * objectSpace, int posY, int posX, char & objectForm) : m_objectSpace(objectSpace), m_posY(posY), m_posX(posX), m_objectForm(objectForm)
+CGameObject::CGameObject(WINDOW * objectSpace, int posY, int posX, const char & objectForm) : m_objectSpace(objectSpace), m_posY(posY), m_posX(posX), m_objectForm(objectForm)
 {}
 
 void CGameObject::objectRender()
@@ -14,26 +13,32 @@ void CGameObject::objectRender()
     mvwaddch(m_objectSpace, m_posY, m_posX, m_objectForm);
 }
 
-void CGameObject::cameraUp()
+void CGameObject::moveUp(int & steps)
 {
     mvwaddch(m_objectSpace, m_posY, m_posX, ' ');
-    m_posY -= 1;
+    m_posY -= steps;
 }
 
-void CGameObject::cameraDown()
+void CGameObject::moveDown(int & steps)
 {
     mvwaddch(m_objectSpace, m_posY, m_posX, ' ');
-    m_posY += 1;
+    m_posY += steps;
 }
 
-void CGameObject::cameraLeft()
+void CGameObject::moveLeft(int & steps)
 {
     mvwaddch(m_objectSpace, m_posY, m_posX, ' ');
-    m_posX -= 2;
+    m_posX -= steps;
 }
 
-void CGameObject::cameraRight()
+void CGameObject::moveRight(int & steps)
 {
     mvwaddch(m_objectSpace, m_posY, m_posX, ' ');
-    m_posX += 2;
+    m_posX += steps;
+}
+
+std::pair<int, int> & CGameObject::getPos()
+{
+    pair = std::make_pair(m_posY, m_posX);
+    return pair;
 }

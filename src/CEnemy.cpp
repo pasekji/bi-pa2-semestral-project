@@ -1,32 +1,57 @@
 #include "CEnemy.h"
-#include "CGame.h"
+#include "CApplication.h"
 
 
-extern CGame game;
+extern CApplication application;
 
 int CEnemy::getAction()     // just demo testing - TODO - AI 
 {
-    int action = rand() % 5;
-    int tmppos;
+    int action = rand() % 6;
+    int tmppos, tmpstep;
+    std::pair<int, int> pair;
+
+
     switch (action) 
     {
         case 0:
             break;
         case 1:
-            if(!game.m_currentMap->colisionDetect(tmppos = m_posY - m_speed, m_posX))
-                moveUp();
             break;
         case 2:
-            if(!game.m_currentMap->colisionDetect(tmppos = m_posY + m_speed, m_posX))
-                moveDown();
+            tmpstep = 1;
+
+            while((!application.getGame().getMap()->colisionDetect(pair = std::make_pair(tmppos = m_posY - tmpstep, m_posX))) && (tmpstep <=  m_speed))
+                tmpstep++;
+
+            tmpstep--;
+            moveUp(tmpstep);
             break;
         case 3:
-            if(!game.m_currentMap->colisionDetect(m_posY, tmppos = m_posX - (m_speed + 1)))
-                moveLeft();
+            tmpstep = 1;
+
+            while((!application.getGame().getMap()->colisionDetect(pair = std::make_pair(tmppos = m_posY + tmpstep, m_posX))) && (tmpstep <= m_speed))
+                tmpstep++;
+
+            tmpstep--;
+            moveDown(tmpstep);
             break;
         case 4:
-            if(!game.m_currentMap->colisionDetect(m_posY, tmppos = m_posX + (m_speed + 1)))
-                moveRight();
+            tmpstep = 1;
+
+            while((!application.getGame().getMap()->colisionDetect(pair = std::make_pair(m_posY, tmppos = m_posX - tmpstep))) && (tmpstep <= m_speed))
+                tmpstep++;
+
+            tmpstep--;
+            moveLeft(tmpstep);
+            break;
+        case 5:
+            tmpstep = 1;
+
+            while((!application.getGame().getMap()->colisionDetect(pair = std::make_pair(m_posY, tmppos = m_posX + tmpstep))) && (tmpstep <= m_speed))
+                tmpstep++;
+
+            tmpstep--;
+            moveRight(tmpstep);
         default:
             break;
     }

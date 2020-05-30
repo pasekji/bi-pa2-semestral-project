@@ -20,10 +20,10 @@ class CMap
         void loadMap();                                 // load all objects in map and render
         void demo_loadMap();                            // demo loadMap() for testing only
         bool loadMapFromFile(const std::string & pathToFile);
-        bool openDoor(CDoor*);
-        bool goToMap(CMap*);
-        bool colisionDetect(int & p_posY, int & p_posX);
-        void staticCamera(direction & dir);
+        bool openDoor(CDoor* door);
+        bool goToMap(CMap* map);
+        bool colisionDetect(std::pair<int, int> & pair);
+        void staticCamera(direction & dir, int & steps);
         int m_width, m_height;
         int m_yMax, m_xMax;
         WINDOW* m_mapWindow;
@@ -35,16 +35,16 @@ class CMap
         std::vector<CCharacter*> m_moveableObjects;
         std::vector<CGameObject*> m_imoveableObjects;
         std::map<std::pair<int, int>, CGameObject*> m_targets;
-        std::map<CDoor, CMap*> m_layers;                     // current layer must be included too
+        std::map<CDoor, CMap*> m_layers;                     // current layer must be included too - TODO: get position at target map
         void spawnPlayer(int posY, int posX, player_class playerClass);           // (int posY, int posX)
         void spawnEnemy(int posY, int posX, enemy_type type);
-        void spawnProp(int posY, int posX, char & objectForm);
+        void spawnProp(int posY, int posX, const char & objectForm);
         void renderObjects();                           // only new render of objects
         void moveableDoAction();                        // invoke action to change properties of instance. posX++ (once)
-        void camera_objectsUp();
-        void camera_objectsDown();
-        void camera_objectsLeft();
-        void camera_objectsRight();
+        void camera_objectsUp(int & steps);
+        void camera_objectsDown(int & steps);
+        void camera_objectsLeft(int & steps);
+        void camera_objectsRight(int & steps);
     
 };
 

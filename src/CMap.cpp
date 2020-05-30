@@ -1,27 +1,27 @@
 #include "CMap.h"
-#include "CGame.h"
+#include "CApplication.h"
 
-
-extern CGame game;
-extern char WALL;
+extern CApplication application;
+const char WALL = '#';
+const char VOID = '+';
 
 void CMap::loadMap()            
 {
     // no predef ROOM_HEIGHT othr. will be used 
-    spawnPlayer(((int)(game.m_yMax * 0.99) - 2) / 2, ((int)(game.m_xMax * 0.633) - 2) / 2, PALADIN);
+    spawnPlayer(((int)(application.getGame().m_yMax * 0.99) - 2) / 2, ((int)(application.getGame().m_xMax * 0.633) - 2) / 2, PALADIN);
 }
 
-bool CMap::colisionDetect(int & p_posY, int & p_posX)
+bool CMap::colisionDetect(std::pair<int, int> & pair)
 {
     for (auto i: m_moveableObjects)
     {
-        if(std::make_pair(i->m_posY, i->m_posX) == std::make_pair(p_posY, p_posX))
+        if(i->getPos() == pair)
             return true;
     }
 
     for (auto i: m_imoveableObjects)
     {
-        if(std::make_pair(i->m_posY, i->m_posX) == std::make_pair(p_posY, p_posX))
+        if(i->getPos() == pair)
             return true;
     }
 
@@ -54,9 +54,9 @@ void CMap::renderObjects()
 
 void CMap::moveableDoAction()
 {
-    for(auto i: m_moveableObjects)
+    for(auto i = ++m_moveableObjects.begin(); i != m_moveableObjects.end(); ++i)
     {
-        i->getAction();
+        (*i)->getAction();
     }
 }
 
@@ -81,13 +81,13 @@ void CMap::spawnPlayer(int posY, int posX, player_class playerClass)
 
     do
     {
-        player->objectRender();
         moveableDoAction();
         renderObjects();
         wrefresh(m_mapWindow);
+
     } while (player->getAction() != 'x');
     
-    game.endGame();
+    application.getGame().endGame();
 
 }
 
@@ -97,33 +97,33 @@ void CMap::spawnEnemy(int posY, int posX, enemy_type type)
     m_moveableObjects.push_back(enemy);
 }
 
-void CMap::spawnProp(int posY, int posX, char & objectForm)
+void CMap::spawnProp(int posY, int posX, const char & objectForm)
 {
     CProp* prop = new CProp(m_mapWindow, posY, posX, objectForm);
     m_imoveableObjects.push_back(prop);
 }
 
-void CMap::staticCamera(direction & dir)
+void CMap::staticCamera(direction & dir, int & steps)
 {
     switch (dir)
     {
         case UP:
-            camera_objectsDown();
+            camera_objectsDown(steps);
             renderObjects();
             break;
     
         case DOWN:
-            camera_objectsUp();
+            camera_objectsUp(steps);
             renderObjects();
             break;
         
         case LEFT:
-            camera_objectsRight();
+            camera_objectsRight(steps);
             renderObjects();
             break;
 
         case RIGHT:
-            camera_objectsLeft();
+            camera_objectsLeft(steps);
             renderObjects();
             break;
         
@@ -132,54 +132,53 @@ void CMap::staticCamera(direction & dir)
     }
 }
 
-void CMap::camera_objectsDown()
+void CMap::camera_objectsDown(int & steps)
 {
     for(auto i: m_moveableObjects)
     {
-        i->cameraDown();
+        i->moveDown(steps);
     }
 
     for(auto i: m_imoveableObjects)
     {
-        i->cameraDown();
+        i->moveDown(steps);
     }
 }
 
-void CMap::camera_objectsUp()
+void CMap::camera_objectsUp(int & steps)
 {
     for(auto i: m_moveableObjects)
     {
-        i->cameraUp();
+        i->moveUp(steps);
     }
 
     for(auto i: m_imoveableObjects)
     {
-        i->cameraUp();
+        i->moveUp(steps);
     }
 }
 
-void CMap::camera_objectsRight()
+void CMap::camera_objectsRight(int & steps)
 {
     for(auto i: m_moveableObjects)
     {
-        i->cameraRight();
+        i->moveRight(steps);
     }
 
     for(auto i: m_imoveableObjects)
     {
-        i->cameraRight();
+        i->moveRight(steps);
     }
 }
 
-void CMap::camera_objectsLeft()
+void CMap::camera_objectsLeft(int & steps)
 {
     for(auto i: m_moveableObjects)
     {
-        i->cameraLeft();
+        i->moveLeft(steps);
     }
-
     for(auto i: m_imoveableObjects)
     {
-        i->cameraLeft();
+        i->moveLeft(steps);
     }   
 }

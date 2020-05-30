@@ -6,7 +6,7 @@
 class CConsumable : public CItem        // could be stackable
 {
     public:
-        CConsumable(const std::string & name, const std::string & lable, const std::string & id, std::size_t price, std::size_t useability, int healthSource, int energySource, int sideEffect) : CItem(CONSUMABLE, name, lable, price, useability)
+        CConsumable(const std::string & name, const std::string & lable, const std::string & id, std::size_t price, std::size_t useability, int healthSource, int energySource, int sideEffect) : CItem(name, lable, price, useability)
         {
             m_healthSource = healthSource;
             m_energySource = energySource;

@@ -2,11 +2,12 @@
 #define ATTACK_H
 
 #include "CEvent.h"
+#include "enums.h"
 
 class CAttack : public CEvent
 {
     public:
-        CAttack(CGameObject* source, CGameObject* target, attack_type attackType) : CEvent(source, target, ATTACK)
+        CAttack(CGameObject* source, CGameObject* target, attack_type attackType) : CEvent(source, target)
         {}
         ~CAttack()
         {}

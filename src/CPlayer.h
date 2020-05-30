@@ -11,33 +11,14 @@
 class CPlayer : public CCharacter
 {
     public:
-        player_class m_class;
-        CInventory* m_inventory;
-        std::map<body_part, CArmor*> m_armor;
-        std::pair<CWeapon*, CWeapon*> m_weapon;
         void changeForm(const char& objectForm);
+        void defaultStep(int & move);
         
-        CPlayer(WINDOW* objectSpace, int posY, int posX, player_class playerClass) : CCharacter(objectSpace, posY, posX)
+        CPlayer(WINDOW* objectSpace, int posY, int posX) : CCharacter(objectSpace, posY, posX)
         {
             m_objectForm = '^';
             m_speed = 1;
-            m_class = playerClass;
-
-            switch (playerClass)
-            {
-                case PALADIN:
-                    m_inventorySize = 20;
-                    break;
-                case MAGE:
-                    m_inventorySize = 15;
-                    break;
-                case ROGUE:
-                    m_inventorySize = 10;
-                    break;
-                default:
-                    break;
-            }
-            m_inventory = new CInventory(m_inventorySize);
+            m_sprint = false;
             keypad(m_objectSpace, true);
         }
 
@@ -45,8 +26,15 @@ class CPlayer : public CCharacter
         {}
 
     protected:
-        size_t m_inventorySize;
+        bool m_sprint;
+        std::size_t m_inventorySize;
+        std::size_t m_level = 1;
+        std::size_t m_exp = 0; 
+        std::size_t m_expTarget = 20;
         std::string m_playerName;
+        CInventory* m_inventory;
+        std::map<body_part, CArmor*> m_armor;
+        std::pair<CWeapon*, CWeapon*> m_weapon;
 
 };
 

@@ -7,7 +7,7 @@
 class CTalk : public CEvent
 {
     public:
-        CTalk(CGameObject* source, CGameObject* target) : CEvent(source, target, TALK)
+        CTalk(CGameObject* source, CGameObject* target) : CEvent(source, target)
         {}
         ~CTalk()
         {}

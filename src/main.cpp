@@ -1,12 +1,10 @@
-#include "CGame.h"
+#include "CApplication.h"
 
-CGame game;
-char WALL = '#';
-char VOID = '+';
+CApplication application;
 
 int main()
 {
-    game.run();
+    application.run();
 
     return 0;
 }

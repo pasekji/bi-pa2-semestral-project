@@ -7,7 +7,7 @@
 class CPickup : public CEvent
 {
     public:
-        CPickup(CPlayer* source, CGameObject* target) : CEvent(source, target, ITEM_PICKUP)
+        CPickup(CPlayer* source, CGameObject* target) : CEvent(source, target)
         {}
         ~CPickup()
         {}

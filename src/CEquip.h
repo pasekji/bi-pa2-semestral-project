@@ -7,7 +7,7 @@
 class CEquip : public CEvent
 {
     public:
-        CEquip(CPlayer* source, CItem* item) : CEvent(source, nullptr, EQUIP)
+        CEquip(CPlayer* source, CItem* item) : CEvent(source, nullptr)
         {
             m_item = item;
         }

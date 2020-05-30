@@ -8,10 +8,6 @@
 class CCharacter : public CGameObject
 {
     protected:    
-        void moveUp();
-        void moveDown();
-        void moveLeft();
-        void moveRight();
 
         CCharacter(WINDOW* objectSpace, int posY, int posX) : CGameObject(objectSpace, posY, posX)
         {}
@@ -21,6 +17,9 @@ class CCharacter : public CGameObject
         int m_health;
         int m_energy;
         float m_chanceOfBlock;
+
+    public:
+        virtual int getAction() = 0;
 };
 
 #endif

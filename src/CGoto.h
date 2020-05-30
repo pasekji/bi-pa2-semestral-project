@@ -8,7 +8,7 @@
 class CGoto : public CEvent
 {
     public:
-        CGoto(CPlayer* source, CDoor* door) : CEvent(source, door, GOTO)
+        CGoto(CPlayer* source, CDoor* door) : CEvent(source, door)
         {}
         ~CGoto()
         {}

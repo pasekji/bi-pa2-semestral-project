@@ -13,9 +13,7 @@ class CGame
         CGame() = default;
         ~CGame() = default;
         int m_yMax, m_xMax;
-        std::list<CEvent*> event_list;
-        CMap* m_currentMap = new CMap;
-        WINDOW* m_Window;
+        WINDOW* m_Window;                   // player or map window
         WINDOW* m_eventWindow;
         WINDOW* m_effectWindow;
         WINDOW* m_objectWindow;
@@ -23,14 +21,19 @@ class CGame
         WINDOW* m_inventoryWindow;
         void run();
         void endGame();
-        bool saveGame();
-        bool loadGame();
+        void pushEvent(CEvent* event);
+        bool isRunning();
+        void backToGame();
+        CMap* getMap();
 
     private:
         void initGame();
-        void renderSpace();
-        void renderBars();
+        void initSpace();
+        void initBars();
         void initMap();
+        void updateEventList();
+        std::list<CEvent*> event_list;
+        CMap* m_currentMap = new CMap;
 
 };
 

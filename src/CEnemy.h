@@ -8,7 +8,6 @@
 class CEnemy : public CCharacter
 {
     public:
-        enemy_type m_type;
         void enemyDead();
         int getAction() override;
         bool interactWith() override;
@@ -48,6 +47,7 @@ class CEnemy : public CCharacter
         {}
 
     private:
+        enemy_type m_type;
         int m_force;
         attack_type m_primaryAttackType;
         CChest * m_loot;                            // will generate loot chest after death
