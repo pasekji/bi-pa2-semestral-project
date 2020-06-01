@@ -1,4 +1,4 @@
-#include "CMenu.h"
+#include "CMainMenu.h"
 #include "CGame.h"
 
 class CApplication
@@ -11,17 +11,22 @@ class CApplication
         bool loadGame();
         void loadMenu();
         void newGame();
-        void endGame();
+        void endApplication();
         void run();
 
         CGame & getGame();
         const CGame & getGame() const;
+
+        CMainMenu & getMainMenu();
+        const CMainMenu & getMainMenu() const;
 
         //WINDOW* m_menuWindow;
         int m_yMax, m_xMax;
 
         bool is_new;
         bool is_loaded;
+
+        friend class CGame;
 
     private:
         CMainMenu m_mainMenu;

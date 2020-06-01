@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <cstdlib>
+#include <cstring>
 #include "enums.h"
 
 // main menu - new game, load game, quit
@@ -21,7 +22,8 @@
 class CMenu
 {
     protected:
-        CMenu() = default;
+        CMenu()
+        {}
         virtual ~CMenu()
         {}
         
@@ -29,36 +31,23 @@ class CMenu
 
         std::vector<std::string>::iterator m_it;
         std::vector<std::string> m_options;
-        std::size_t m_selected;
         std::string m_lable;
+        unsigned int m_selected;
         int m_action;
-
-    public:
         WINDOW* m_menuWindow;
-        virtual void renderMenu() = 0;
-        virtual int getAction() = 0;
 
-};
-
-class CMainMenu : public CMenu
-{
     public:
-        CMainMenu() : CMenu()
-        {}
-        ~CMainMenu()
-        {}
+        virtual void initMenu() = 0;
+        virtual void renderMenu() = 0;
+        virtual unsigned int getAction() = 0;
 
-        int getAction()
+        unsigned int getSelected()
         {
-            return 0;
+            unsigned int tmp = m_selected;
+            m_selected = 0;
+            return tmp;
         }
 
-        void renderMenu()
-        {}
-    
-    private:
-        const std::vector<std::string> m_logo;
-        
 };
 
 class CNewGameMenu : public CMenu
@@ -69,12 +58,15 @@ class CNewGameMenu : public CMenu
         ~CNewGameMenu()
         {}
 
-        int getAction()
+        unsigned int getAction()
         {
             return 0;
         }
 
         void renderMenu()
+        {}
+
+        void initMenu()
         {}
 
         bool selectMap();
@@ -97,12 +89,15 @@ class CLoadGameMenu : public CMenu
         ~CLoadGameMenu()
         {}
 
-        int getAction()
+        unsigned int getAction()
         {
             return 0;
         }
 
         void renderMenu()
+        {}
+
+        void initMenu()
         {}
 
         const std::string & getFileName() const;
@@ -122,12 +117,15 @@ class CSaveGameMenu : public CMenu
         ~CSaveGameMenu()
         {}
 
-        int getAction()
+        unsigned int getAction()
         {
             return 0;
         }
 
         void renderMenu()
+        {}
+
+        void initMenu()
         {}
 
         void setTitle();

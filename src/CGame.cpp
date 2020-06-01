@@ -1,4 +1,7 @@
 #include "CGame.h"
+#include "CApplication.h"
+
+extern CApplication application;
 
 void CGame::run() 
 {
@@ -49,9 +52,8 @@ void CGame::initBars()
 
 void CGame::endGame()
 {
-    curs_set(0);
-    refresh();
-    endwin();
+    clear();
+    application.initMainMenu();
 }
 
 CMap* CGame::getMap()

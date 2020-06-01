@@ -19,10 +19,10 @@ void CApplication::initApplication()
 void CApplication::run()
 {
     initApplication();
-    m_game.run();
+    initMainMenu();
 }
 
-void CApplication::endGame()
+void CApplication::endApplication()
 {
     curs_set(0);
     refresh();
@@ -39,12 +39,33 @@ const CGame & CApplication::getGame() const
     return m_game;
 }
 
+CMainMenu & CApplication::getMainMenu()
+{
+    return m_mainMenu;
+}
+
+const CMainMenu & CApplication::getMainMenu() const
+{
+    return m_mainMenu;
+}
+
 void CApplication::initMainMenu()
 {
-    //m_mainMenu.m_height = 10;
-    //m_mainMenu.m_width = 10;
-    //m_mainMenu.m_menuWindow = newwin(m_mainMenu.m_height, m_mainMenu.m_width, (m_yMax - m_mainMenu.m_height) / 2, (m_xMax - m_mainMenu.m_width) / 2);
-    //box(m_mainMenu.m_menuWindow, 0, 0);
-    //keypad(m_mainMenu.m_menuWindow, true);
+    m_mainMenu.initMenu();
 
+    while(m_mainMenu.getAction() == 0);
+
+    switch(m_mainMenu.getSelected())
+    {
+        case 0:
+            m_game.run();
+            break;
+        case 1:
+            m_game.run();
+            break;
+        case 2:
+            endApplication();
+        default:
+            break;
+    }
 }
