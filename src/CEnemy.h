@@ -12,36 +12,7 @@ class CEnemy : public CCharacter
         int getAction() override;
         bool interactWith() override;
 
-        // enemy demo testing constructor
-        CEnemy(WINDOW* objectSpace, int posY, int posX, enemy_type type) : CCharacter(objectSpace, posY, posX)
-        {
-            switch (type)
-            {
-                case BASILISK:
-                    m_objectForm = '~';
-                    m_type = BASILISK;
-                    break;
-                case UNDEAD:
-                    m_objectForm = 'F';
-                    m_type = UNDEAD;
-                    break;
-                case GHOUL:
-                    m_objectForm = 'G';
-                    m_type = GHOUL;
-                case HELLHOUND:
-                    m_objectForm = 'E';
-                    m_type = HELLHOUND;
-                case DRYAD:
-                    m_objectForm = 'Y';
-                    m_type = DRYAD;
-                case SIREN:
-                    m_objectForm = '%';
-                    m_type = SIREN;
-                default:
-                    break;
-            }
-            m_speed = 1;
-        }
+        CEnemy(WINDOW* objectSpace, int posY, int posX, enemy_type type);
 
         ~CEnemy()
         {}

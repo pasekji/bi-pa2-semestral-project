@@ -12,7 +12,6 @@ class CGame
     public:
         CGame() = default;
         ~CGame() = default;
-        int m_yMax, m_xMax;
         WINDOW* m_Window;                   // player or map window
         WINDOW* m_eventWindow;
         WINDOW* m_effectWindow;
@@ -20,14 +19,21 @@ class CGame
         WINDOW* m_playerWindow;
         WINDOW* m_inventoryWindow;
         void run();
-        void endGame();
         void pushEvent(CEvent* event);
         bool isRunning();
         void backToGame();
-        CMap* getMap();
+        CMap* getMap() const;
+
+        const int & getYMax() const;
+        const int & getXMax() const;
+
+        bool is_init = false;
 
     private:
+        int m_yMax, m_xMax;
         void initGame();
+        void loadGame();
+        void endGame();
         void initSpace();
         void initBars();
         void initMap();

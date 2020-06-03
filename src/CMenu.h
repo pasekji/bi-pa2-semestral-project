@@ -7,17 +7,7 @@
 
 // main menu - new game, load game, quit
 // new game -> player creation menu and map selection
-// load game -> list savegame menu files in directory + timestamp
-
-/*
- _   _ _____   _   _   ___  ___  ___ _____  ____________ _____ 
-| \ | |  _  | | \ | | / _ \ |  \/  ||  ___| | ___ \ ___ \  __ \
-|  \| | | | | |  \| |/ /_\ \| .  . || |__   | |_/ / |_/ / |  \/
-| . ` | | | | | . ` ||  _  || |\/| ||  __|  |    /|  __/| | __ 
-| |\  \ \_/ / | |\  || | | || |  | || |___  | |\ \| |   | |_\ \
-\_| \_/\___/  \_| \_/\_| |_/\_|  |_/\____/  \_| \_\_|    \____/
-                                                                 
-*/                                                                 
+// load game -> list savegame menu files in directory + timestamp                                                                
 
 class CMenu
 {
@@ -37,6 +27,7 @@ class CMenu
         WINDOW* m_menuWindow;
 
     public:
+        virtual void loadMenu() = 0;
         virtual void initMenu() = 0;
         virtual void renderMenu() = 0;
         virtual unsigned int getAction() = 0;
@@ -48,6 +39,7 @@ class CMenu
             return tmp;
         }
 
+        bool is_init = false;
 };
 
 class CNewGameMenu : public CMenu
@@ -67,6 +59,9 @@ class CNewGameMenu : public CMenu
         {}
 
         void initMenu()
+        {}
+
+        void loadMenu()
         {}
 
         bool selectMap();
@@ -100,6 +95,9 @@ class CLoadGameMenu : public CMenu
         void initMenu()
         {}
 
+        void loadMenu()
+        {}
+
         const std::string & getFileName() const;
 
     private:
@@ -126,6 +124,9 @@ class CSaveGameMenu : public CMenu
         {}
 
         void initMenu()
+        {}
+
+        void loadMenu()
         {}
 
         void setTitle();

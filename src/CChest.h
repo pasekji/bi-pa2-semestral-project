@@ -28,6 +28,11 @@ class CChest : public CGameObject
         void popItem();
         void pushItem(CItem * item);
 
+        bool interactWith() override
+        {
+            return false;
+        }
+
     private:
         std::size_t m_size;
         std::vector<std::size_t> m_keys;

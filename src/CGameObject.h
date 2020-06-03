@@ -16,10 +16,7 @@ class CGameObject
         virtual ~CGameObject()
         {}
 
-        virtual bool interactWith()
-        {
-            return false;
-        }
+        virtual bool interactWith() = 0;
 
         void moveUp(int & steps);
         void moveDown(int & steps);

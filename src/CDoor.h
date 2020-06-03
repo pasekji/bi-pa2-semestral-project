@@ -13,6 +13,11 @@ class CDoor : public CGameObject
         ~CDoor()
         {}
 
+        bool interactWith() override
+        {
+            return false;
+        }
+
 };
 
 #endif

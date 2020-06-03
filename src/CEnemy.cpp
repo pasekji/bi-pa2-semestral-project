@@ -4,6 +4,40 @@
 
 extern CApplication application;
 
+CEnemy::CEnemy(WINDOW* objectSpace, int posY, int posX, enemy_type type) : CCharacter(objectSpace, posY, posX)
+{
+    switch (type)
+    {
+        case BASILISK:
+            m_objectForm = '~';
+            m_type = BASILISK;
+            break;
+        case UNDEAD:
+            m_objectForm = 'F';
+            m_type = UNDEAD;
+            break;
+        case GHOUL:
+            m_objectForm = 'G';
+            m_type = GHOUL;
+            break;
+        case HELLHOUND:
+            m_objectForm = 'E';
+            m_type = HELLHOUND;
+            break;
+        case DRYAD:
+            m_objectForm = 'Y';
+            m_type = DRYAD;
+            break;
+        case SIREN:
+            m_objectForm = '%';
+            m_type = SIREN;
+            break;
+        default:
+            break;
+    }
+    m_speed = 1;
+}
+
 int CEnemy::getAction()     // just demo testing - TODO - AI 
 {
     int action = rand() % 6;

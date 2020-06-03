@@ -12,21 +12,25 @@ void CApplication::initApplication()
 
     // get screen size
     getmaxyx(stdscr, m_yMax, m_xMax);
-    m_game.m_yMax = m_yMax;
-    m_game.m_xMax = m_xMax;
+
+    return;
 }
 
 void CApplication::run()
 {
     initApplication();
     initMainMenu();
+
+    return;
 }
 
 void CApplication::endApplication()
 {
     curs_set(0);
     refresh();
-    endwin();    
+    endwin();
+
+    return;    
 }
 
 CGame & CApplication::getGame()
@@ -51,21 +55,31 @@ const CMainMenu & CApplication::getMainMenu() const
 
 void CApplication::initMainMenu()
 {
-    m_mainMenu.initMenu();
+    if(!m_mainMenu.is_init)
+        m_mainMenu.initMenu();
+    else
+        m_mainMenu.loadMenu();
+    
 
     while(m_mainMenu.getAction() == 0);
+
+    clear();
 
     switch(m_mainMenu.getSelected())
     {
         case 0:
-            m_game.run();
+            m_game.run(); 
+            initMainMenu();          
             break;
         case 1:
             m_game.run();
+            initMainMenu();
             break;
         case 2:
             endApplication();
         default:
             break;
     }
+
+    return;
 }

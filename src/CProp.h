@@ -11,6 +11,11 @@ class CProp : public CGameObject
         ~CProp()
         {}
 
+        bool interactWith() override
+        {
+            return false;
+        }
+
 };
 
 #endif

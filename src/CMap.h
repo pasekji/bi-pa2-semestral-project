@@ -25,13 +25,17 @@ class CMap
         bool colisionDetect(std::pair<int, int> & pair);
         void staticCamera(direction & dir, int & steps);
         int m_width, m_height;
-        int m_yMax, m_xMax;
         WINDOW* m_mapWindow;
+
+        CPlayer* getPlayer() const;
+
+        void catchPlayer();
 
     private:
         std::string m_pathToFile;
         std::string m_locationName;
         CDoor* m_upperLayer;
+        CPlayer* m_player;
         std::vector<CCharacter*> m_moveableObjects;
         std::vector<CGameObject*> m_imoveableObjects;
         std::map<std::pair<int, int>, CGameObject*> m_targets;

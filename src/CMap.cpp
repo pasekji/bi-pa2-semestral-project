@@ -2,13 +2,16 @@
 #include "CApplication.h"
 
 extern CApplication application;
+
 const char WALL = '#';
 const char VOID = '+';
 
 void CMap::loadMap()            
 {
     // no predef ROOM_HEIGHT othr. will be used 
-    spawnPlayer(((int)(application.getGame().m_yMax * 0.99) - 2) / 2, ((int)(application.getGame().m_xMax * 0.633) - 2) / 2, PALADIN);
+    spawnPlayer(((int)(application.getGame().getYMax() * 0.99) - 2) / 2, ((int)(application.getGame().getXMax() * 0.633) - 2) / 2, PALADIN);
+
+    return;
 }
 
 bool CMap::colisionDetect(std::pair<int, int> & pair)
@@ -37,6 +40,7 @@ void CMap::demo_loadMap()
     spawnProp((ROOM_HEIGHT/2), (ROOM_WIDTH - (ROOM_WIDTH/20) - 1), WALL);
     spawnProp((ROOM_HEIGHT/2), (ROOM_WIDTH - (ROOM_WIDTH/20) - 2), WALL);
 
+    return;
 }
 
 void CMap::renderObjects()
@@ -50,6 +54,8 @@ void CMap::renderObjects()
     {
         i->objectRender();
     }
+
+    return;
 }
 
 void CMap::moveableDoAction()
@@ -58,15 +64,16 @@ void CMap::moveableDoAction()
     {
         (*i)->getAction();
     }
+
+    return;
 }
 
 void CMap::spawnPlayer(int posY, int posX, player_class playerClass)
 {
-    CPlayer* player;
     switch (playerClass)
     {
         case PALADIN:
-            player = new CPlayerPaladin(m_mapWindow, posY, posX);
+            m_player = new CPlayerPaladin(m_mapWindow, posY, posX);
             break;
         case MAGE:
             break;
@@ -75,32 +82,51 @@ void CMap::spawnPlayer(int posY, int posX, player_class playerClass)
         default:
             break;
     }
-    m_moveableObjects.push_back(player);
+    m_moveableObjects.push_back(m_player);
     demo_loadMap();
     wrefresh(m_mapWindow);
 
+    catchPlayer();
+    
+    return;
+}
+
+CPlayer* CMap::getPlayer() const            // not needed
+{
+    return m_player;
+}
+
+void CMap::catchPlayer()
+{
     do
     {
         moveableDoAction();
         renderObjects();
         wrefresh(m_mapWindow);
 
-    } while (player->getAction() != 'x');
+    } while (m_player->getAction() != 'x');    
     
-    application.getGame().endGame();
+    clear();
+    refresh();
 
+    return;                 // resenim tech vice sracek je ze se mi tady cyklus ve volani void funkci... 
+                            // extern application je třeba používat pouze na get/set
 }
 
 void CMap::spawnEnemy(int posY, int posX, enemy_type type)
 {
     CEnemy* enemy = new CEnemy(m_mapWindow, posY, posX, type);
     m_moveableObjects.push_back(enemy);
+
+    return;
 }
 
 void CMap::spawnProp(int posY, int posX, const char & objectForm)
 {
     CProp* prop = new CProp(m_mapWindow, posY, posX, objectForm);
     m_imoveableObjects.push_back(prop);
+
+    return;
 }
 
 void CMap::staticCamera(direction & dir, int & steps)
@@ -130,6 +156,8 @@ void CMap::staticCamera(direction & dir, int & steps)
         default:
             break;
     }
+
+    return;
 }
 
 void CMap::camera_objectsDown(int & steps)
@@ -143,6 +171,8 @@ void CMap::camera_objectsDown(int & steps)
     {
         i->moveDown(steps);
     }
+
+    return;
 }
 
 void CMap::camera_objectsUp(int & steps)
@@ -156,6 +186,8 @@ void CMap::camera_objectsUp(int & steps)
     {
         i->moveUp(steps);
     }
+
+    return;
 }
 
 void CMap::camera_objectsRight(int & steps)
@@ -169,6 +201,8 @@ void CMap::camera_objectsRight(int & steps)
     {
         i->moveRight(steps);
     }
+
+    return;
 }
 
 void CMap::camera_objectsLeft(int & steps)
@@ -180,5 +214,7 @@ void CMap::camera_objectsLeft(int & steps)
     for(auto i: m_imoveableObjects)
     {
         i->moveLeft(steps);
-    }   
+    }
+
+    return;  
 }
