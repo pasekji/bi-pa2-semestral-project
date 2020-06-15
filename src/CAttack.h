@@ -2,7 +2,11 @@
 #define ATTACK_H
 
 #include "CEvent.h"
-#include "enums.h"
+#include "CAttack.fwd.h"
+#include "CPlayerPaladin.h"
+#include "CPlayerRogue.h"
+#include "CPlayerMage.h"
+#include "CEnemy.h"
 
 class CAttack : public CEvent
 {
@@ -11,10 +15,14 @@ class CAttack : public CEvent
         {}
         ~CAttack()
         {}
-        void print() const override;
-        void updateObjects() override;
 
-    private:
+        void visit(CPlayerPaladin* paladin);
+        void visit(CPlayerMage* mage);
+        void visit(CPlayerRogue* rogue);
+        void visit(CEnemy* enemy);
+
+    protected:
+        virtual void evaluateAttack() = 0;
         attack_type m_attackType;
         int m_force;
         int m_healthLost;

@@ -16,6 +16,8 @@ class CWeapon : public CItem
         {}
         bool itemApply();
 
+        bool is_equiped;
+
     private:
         player_class m_compatible;
         int m_damage;

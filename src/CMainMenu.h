@@ -1,3 +1,6 @@
+#ifndef MAIN_MENU_H
+#define MAIN_MENU_H
+
 #include "CMenu.h"
 
 class CMainMenu : public CMenu
@@ -28,3 +31,5 @@ class CMainMenu : public CMenu
         WINDOW* m_logoWindow;
         
 };
+
+#endif

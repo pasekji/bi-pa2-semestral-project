@@ -6,7 +6,7 @@
 #include <map>
 #include <stack>
 
-class CInventory            // map of stacks
+class CInventory
 {
     public:
         CInventory(std::size_t size) : m_size(size)

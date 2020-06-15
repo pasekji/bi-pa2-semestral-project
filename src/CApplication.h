@@ -1,3 +1,6 @@
+#ifndef APPLICATION_H
+#define APPLICATION_H
+
 #include "CMainMenu.h"
 #include "CGame.h"
 
@@ -14,10 +17,8 @@ class CApplication
         void endApplication();
         void run();
 
-        CGame & getGame();
         const CGame & getGame() const;
 
-        CMainMenu & getMainMenu();
         const CMainMenu & getMainMenu() const;
 
         bool is_new;
@@ -36,3 +37,5 @@ class CApplication
 
 
 };
+
+#endif

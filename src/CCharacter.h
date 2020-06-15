@@ -2,8 +2,6 @@
 #define CHARACTER_H
 
 #include "CGameObject.h"
-#include "enums.h"
-
 
 class CCharacter : public CGameObject
 {
@@ -14,7 +12,9 @@ class CCharacter : public CGameObject
         ~CCharacter(){}
 
         int m_speed;
+        int m_currentHealth;
         int m_health;
+        int m_currentEnergy;
         int m_energy;
         float m_chanceOfBlock;
 

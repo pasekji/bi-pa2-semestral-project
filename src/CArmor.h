@@ -16,6 +16,8 @@ class CArmor : public CItem
         {}
         bool itemApply();
 
+        bool is_equiped;
+
     private:
         body_part m_body;
         int m_armor;

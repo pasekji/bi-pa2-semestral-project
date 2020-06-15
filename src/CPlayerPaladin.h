@@ -3,11 +3,14 @@
 
 #include "CPlayer.h"
 
+
 class CPlayerPaladin : public CPlayer
 {  
     public:
         int getAction() override;
         bool interactWith() override;
+        bool accept(CAttack* attack) override;
+        void showStats() const override;
         CPlayerPaladin(WINDOW* objectSpace, int posY, int posX);
         ~CPlayerPaladin()
         {}
@@ -16,8 +19,8 @@ class CPlayerPaladin : public CPlayer
         int m_strength;
         float m_chanceOfCriticalAttack;
         attack_type m_primaryAttackType;
-        bool paladinPrimaryAttack();
-        bool paladinSpecialAbility();           // knockout the enemy for x rounds ?? 
+        bool paladinPrimaryAttack(CGameObject* target);
+        bool paladinSpecialAbility();                       // knockout the enemy for x rounds ?? 
 
 };
 

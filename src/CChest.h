@@ -33,6 +33,17 @@ class CChest : public CGameObject
             return false;
         }
 
+        bool accept(CAttack* attack) override
+        {
+            return false;
+        }
+
+        void showStats() const override
+        {
+            return;
+        }
+
+
     private:
         std::size_t m_size;
         std::vector<std::size_t> m_keys;

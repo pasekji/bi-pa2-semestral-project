@@ -3,15 +3,17 @@
 
 #include "CGameObject.h"
 
-
 class CEvent
 {
     public:
+        virtual void print() const = 0;
+
+    protected:
         CEvent(CGameObject* source, CGameObject* target) : m_source(source), m_target(target)
         {}
-        virtual ~CEvent();
-        virtual void print() const;
-        virtual void updateObjects();
+        virtual ~CEvent()
+        {}
+        virtual void updateObjects() = 0;
         void pushToDisplay() const;
         CGameObject* m_source;
         CGameObject* m_target;

@@ -20,7 +20,7 @@ void CMainMenu::initMenu()
     int tmpY, tmpX;
     getmaxyx(stdscr, tmpY, tmpX);
     m_menuWindow = newwin(m_height, m_width, (tmpY - m_height) / 2, (tmpX - m_width) / 2);
-    box(m_menuWindow, 0, 0);
+    wborder(m_menuWindow, 0, 0, 0, 0, 0, 0, 0, 0);
     keypad(m_menuWindow, true);
     m_logoWindow = newwin(8, 65, ((tmpY - m_height) / 2) - 8, ((tmpX - m_width) / 2) - ((65 - m_width) / 2));
     is_init = true;
@@ -60,7 +60,7 @@ unsigned int CMainMenu::getAction()
 
 void CMainMenu::renderMenu()
 {
-    box(m_menuWindow, 0, 0);
+    wborder(m_menuWindow, 0, 0, 0, 0, 0, 0, 0, 0);
     refresh();
 
     for(std::size_t i = 0; i < m_logo.size(); ++i)

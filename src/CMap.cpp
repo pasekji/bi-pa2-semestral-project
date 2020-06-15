@@ -1,5 +1,6 @@
 #include "CMap.h"
 #include "CApplication.h"
+#include <ctype.h>
 
 extern CApplication application;
 
@@ -10,11 +11,10 @@ void CMap::loadMap()
 {
     // no predef ROOM_HEIGHT othr. will be used 
     spawnPlayer(((int)(application.getGame().getYMax() * 0.99) - 2) / 2, ((int)(application.getGame().getXMax() * 0.633) - 2) / 2, PALADIN);
-
     return;
 }
 
-bool CMap::colisionDetect(std::pair<int, int> & pair)
+bool CMap::collisionDetect(std::pair<int, int> & pair)
 {
     for (auto i: m_moveableObjects)
     {
@@ -70,24 +70,33 @@ void CMap::moveableDoAction()
 
 void CMap::spawnPlayer(int posY, int posX, player_class playerClass)
 {
+    std::pair<int, int> pair = std::make_pair(posY, posX);
+
+    if(collisionDetect(pair))
+        throw std::invalid_argument("received overlapping coordinates with other object");
+
     switch (playerClass)
     {
         case PALADIN:
             m_player = new CPlayerPaladin(m_mapWindow, posY, posX);
             break;
         case MAGE:
+            m_player = new CPlayerMage(m_mapWindow, posY, posX);
             break;
         case ROGUE:
+            m_player = new CPlayerRogue(m_mapWindow, posY, posX);
             break;
         default:
             break;
     }
+        
     m_moveableObjects.push_back(m_player);
+    m_targets.push_back(m_player);
     demo_loadMap();
     wrefresh(m_mapWindow);
-
     catchPlayer();
-    
+
+
     return;
 }
 
@@ -96,15 +105,30 @@ CPlayer* CMap::getPlayer() const            // not needed
     return m_player;
 }
 
+CGameObject* CMap::getTargetObject(std::pair<int, int> & pair) const
+{
+    for(auto i : m_targets)
+    {
+        if(i->getPos() == pair)
+        {
+            i->showStats();
+            return i;
+        }
+    } 
+    
+    return nullptr;
+}
+
 void CMap::catchPlayer()
 {
-    do
+    while (toupper(m_player->getAction()) != 'X')    
     {
         moveableDoAction();
         renderObjects();
         wrefresh(m_mapWindow);
+        wrefresh(application.getGame().getPlayerWindow());
 
-    } while (m_player->getAction() != 'x');    
+    }   
     
     clear();
     refresh();
@@ -115,14 +139,25 @@ void CMap::catchPlayer()
 
 void CMap::spawnEnemy(int posY, int posX, enemy_type type)
 {
+    std::pair<int, int> pair = std::make_pair(posY, posX);
+
+    if(collisionDetect(pair))
+        throw std::invalid_argument("received overlapping coordinates with other object");
+    
     CEnemy* enemy = new CEnemy(m_mapWindow, posY, posX, type);
     m_moveableObjects.push_back(enemy);
+    m_targets.push_back(enemy);
 
     return;
 }
 
 void CMap::spawnProp(int posY, int posX, const char & objectForm)
 {
+    std::pair<int, int> pair = std::make_pair(posY, posX);
+
+    if(collisionDetect(pair))
+        throw std::invalid_argument("received overlapping coordinates with other object");
+
     CProp* prop = new CProp(m_mapWindow, posY, posX, objectForm);
     m_imoveableObjects.push_back(prop);
 
@@ -179,7 +214,7 @@ void CMap::camera_objectsUp(int & steps)
 {
     for(auto i: m_moveableObjects)
     {
-        i->moveUp(steps);
+        i->moveUp(steps);    
     }
 
     for(auto i: m_imoveableObjects)
@@ -211,6 +246,7 @@ void CMap::camera_objectsLeft(int & steps)
     {
         i->moveLeft(steps);
     }
+
     for(auto i: m_imoveableObjects)
     {
         i->moveLeft(steps);

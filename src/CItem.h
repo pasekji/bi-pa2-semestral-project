@@ -4,6 +4,7 @@
 #include <string>
 #include <cstdlib>
 #include "CCharacter.h"
+#include "enums.h"
 
 
 class CItem
@@ -15,6 +16,8 @@ class CItem
         std::size_t m_useability;            // count of possible uses
 
         virtual bool itemApply() = 0;
+
+        bool is_stackable;
 
         CItem(const std::string & name, const std::string & lable, std::size_t price, std::size_t useability) : m_name(name), m_lable(lable), m_price(price), m_useability(useability)
         {}

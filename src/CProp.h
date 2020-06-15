@@ -16,6 +16,16 @@ class CProp : public CGameObject
             return false;
         }
 
+        bool accept(CAttack* attack) override
+        {
+            return false;
+        }
+        
+        void showStats() const override
+        {
+            return;
+        }
+
 };
 
 #endif

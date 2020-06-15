@@ -33,19 +33,9 @@ void CApplication::endApplication()
     return;    
 }
 
-CGame & CApplication::getGame()
-{
-    return m_game;
-}
-
 const CGame & CApplication::getGame() const
 {
     return m_game;
-}
-
-CMainMenu & CApplication::getMainMenu()
-{
-    return m_mainMenu;
 }
 
 const CMainMenu & CApplication::getMainMenu() const
@@ -64,7 +54,7 @@ void CApplication::initMainMenu()
     while(m_mainMenu.getAction() == 0);
 
     clear();
-
+    
     switch(m_mainMenu.getSelected())
     {
         case 0:

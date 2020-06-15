@@ -4,11 +4,14 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <stdexcept>
 #include "CGameObject.h"
 #include "CCharacter.h"
 #include "CDoor.h"
 #include "CPlayer.h"
 #include "CPlayerPaladin.h"
+#include "CPlayerRogue.h"
+#include "CPlayerMage.h"
 #include "CEnemy.h"
 #include "CProp.h"
 
@@ -22,12 +25,14 @@ class CMap
         bool loadMapFromFile(const std::string & pathToFile);
         bool openDoor(CDoor* door);
         bool goToMap(CMap* map);
-        bool colisionDetect(std::pair<int, int> & pair);
+        bool collisionDetect(std::pair<int, int> & pair);
         void staticCamera(direction & dir, int & steps);
         int m_width, m_height;
         WINDOW* m_mapWindow;
 
         CPlayer* getPlayer() const;
+
+        CGameObject* getTargetObject(std::pair<int, int> & pair) const;
 
         void catchPlayer();
 
@@ -38,7 +43,7 @@ class CMap
         CPlayer* m_player;
         std::vector<CCharacter*> m_moveableObjects;
         std::vector<CGameObject*> m_imoveableObjects;
-        std::map<std::pair<int, int>, CGameObject*> m_targets;
+        std::vector<CGameObject*> m_targets;
         std::map<CDoor, CMap*> m_layers;                     // current layer must be included too - TODO: get position at target map
         void spawnPlayer(int posY, int posX, player_class playerClass);           // (int posY, int posX)
         void spawnEnemy(int posY, int posX, enemy_type type);

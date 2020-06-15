@@ -1,3 +1,6 @@
+#ifndef MENU_H
+#define MENU_H
+
 #include <ncurses.h>
 #include <string>
 #include <vector>
@@ -138,4 +141,4 @@ class CSaveGameMenu : public CMenu
         bool m_newSave;
 };
 
-
+#endif
