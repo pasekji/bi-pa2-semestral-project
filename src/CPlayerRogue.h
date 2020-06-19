@@ -8,12 +8,33 @@ class CPlayerRogue : public CPlayer
     public:
         int getAction() override;
         bool interactWith() override;
-        bool accept(CAttack* attack) override;
+        bool acceptSource(CAttack* attack) override;
+        bool acceptTarget(CAttack* attack) override;
         void showStats() const override;
         CPlayerRogue(WINDOW* objectSpace, int posY, int posX);
 
         ~CPlayerRogue()
         {}
+
+        const int getForce() const override
+        {
+            return m_agility;
+        }
+
+        const float getChanceOfCriticalAttack() const override
+        {
+            return m_chanceOfDoubleHit;
+        }
+
+        virtual string getTypeName()
+        {
+            return "CPlayerRogue";
+        }
+
+        void save(ofstream& os) override
+        {
+            writeString(os, getTypeName());
+        }
     
     private:
         int m_agility;

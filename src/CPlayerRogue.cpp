@@ -26,9 +26,15 @@ bool CPlayerRogue::interactWith()
     return false;
 }
 
-bool CPlayerRogue::accept(CAttack* attack)
+bool CPlayerRogue::acceptSource(CAttack* attack)
 {
-    attack->visit(this);
+    attack->visitSource(this);
+    return true;
+}
+
+bool CPlayerRogue::acceptTarget(CAttack* attack)
+{
+    attack->visitTarget(this);
     return true;
 }
 

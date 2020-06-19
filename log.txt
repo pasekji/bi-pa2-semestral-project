@@ -1,0 +1,41 @@
+
+
+
+
+
+
+
+
+                                                                    ==37== Invalid write of size 8
+                                                                    -                             ==37==    at 0x109EF6: CGame::initMap() (in /mnt/c/Users/jirip/iCloudDrive/Documents/Dokumenty - jir¡i´ - MacBook Air/BI-PA2/semestralka/rpg/rpg/rpg)                                                          -                                                                                                  -
+          ==37==    by 0x109EC9: CGame::run() (in /mnt/c/Users/jirip/iCloudDrive/Documents/Dokumenty - jir¡i´ - MacBook Air/BI-PA2/semestralka/rpg/rpg/rpg)            -
+                                                                    -                                                                                      ==37==    by 0x10F744: main (in /mnt/c/Users/jirip/iCloudDrive/Documents/Dokumenty - jir¡i´ - MacBook Air/BI-PA2/semestralka/rpg/rpg/rpg)             -                                                                                                  -
+                                                       ==37==  Address 0x10 is not stack'd, malloc'd or (recently) free'd                                              -
+                                                                    -                                                    ==37==                                        -
+                                                                    -                                                           ==37==                                 -
+                                                                    -                                                                  ==37== Process terminating with default action of signal 11 (SIGSEGV)
+                                                                    -                                                                                                  -                                    ==37==  Access not within mapped region at address 0x10                                              -                                                                                                  -
+                      ==37==    at 0x109EF6: CGame::initMap() (in /mnt/c/Users/jirip/iCloudDrive/Documents/Dokumenty - jir¡i´ - MacBook Air/BI-PA2/semestralka/rpg/rpg/rpg)
+                                                                    -                                                                                                  -   ==37==    by 0x109EC9: CGame::run() (in /mnt/c/Users/jirip/iCloudDrive/Documents/Dokumenty - jir¡i´ - MacBook Air/BI-PA2/semestralka/rpg/rpg/rpg)                                                                                        -
+                                                                    -          ==37==    by 0x10F744: main (in /mnt/c/Users/jirip/iCloudDrive/Documents/Dokumenty - jir¡i´ - MacBook Air/BI-PA2/semestralka/rpg/rpg/rpg)
+                                                                    -                                                                                                  -                                                ==37==  If you believe this happened as a result of a stack                              -                                                                                                  -
+                                      ==37==  overflow in your program's main thread (unlikely but                                                                     -
+                                                                    -                             ==37==  possible), you can try to increase the size of the           -
+                                                                    -                                                                                       ==37==  main thread stack using the --main-stacksize= flag.
+                                                                    -                                                                                                  -                                               ==37==  The main thread stack size used in this run was 8388608.                          -                                                                                                  -
+                                          ==37==                    -                                                                                                  -
+                                                 ==37== HEAP SUMMARY:                                                                                                  -
+                                                                    -==37==     in use at exit: 451,138 bytes in 279 blocks                                            -
+                                                                    -                                                      ==37==   total heap usage: 515 allocs, 236 frees, 554,066 bytes allocated
+                                                                    -                                                                                                  -                            ==37==
+                                                                    -                                                                                                  -                                   ==37== LEAK SUMMARY:
+                                                                    -                                                                                                  -                                                       ==37==    definitely lost: 0 bytes in 0 blocks                                    -                                                                                                  -
+                                ==37==    indirectly lost: 0 bytes in 0 blocks                                                                                         -
+                                                                    -         ==37==      possibly lost: 0 bytes in 0 blocks                                           -
+                                                                    -                                                       ==37==    still reachable: 451,138 bytes in 279 blocks
+                                                                    -                                                                                                  -          ==37==         suppressed: 0 bytes in 0 blocks
+                                                                    -                                                                                                  -                                                        ==37== Rerun with --leak-check=full to see details of leaked memory              -                                                                                                  -
+                                                      ==37==        -                                                                                                  -
+                                                             ==37== For counts of detected and suppressed errors, rerun with: -v                                       -
+                                                                    -                                                           ==37== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+                                                                    -                                                                                                  -                             Segmentation fault (core dumped)

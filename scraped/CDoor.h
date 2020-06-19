@@ -18,7 +18,12 @@ class CDoor : public CGameObject
             return false;
         }
 
-        bool accept(CAttack* attack) override
+        bool acceptSource(CAttack* attack) override
+        {
+            return false;
+        }
+
+        bool acceptTarget(CAttack* attack) override
         {
             return false;
         }
@@ -27,7 +32,11 @@ class CDoor : public CGameObject
         {
             return;
         }
-
+        
+        void getLable(std::string & lable) const override
+        {
+            return;
+        } 
 
 };
 

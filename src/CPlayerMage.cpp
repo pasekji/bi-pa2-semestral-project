@@ -25,9 +25,15 @@ bool CPlayerMage::interactWith()
     return false;
 }
 
-bool CPlayerMage::accept(CAttack* attack)
+bool CPlayerMage::acceptSource(CAttack* attack)
 {
-    attack->visit(this);
+    attack->visitSource(this);
+    return true;
+}
+
+bool CPlayerMage::acceptTarget(CAttack* attack)
+{
+    attack->visitTarget(this);
     return true;
 }
 

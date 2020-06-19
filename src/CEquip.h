@@ -3,6 +3,8 @@
 
 #include "CEvent.h"
 #include "CItem.h"
+#include "CWeapon.fwd.h"
+#include "CConsumable.h"
 
 class CEquip : public CEvent
 {
@@ -15,6 +17,9 @@ class CEquip : public CEvent
         {}
         void print() const override;
         void updateObjects() override;
+
+        bool visist(CWeapon* weapon);
+        bool visit(CConsumable* consumable);
 
     private:
         CItem* m_item;

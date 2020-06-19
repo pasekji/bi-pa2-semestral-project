@@ -2,6 +2,7 @@
 #define WEAPON_H
 
 #include "CItem.h"
+#include "CWeapon.fwd.h"
 
 class CWeapon : public CItem
 {
@@ -12,13 +13,20 @@ class CWeapon : public CItem
             m_chance_of_hit = chance_of_hit;
             m_compatible = compatible;
         }
+
+        CWeapon() = default;
         ~CWeapon()
         {}
-        bool itemApply();
 
+        bool itemApply() override
+        {
+            return false;
+        }
+        
         bool is_equiped;
 
-    private:
+
+    protected:
         player_class m_compatible;
         int m_damage;
         float m_chance_of_hit;

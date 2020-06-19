@@ -3,12 +3,20 @@
 
 #include <string>
 #include <cstdlib>
-#include "CCharacter.h"
+#include "CItem.fwd.h"
+#include "CPlayerPaladin.h"
+#include "CPlayerRogue.h"
+#include "CPlayerMage.h"
 #include "enums.h"
 
 
 class CItem
 {
+    public:
+        virtual bool accept(CPlayerPaladin* paladin) = 0;
+        virtual bool accept(CPlayerMage* mage) = 0;
+        virtual bool accept(CPlayerRogue* rogue) = 0;
+
     protected:
         std::string m_name;
         std::string m_lable;
@@ -16,6 +24,8 @@ class CItem
         std::size_t m_useability;            // count of possible uses
 
         virtual bool itemApply() = 0;
+
+
 
         bool is_stackable;
 

@@ -1,15 +1,15 @@
-#ifndef CHEST_H
-#define CHEST_H
+#ifndef LOOT_H
+#define LOOT_H
 
 #include "CGameObject.h"
 #include "CItem.h"
 #include <map>
 #include <vector>
 
-class CChest : public CGameObject
+class CLoot : public CGameObject
 {
     public:
-        CChest(WINDOW* objectSpace, int posY, int posX, std::size_t size) : CGameObject(objectSpace, posY, posX)
+        CLoot(WINDOW* objectSpace, int posY, int posX, std::size_t size) : CGameObject(objectSpace, posY, posX)
         {
             m_objectForm = 'H';
             m_size = size;
@@ -21,22 +21,39 @@ class CChest : public CGameObject
 
             m_it = m_keys.begin();
         }
+
+        ~CLoot()
+        {}
+
         std::vector<std::size_t>::iterator m_it;
         bool is_empty();
-        bool is_full();
         void loadContents();
         void popItem();
-        void pushItem(CItem * item);
 
-        bool interactWith() override
+        bool acceptSource(CAttack* attack) override
         {
             return false;
         }
 
-        bool accept(CAttack* attack) override
+        virtual string getTypeName()
+        {
+            return "CLoot";
+        }
+
+        void save(ofstream& os) override
+        {
+            writeString(os, getTypeName());
+        }
+
+        bool acceptTarget(CAttack* attack) override
         {
             return false;
         }
+
+        void getLable(std::string & lable) const override
+        {
+            return;
+        } 
 
         void showStats() const override
         {

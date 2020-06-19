@@ -1,10 +1,9 @@
 #ifndef INVENTORY_H
 #define INVENTORY_H
 
-#include "CItem.h"
+#include "CItem.fwd.h"
 #include <vector>
 #include <map>
-#include <stack>
 
 class CInventory
 {
@@ -33,7 +32,7 @@ class CInventory
         std::size_t m_size;
         std::vector<std::size_t> m_keys;
         std::vector<std::size_t>::iterator m_it;
-        std::map<size_t, std::pair<std::string, std::stack<CItem*>>> m_contents;
+        std::map<size_t, CItem*> m_contents;
 
 };
 

@@ -27,7 +27,7 @@ void CPlayer::defaultStep(int & move)       // basic player movement, every clas
 
 }
 
-bool CPlayer::defaultMove(int & move)
+bool CPlayer::defaultMove(int move)
 {
     // if default speed and delay move up, down etc...
 
@@ -38,13 +38,20 @@ bool CPlayer::defaultMove(int & move)
 
     switch (move) 
     {
+        case 'w':
+        case 'W':
         case KEY_UP:
             tmpstep = 1;
 
             while((!application.getGame().getMap()->collisionDetect(pair = std::make_pair(tmppos = m_posY - tmpstep, m_posX))) && (tmpstep <=  m_speed))
                 tmpstep++;
 
+            if(!spareEnergyToStep())
+                break;
+
             tmpstep--;
+
+            takeStep();
             moveUp(tmpstep);
             m_posY_real -= tmpstep;
             application.getGame().getMap()->staticCamera(tmpdir = UP, tmpstep);
@@ -52,13 +59,20 @@ bool CPlayer::defaultMove(int & move)
             used = true;
             break;
 
+        case 's':
+        case 'S':
         case KEY_DOWN:
             tmpstep = 1;
 
             while((!application.getGame().getMap()->collisionDetect(pair = std::make_pair(tmppos = m_posY + tmpstep, m_posX))) && (tmpstep <= m_speed))
                 tmpstep++;
 
+            if(!spareEnergyToStep())
+                break;
+
             tmpstep--;
+
+            takeStep();
             moveDown(tmpstep);
             m_posY_real += tmpstep;
             application.getGame().getMap()->staticCamera(tmpdir = DOWN, tmpstep);
@@ -66,27 +80,41 @@ bool CPlayer::defaultMove(int & move)
             used = true;
             break;
 
+        case 'a':
+        case 'A':
         case KEY_LEFT:
             tmpstep = 1;
 
             while((!application.getGame().getMap()->collisionDetect(pair = std::make_pair(m_posY, tmppos = m_posX - tmpstep))) && (tmpstep <= m_speed))
                 tmpstep++;
 
+            if(!spareEnergyToStep())
+                break;
+
             tmpstep--;
+
+            takeStep();
             moveLeft(tmpstep);
             m_posX_real -= tmpstep;
             application.getGame().getMap()->staticCamera(tmpdir = LEFT, tmpstep);
             changeForm('<');
             used = true;
             break;
-
+        
+        case 'd':
+        case 'D':
         case KEY_RIGHT:
             tmpstep = 1;
 
             while((!application.getGame().getMap()->collisionDetect(pair = std::make_pair(m_posY, tmppos = m_posX + tmpstep))) && (tmpstep <= m_speed))
                 tmpstep++;
 
+            if(!spareEnergyToStep())
+                break;
+
             tmpstep--;
+
+            takeStep();
             moveRight(tmpstep);
             m_posX_real += tmpstep;
             application.getGame().getMap()->staticCamera(tmpdir = RIGHT, tmpstep);
@@ -94,6 +122,9 @@ bool CPlayer::defaultMove(int & move)
             used = true;
             break;
 
+        case 'i':
+        case 'I':   // go to invetory
+            break;
         default:
             break;
     }

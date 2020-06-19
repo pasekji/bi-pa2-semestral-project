@@ -20,6 +20,8 @@ CEnemy::CEnemy(WINDOW* objectSpace, int posY, int posX, enemy_type type) : CChar
             m_speed = 1;
             m_chanceOfBlock = 0.25;
             m_triggerDistance = 15;
+            m_energyForStep = 1;
+            m_energyRegain = 2;
             m_primaryAttackType = BITE;
             break;
         case UNDEAD:
@@ -33,6 +35,8 @@ CEnemy::CEnemy(WINDOW* objectSpace, int posY, int posX, enemy_type type) : CChar
             m_speed = 1;
             m_chanceOfBlock = 0.10;
             m_triggerDistance = 3;
+            m_energyForStep = 1;
+            m_energyRegain = 3;
             m_primaryAttackType = SCRATCH;
             break;
         case GHOUL:
@@ -46,6 +50,8 @@ CEnemy::CEnemy(WINDOW* objectSpace, int posY, int posX, enemy_type type) : CChar
             m_speed = 1;
             m_chanceOfBlock = 0.15;
             m_triggerDistance = 4;
+            m_energyForStep = 2;
+            m_energyRegain = 2;
             m_primaryAttackType = TEAR;
             break;
         case HELLHOUND:
@@ -59,6 +65,8 @@ CEnemy::CEnemy(WINDOW* objectSpace, int posY, int posX, enemy_type type) : CChar
             m_speed = 1;
             m_chanceOfBlock = 0.20;
             m_triggerDistance = 4;
+            m_energyForStep = 3;
+            m_energyRegain = 2;
             m_primaryAttackType = MELEE; 
             break;
         case NOONWRAITH:
@@ -72,6 +80,8 @@ CEnemy::CEnemy(WINDOW* objectSpace, int posY, int posX, enemy_type type) : CChar
             m_speed = 2;
             m_chanceOfBlock = 0.35;
             m_triggerDistance = 5;
+            m_energyForStep = 2;
+            m_energyRegain = 4;
             m_primaryAttackType = SLAP;
             break;
         case SIREN:
@@ -85,12 +95,17 @@ CEnemy::CEnemy(WINDOW* objectSpace, int posY, int posX, enemy_type type) : CChar
             m_speed = 3;
             m_chanceOfBlock = 0.30;
             m_triggerDistance = 7;
+            m_energyForStep = 2;
+            m_energyRegain = 1;
             m_primaryAttackType = KICK;
             break;
         default:
             break;
     }
 }
+
+CEnemy::CEnemy(WINDOW* objectSpace, int posY, int posX) : CCharacter(objectSpace, posY, posX)
+{}
 
 const float CEnemy::getDistance(std::pair<int, int> & thisPos, std::pair<int, int> & playerPos) const
 {
@@ -153,64 +168,154 @@ void CEnemy::findPath(std::pair<int, int> & thisPos, std::pair<int, int> & playe
     return;
 }
 
-int CEnemy::getAction()     // just demo testing - TODO - AI 
+CGameObject* loadEnemy(ifstream& is)
 {
-    const direction way[6] = {STAY, STAY, UP, DOWN, LEFT, RIGHT}; 
-    int index = rand() % 6;
-    direction move = way[index];
-    int tmppos, tmpstep;
-    std::pair<int, int> thisPos;
-    std::pair<int, int> playerPos;
-    
-    playerPos = application.getGame().getMap()->getPlayer()->getPos();
-    thisPos = getPos();
+    int m_triggerDistance;
+    bool m_triggerAttack;
+    int m_type;
+    int m_force;
+    int m_primaryAttackType;
+    is >> m_triggerDistance;
+    is >> m_triggerAttack;
+    is >> m_type;
+    is >> m_force;
+    is >> m_primaryAttackType;
+    return nullptr; //new CEnemy(nullptr, );
+}
 
-    if(getDistance(pair, playerPos) <= (float)m_triggerDistance)
-        findPath(pair, playerPos, move);
+bool CEnemy::defaultMove(int move)
+{
+    bool used = false;
+    std::pair<int, int> thisPos;
+    int tmppos, tmpstep;
 
     switch (move) 
     {
-        case STAY:
-            break;
         case UP:
             tmpstep = 1;
 
             while((!application.getGame().getMap()->collisionDetect(thisPos = std::make_pair(tmppos = m_posY - tmpstep, m_posX))) && (tmpstep <=  m_speed))
                 tmpstep++;
 
+            if(!spareEnergyToStep())
+                break;
+
             tmpstep--;
+
+            takeStep();
             moveUp(tmpstep);
+            used = true;
             break;
+
         case DOWN:
             tmpstep = 1;
 
             while((!application.getGame().getMap()->collisionDetect(thisPos = std::make_pair(tmppos = m_posY + tmpstep, m_posX))) && (tmpstep <= m_speed))
                 tmpstep++;
 
+            if(!spareEnergyToStep())
+                break;
+
             tmpstep--;
+
+            takeStep();
             moveDown(tmpstep);
+            used = true;
             break;
+
         case LEFT:
             tmpstep = 1;
 
             while((!application.getGame().getMap()->collisionDetect(thisPos = std::make_pair(m_posY, tmppos = m_posX - tmpstep))) && (tmpstep <= m_speed))
                 tmpstep++;
 
+            if(!spareEnergyToStep())
+                break;
+
             tmpstep--;
+
+            takeStep();
             moveLeft(tmpstep);
+            used = true;
             break;
+
         case RIGHT:
             tmpstep = 1;
 
             while((!application.getGame().getMap()->collisionDetect(thisPos = std::make_pair(m_posY, tmppos = m_posX + tmpstep))) && (tmpstep <= m_speed))
                 tmpstep++;
 
+            if(!spareEnergyToStep())
+                break;
+
             tmpstep--;
+
+            takeStep();
             moveRight(tmpstep);
+            used = true;
+            break;
+
         default:
             break;
     }
 
+    return used;
+}
+
+void CEnemy::playerNearby(direction & move)
+{
+    std::pair<int, int> playerPos;
+
+    playerPos = application.getGame().getMap()->getPlayer()->getPos();
+
+    if(getDistance(pair, playerPos) <= (float)m_triggerDistance)
+        findPath(pair, playerPos, move);
+
+}
+
+int CEnemy::getAction()     // just demo testing - TODO - AI 
+{
+    const direction way[6] = {STAY, STAY, UP, DOWN, LEFT, RIGHT};
+    int index;
+    direction move;
+    std::default_random_engine randomGenerator(rand());
+    std::uniform_int_distribution<int> roll(0, 5);
+
+    if(m_currentEnergy < (m_energy/2))
+    {        
+        index = roll(randomGenerator) % 3;
+
+        if(index != 2)
+        {
+            move = way[index];
+            rest();
+        }
+        else
+        {
+            index = (roll(randomGenerator) % 4) + 2;
+            move = way[index];
+            playerNearby(move);
+            defaultMove(move);
+        }
+        
+    }
+    else
+    {
+        roll.reset();
+        index = roll(randomGenerator);
+        move = way[index];
+
+        if(move == STAY)
+        {
+            rest();
+            return index;
+        }
+
+        playerNearby(move);
+        defaultMove(move);
+
+    }
+        
     return index;
 }
 
@@ -220,9 +325,15 @@ bool CEnemy::interactWith()
     return false;
 }
 
-bool CEnemy::accept(CAttack* attack)
+bool CEnemy::acceptSource(CAttack* attack)
 {
-    attack->visit(this);
+    attack->visitSource(this);
+    return true;
+}
+
+bool CEnemy::acceptTarget(CAttack* attack)
+{
+    attack->visitTarget(this);
     return true;
 }
 
@@ -263,4 +374,5 @@ void CEnemy::showStats() const
 
 
     return;
-} 
+}
+

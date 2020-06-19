@@ -1,6 +1,6 @@
 #include "CGameObject.h"
 #include "CGame.h"
-
+#include <string>
 
 CGameObject::CGameObject(WINDOW * objectSpace, int posY, int posX) : m_objectSpace(objectSpace), m_posY(posY), m_posX(posX)
 {}
@@ -41,4 +41,17 @@ std::pair<int, int> & CGameObject::getPos()
 {
     pair = std::make_pair(m_posY, m_posX);
     return pair;
+}
+
+CGameObject* loadGameObject(ifstream& is)
+{
+    string typeName = loadString(is);
+    if (typeName == "CProp") {
+        return CProp::loadGameObject(is);
+    }
+    else if (typeName == " ")
+    {
+
+    }
+
 }

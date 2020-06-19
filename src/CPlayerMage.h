@@ -7,13 +7,34 @@ class CPlayerMage : public CPlayer
 {  
     public:
         int getAction() override;
-        bool accept(CAttack* attack) override;
+        bool acceptSource(CAttack* attack) override;
+        bool acceptTarget(CAttack* attack) override;
         bool interactWith() override;
         void showStats() const override;
         CPlayerMage(WINDOW* objectSpace, int posY, int posX);
 
         ~CPlayerMage()
         {}
+
+        const int getForce() const override
+        {
+            return m_wisdom;
+        }
+
+        const float getChanceOfCriticalAttack() const override
+        {
+            return m_chanceOfCriticalAttack;
+        }
+
+        virtual string getTypeName()
+        {
+            return "CPlayerMage";
+        }
+
+        void save(ofstream& os) override
+        {
+            writeString(os, getTypeName());
+        }
 
     private:
         int m_wisdom;
