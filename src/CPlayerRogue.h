@@ -33,7 +33,7 @@ class CPlayerRogue : public CPlayer
 
         void save(ofstream& os) override
         {
-            writeString(os, getTypeName());
+            os << getTypeName() << endl;
         }
     
     private:

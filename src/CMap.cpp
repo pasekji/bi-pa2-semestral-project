@@ -256,7 +256,7 @@ void CMap::camera_objectsLeft(int & steps)
 
 void CMap::save(ofstream& os)
 {
-    writeString(os, m_locationName);
+    os << m_locationName << endl;
     m_player->save(os);
     os << m_moveableObjects.size();
     for (auto moveable : m_moveableObjects)
@@ -269,7 +269,7 @@ void CMap::save(ofstream& os)
 
 void CMap::load(ifstream& is)
 {
-    m_locationName = loadString(is);
+    is >> m_locationName;
     size_t m_moveableObjectsSize;
     is >> m_moveableObjectsSize;
     for(size_t i = 0; i < m_moveableObjectsSize; i++)

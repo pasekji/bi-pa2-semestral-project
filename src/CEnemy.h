@@ -64,12 +64,13 @@ class CEnemy : public CCharacter
 
         void save(ofstream& os) override
         {
-            writeString(os, getTypeName());
+            os << getTypeName();
             os << m_triggerDistance;
             os << m_triggerAttack;
             os << (int)m_type;
             os << m_force;
             os << (int)m_primaryAttackType;
+            os << endl;
         }
 
     private:

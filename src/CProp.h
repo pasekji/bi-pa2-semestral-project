@@ -67,15 +67,21 @@ class CProp : public CGameObject
 
         void save(ofstream& os) override
         {
-            writeString(os, getTypeName());
+            os << getTypeName() << endl;
             os << (int)m_type;
+            os << m_posX;
+            os << m_posY;
         }
 
-        static CGameObject* loadGameObject(ifstream& is)
+        static CGameObject* loadGameObject(ifstream& is, WINDOW* objectSpace)
         {
             int _type;
             is >> _type;
-            CProp* res = new CProp(nullptr, 0,0, (prop_type)_type); // TODO
+            int posX;
+            int posY;
+            is >> posX;
+            is >> posY;
+            CProp* res = new CProp(objectSpace, posY, posX, (prop_type)_type);
             return res;
         }
     

@@ -366,7 +366,13 @@ void CEnemy::showStats() const
             break;
     }
 
-    mvwprintw(application.getGame().getObjectWindow(), (height - 6) / 2, (width - 18) / 2, "Health:     %d/%d", m_currentHealth, m_health);
+    mvwprintw(
+        application.getGame().getObjectWindow(),
+        (height - 6) / 2,
+        (width - 18) / 2,
+        "Health:     %d/%d",
+        m_currentHealth, m_health
+    );
     mvwprintw(application.getGame().getObjectWindow(), (height - 2) / 2, (width - 18) / 2, "Energy:     %d/%d", m_currentEnergy, m_energy);
     mvwprintw(application.getGame().getObjectWindow(), (height + 2) / 2, (width - 15) / 2, "Force:      %d", m_force);
 
@@ -376,3 +382,21 @@ void CEnemy::showStats() const
     return;
 }
 
+CGameObject* loadEnemy(ifstream& is, WINDOW* objectSpace)
+{
+    int triggerDistance;
+    is >> triggerDistance;
+    bool triggerAttack;
+    is >> triggerAttack;
+    int type;
+    is >> type;
+    int force;
+    is >> force;
+    int primaryAttackType;
+    is >> primaryAttackType;
+    int posX;
+    is >> posX;
+    int posY;
+    is >> posY;
+    return new CEnemy(objectSpace, posY, posX); // TODO doplnit do Cenemy zbyle udaje
+}

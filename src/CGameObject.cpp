@@ -43,11 +43,12 @@ std::pair<int, int> & CGameObject::getPos()
     return pair;
 }
 
-CGameObject* loadGameObject(ifstream& is)
+CGameObject* loadGameObject(ifstream& is, WINDOW* objectSpace)
 {
-    string typeName = loadString(is);
+    string typeName;
+    is >> typeName;
     if (typeName == "CProp") {
-        return CProp::loadGameObject(is);
+        return CProp::loadGameObject(is, objectSpace);
     }
     else if (typeName == " ")
     {

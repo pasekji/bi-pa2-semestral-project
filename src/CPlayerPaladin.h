@@ -27,7 +27,7 @@ class CPlayerPaladin : public CPlayer
 
         void save(ofstream& os) override
         {
-            writeString(os, getTypeName());
+            os << getTypeName() << endl;
         }
 
         virtual string getTypeName()

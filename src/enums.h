@@ -17,7 +17,7 @@ enum map_type {COUNTRYSIDE, DUNGEON, TESTROOM};
 enum prop_type {WALL, TREE, STONE, BUSH, VOID};
 
 
-void writeString(ofstream& os, string text);
-string loadString(ifstream& is);
+/*void writeString(ofstream& os, string text);
+string loadString(ifstream& is);*/
 
 #endif

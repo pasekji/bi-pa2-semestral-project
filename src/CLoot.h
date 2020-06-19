@@ -42,7 +42,7 @@ class CLoot : public CGameObject
 
         void save(ofstream& os) override
         {
-            writeString(os, getTypeName());
+            os << getTypeName() << endl;
         }
 
         bool acceptTarget(CAttack* attack) override

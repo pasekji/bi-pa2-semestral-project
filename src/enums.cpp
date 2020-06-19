@@ -1,6 +1,6 @@
 #include "enums.h"
 
-void writeString(ofstream& os, string text)
+/*void writeString(ofstream& os, string text)
 {
     os << text.size();
     os << text;
@@ -18,4 +18,4 @@ string loadString(ifstream& is)
         text += c;
     }
     return text;
-}
+}*/
