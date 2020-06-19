@@ -168,21 +168,6 @@ void CEnemy::findPath(std::pair<int, int> & thisPos, std::pair<int, int> & playe
     return;
 }
 
-CGameObject* loadEnemy(ifstream& is)
-{
-    int m_triggerDistance;
-    bool m_triggerAttack;
-    int m_type;
-    int m_force;
-    int m_primaryAttackType;
-    is >> m_triggerDistance;
-    is >> m_triggerAttack;
-    is >> m_type;
-    is >> m_force;
-    is >> m_primaryAttackType;
-    return nullptr; //new CEnemy(nullptr, );
-}
-
 bool CEnemy::defaultMove(int move)
 {
     bool used = false;

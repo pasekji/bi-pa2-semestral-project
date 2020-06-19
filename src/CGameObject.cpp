@@ -50,9 +50,12 @@ CGameObject* loadGameObject(ifstream& is, WINDOW* objectSpace)
     if (typeName == "CProp") {
         return CProp::loadGameObject(is, objectSpace);
     }
-    else if (typeName == " ")
+    else if (typeName == "CEnemy")
     {
-
+        return loadEnemy(is, objectSpace);
     }
-
+    else if (typeName == "CPlayerMage")
+    {
+        return loadPlayerMage(is, objectSpace);
+    }
 }

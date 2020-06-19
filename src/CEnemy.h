@@ -70,6 +70,8 @@ class CEnemy : public CCharacter
             os << (int)m_type;
             os << m_force;
             os << (int)m_primaryAttackType;
+            os << m_posX;
+            os << m_posY;
             os << endl;
         }
 
@@ -100,6 +102,6 @@ class CEnemy : public CCharacter
 
 };
 
-CGameObject* loadEnemy(ifstream& is);
+CGameObject* loadEnemy(ifstream& is, WINDOW* objectSpace);
 
 #endif

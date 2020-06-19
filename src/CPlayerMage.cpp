@@ -41,3 +41,12 @@ void CPlayerMage::showStats() const
 {
     return;
 }
+
+CGameObject* loadPlayerMage(ifstream& is, WINDOW* objectSpace)
+{
+    int posX;
+    is >> posX;
+    int posY;
+    is >> posY;
+    return new CPlayerMage(objectSpace, posY, posX);
+}

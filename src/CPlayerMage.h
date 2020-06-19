@@ -33,7 +33,10 @@ class CPlayerMage : public CPlayer
 
         void save(ofstream& os) override
         {
-            os << getTypeName() << endl;
+            os << getTypeName();
+            os << m_posX;
+            os << m_posY;
+            os << endl;
         }
 
     private:
@@ -45,5 +48,7 @@ class CPlayerMage : public CPlayer
         bool mageSecondaryAttack();
         bool mageSpecialAbility();
 };
+
+CGameObject* loadPlayerMage(ifstream& is, WINDOW* objectSpace);
 
 #endif
