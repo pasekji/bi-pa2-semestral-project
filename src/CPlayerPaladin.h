@@ -25,14 +25,14 @@ class CPlayerPaladin : public CPlayer
             return m_chanceOfCriticalAttack;
         }
 
-        virtual string getTypeName()
-        {
-            return "CPlayerPaladin";
-        }
-
         void save(ofstream& os) override
         {
             writeString(os, getTypeName());
+        }
+
+        virtual string getTypeName()
+        {
+            return "CPlayerPaladin";
         }
 
     private:

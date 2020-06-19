@@ -37,7 +37,10 @@ class CDoor : public CGameObject
         {
             return;
         } 
-
+        virtual string getTypeName()
+        {
+            return "CDoor";
+        }
 };
 
 #endif

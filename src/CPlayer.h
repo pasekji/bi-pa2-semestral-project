@@ -32,6 +32,11 @@ class CPlayer : public CCharacter
 
         virtual const float getChanceOfCriticalAttack() const = 0;
 
+        virtual string getTypeName()
+        {
+            return "CPlayer";
+        }
+
     protected:
 
         void changeForm(const char & objectForm);

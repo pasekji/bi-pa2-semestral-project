@@ -87,7 +87,10 @@ class CCharacter : public CGameObject
             return m_attackType;
         }
 
-
+        virtual string getTypeName()
+        {
+            return "CCharacter";
+        }
 };
 
 #endif
