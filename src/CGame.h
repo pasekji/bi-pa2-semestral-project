@@ -1,7 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <list>
+#include <deque>
 #include <ncurses.h>
 #include <unistd.h>
 #include "CEvent.h"
@@ -18,8 +18,6 @@ class CGame
         bool isRunning();
         void backToGame();
 
-        void showObjectStats(CGameObject* object) const;
-
         CMap* getMap() const;
         WINDOW* getWindow() const;
         WINDOW* getPlayerWindow() const;
@@ -27,7 +25,6 @@ class CGame
         WINDOW* getEffectWindow() const;
         WINDOW* getObjectWindow() const;
         WINDOW* getInventoryWindow() const;
-
 
         const int & getYMax() const;
         const int & getXMax() const;
@@ -57,7 +54,8 @@ class CGame
         void correctInventoryWindow() const;
         void correctEffectWindow() const;
         void refreshBars() const;
-        std::list<CEvent*> event_list;
+        void printEvents();
+        std::deque<CEvent*> m_eventQueue;
         CMap* m_currentMap = new CMap;
 
 };

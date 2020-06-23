@@ -2,37 +2,44 @@
 #define INVENTORY_H
 
 #include "CItem.fwd.h"
+#include "CPlayerPaladin.fwd.h"
+#include "CPlayerMage.fwd.h"
+#include "CPlayerRogue.fwd.h"
+#include "CPickup.fwd.h"
 #include <vector>
 #include <map>
+#include <random>
 
 class CInventory
 {
     public:
-        CInventory(std::size_t size) : m_size(size)
-        {
-            for (std::size_t i = 0; i < m_size; ++i)
-            {
-                m_keys.push_back(i);
-                m_contents[i];
-            }
+        CInventory(unsigned size);
 
-            m_it = m_keys.begin();
-        }
-
-        void incrementItr();
-        void decrementItr();
+        void incrementSelected();
+        void decrementSelected();
         void useItem();
         void dumpItem();
-        void pickUpItem();
-        void loadItemsAfterSave();
         void saveItems();
-        void getSize();
+        void constructFill();
+
+        unsigned getSize() const
+        {
+            return m_size;
+        }
+
+        CItem* getItemAt(unsigned i) const
+        {
+            return m_contents[i]; 
+        }
+
+        bool getItem(CPlayerRogue* rogue, CPickup* pickup);
+        bool getItem(CPlayerPaladin* paladin, CPickup* pickup);
+        bool getItem(CPlayerMage* mage, CPickup* pickup);
 
     private:
-        std::size_t m_size;
-        std::vector<std::size_t> m_keys;
-        std::vector<std::size_t>::iterator m_it;
-        std::map<size_t, CItem*> m_contents;
+        unsigned m_size;
+        unsigned m_itemCount;
+        std::vector<CItem*> m_contents;
 
 };
 

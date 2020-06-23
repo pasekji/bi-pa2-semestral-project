@@ -1,13 +1,18 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include "CMainMenu.h"
+#include "CMenu.h"
 #include "CGame.h"
 
 class CApplication
 {
     public:
-        CApplication() = default;
+        CApplication()
+        {
+            m_mainMenu->setOptions({"New Game", "Continue", "Save Game", "Load Game", "Quit"});
+            m_playerSelect->setOptions({"paladin", "mage", "rogue", "BACK"});
+            m_mapSelect->setOptions({"default world", "BACK"});
+        }
         ~CApplication() = default;
 
         bool saveGame();
@@ -17,9 +22,8 @@ class CApplication
         void endApplication();
         void run();
 
-        const CGame & getGame() const;
-
-        const CMainMenu & getMainMenu() const;
+        const CGame* getGame() const;
+        CGame* getGame();
 
         bool is_new;
         bool is_loaded;
@@ -28,11 +32,15 @@ class CApplication
 
     private:
         int m_yMax, m_xMax;
-        CMainMenu m_mainMenu;
-        CNewGameMenu m_newMenu;
-        CLoadGameMenu m_loadMenu;
-        CGame m_game;
+        CMenu* m_mainMenu = new CMenu();
+        CMenu* m_playerSelect = new CMenu();
+        CMenu* m_mapSelect = new CMenu();
+        CMenu* m_loadGames = new CMenu();
+        CGame* m_game = new CGame();
         void initMainMenu();
+        void initPlayerSelect();
+        void initMapSelect();
+        void initLoadGames();
         void initApplication();
 
 

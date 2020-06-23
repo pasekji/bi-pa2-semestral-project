@@ -12,40 +12,46 @@ class CAttack : public CEvent
 {
     public:
         CAttack(CGameObject* source, CGameObject* target, attack_type attackType) : CEvent(source, target)
-        {}
+        {
+            m_attackType = attackType;
+            m_chanceOfCritical = 0;
+        }
         ~CAttack()
         {}
 
-        void visitSource(CPlayerPaladin* paladin);
-        void visitSource(CPlayerMage* mage);
-        void visitSource(CPlayerRogue* rogue);
+        void visitSource(CPlayer* player);
         void visitSource(CEnemy* enemy);
 
-        void visitTarget(CPlayerPaladin* paladin);
-        void visitTarget(CPlayerMage* mage);
-        void visitTarget(CPlayerRogue* rogue);
+        void visitTarget(CPlayer* player);
         void visitTarget(CEnemy* enemy);
+
+        void updateSource(CPlayer* player);
+        void updateSource(CEnemy* enemy);
+
+        void updateTarget(CPlayer* player);
+        void updateTarget(CEnemy* enemy);
 
     protected:
         virtual void evaluateAttack() = 0;
         attack_type m_attackType;
-        std::string m_sourceLable;
-        std::string m_targetLable;
-        float m_chanceOfBlockTarget;
-        float m_chanceOfCritical;
-        int m_forceMax;
-        int m_healthTarget;
-        int m_energySource;
-        int m_energyTarget;
+        std::string m_sourceLabel;
+        std::string m_targetLabel;
+        float m_chanceOfBlockTarget = 0;
+        float m_chanceOfCritical = 0;
+        int m_forceMax = 0;
+        int m_healthTarget = 0;
+        int m_energySource = 0;
+        int m_energyTarget = 0;
 
-        int m_forceGiven;
-        int m_healthLostTarget;
-        int m_energyLostTarget;
-        int m_energyLostSource;
-        int m_expGain;
-        bool m_hit;
-        bool m_criticalHit;
-        bool m_canAttack;       // pokud false v evaluate se vypíše static hláška, "You cant attack that!"
+        int m_forceGiven = 0;
+        int m_healthLostTarget = 0;
+        int m_energyLostTarget = 0;
+        int m_energyLostSource = 0;
+        int m_expGain = 0;
+        bool m_hit = false;
+        bool m_criticalHit = false;
+        bool m_canAttack = false;
+        bool m_targetDead = false;
 };
 
 #endif

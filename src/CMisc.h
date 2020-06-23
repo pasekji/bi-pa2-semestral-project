@@ -6,14 +6,12 @@
 class CMisc : public CItem          // could be stackable
 {
     public:
-        CMisc(const std::string & name, const std::string & lable, std::size_t price) : CItem(name, lable, price, 0)
-        {
-        }
 
         CMisc() = default;
         
         ~CMisc()
         {}
+        
         bool itemApply()            // these items can't be applied f.e. - bone 
         {
             return false;

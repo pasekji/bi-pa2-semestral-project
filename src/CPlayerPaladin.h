@@ -2,14 +2,15 @@
 #define PALADIN_H
 
 #include "CPlayer.h"
+#include "CPrimaryAttack.fwd.h"
+#include "CPlayerPaladin.fwd.h"
+#include "CAttack.fwd.h"
 
 
 class CPlayerPaladin : public CPlayer
 {  
     public:
         int getAction() override;
-        bool acceptSource(CAttack* attack) override;
-        bool acceptTarget(CAttack* attack) override;
         void showStats() const override;
         CPlayerPaladin(WINDOW* objectSpace, int posY, int posX);
         ~CPlayerPaladin()
@@ -34,6 +35,13 @@ class CPlayerPaladin : public CPlayer
         {
             return "CPlayerPaladin";
         }
+
+        bool updateSource(CPickup* pickup) override;
+        bool acceptSource(CPickup* pickup) override;
+        bool acceptTarget(CPickup* pickup) override;
+
+        friend class CAttack;
+        friend class CPickup;
 
     private:
         bool interactWith() override;

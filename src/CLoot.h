@@ -2,35 +2,55 @@
 #define LOOT_H
 
 #include "CGameObject.h"
-#include "CItem.h"
+#include "CAttack.fwd.h"
+#include "CPickup.fwd.h"
+#include "CLoot.fwd.h"
 #include <map>
 #include <vector>
+#include <random>
 
 class CLoot : public CGameObject
 {
     public:
-        CLoot(WINDOW* objectSpace, int posY, int posX, std::size_t size) : CGameObject(objectSpace, posY, posX)
+        CLoot(WINDOW* objectSpace, int posY, int posX) : CGameObject(objectSpace, posY, posX)
         {
             m_objectForm = 'H';
-            m_size = size;
-            for (std::size_t i = 0; i < m_size; ++i)
-            {
-                m_keys.push_back(i);
-                m_contents[i];
-            }
-
-            m_it = m_keys.begin();
+            std::default_random_engine randomGenerator(rand());
+            std::uniform_int_distribution<unsigned> rollSize(0, 4);
+            m_items = rollSize(randomGenerator);
         }
 
         ~CLoot()
         {}
 
-        std::vector<std::size_t>::iterator m_it;
-        bool is_empty();
-        void loadContents();
-        void popItem();
+        bool pick()
+        {
+            if(m_items != 0)
+            {
+                m_items--;
+                return true;
+            }
+            else 
+                return false;
+        }
+
+        unsigned getItemsCount() const
+        {
+            return m_items;
+        }
+
 
         bool acceptSource(CAttack* attack) override
+        {
+            return false;
+        }
+
+        bool updateSource(CAttack* attack) override
+        {
+            return false;
+        }
+
+        bool updateTarget(CAttack* attack) override
         {
             return false;
         }
@@ -50,8 +70,9 @@ class CLoot : public CGameObject
             return false;
         }
 
-        void getLable(std::string & lable) const override
+        void getLabel(std::string & label) const override
         {
+            label = "BOX";
             return;
         } 
 
@@ -60,11 +81,18 @@ class CLoot : public CGameObject
             return;
         }
 
+        bool acceptSource(CPickup* pickup) override
+        {
+            return false;
+        }
+        bool acceptTarget(CPickup* pickup) override;
+        bool updateSource(CPickup* pickup) override
+        {
+            return false;
+        }
 
     private:
-        std::size_t m_size;
-        std::vector<std::size_t> m_keys;
-        std::map<std::size_t, CItem*> m_contents;
+        unsigned m_items;
 };
 
 #endif

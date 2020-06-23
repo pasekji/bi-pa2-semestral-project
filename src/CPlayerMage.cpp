@@ -1,7 +1,7 @@
 #include "CPlayerMage.h"
 #include "CApplication.h"
-#include "CAttack.h"
-
+#include "CPrimaryAttack.h"
+#include "CPickup.h"
 
 extern CApplication application;
 
@@ -25,21 +25,26 @@ bool CPlayerMage::interactWith()
     return false;
 }
 
-bool CPlayerMage::acceptSource(CAttack* attack)
-{
-    attack->visitSource(this);
-    return true;
-}
-
-bool CPlayerMage::acceptTarget(CAttack* attack)
-{
-    attack->visitTarget(this);
-    return true;
-}
-
 void CPlayerMage::showStats() const
 {
     return;
+}
+
+bool CPlayerMage::updateSource(CPickup* pickup)
+{
+    pickup->updateSource(this);
+    return true;
+}
+
+bool CPlayerMage::acceptSource(CPickup* pickup)
+{
+    pickup->visitSource(this);
+    return true;
+}
+
+bool CPlayerMage::acceptTarget(CPickup* pickup)
+{
+    return false;
 }
 
 CGameObject* loadPlayerMage(ifstream& is, WINDOW* objectSpace)

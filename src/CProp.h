@@ -4,6 +4,7 @@
 #include "CGameObject.h"
 #include <fstream>
 #include "enums.h"
+#include "CAttack.fwd.h"
 
 class CProp : public CGameObject
 {
@@ -49,13 +50,36 @@ class CProp : public CGameObject
         {
             return false;
         }
+
+        bool updateSource(CAttack* attack) override
+        {
+            return false;
+        }
+
+        bool updateTarget(CAttack* attack) override
+        {
+            return false;
+        }
+
+        bool acceptSource(CPickup* pickup) override
+        {
+            return false;
+        }
+        bool acceptTarget(CPickup* pickup) override
+        {
+            return false;
+        }
+        bool updateSource(CPickup* pickup) override
+        {
+            return false;
+        }
         
         void showStats() const override
         {
             return;
         }
 
-        void getLable(std::string & lable) const override
+        void getLabel(std::string & label) const override
         {
             return;
         } 

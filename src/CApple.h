@@ -6,11 +6,14 @@
 class CApple : public CConsumable
 {
     public:
-        CApple() : CConsumable()
-        {
-        }
+        CApple() = default;
         ~CApple()
         {}
+
+        std::string getLabel() const override
+        {
+            return "APPLE";
+        }
 
         bool itemApply() override
         {

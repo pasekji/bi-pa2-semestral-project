@@ -7,7 +7,7 @@ extern CApplication application;
 void CMap::loadMap()            
 {
     // no predef ROOM_HEIGHT othr. will be used 
-    spawnPlayer(((int)(application.getGame().getYMax() * 0.99) - 2) / 2, ((int)(application.getGame().getXMax() * 0.633) - 2) / 2, PALADIN);
+    spawnPlayer(((int)(application.getGame()->getYMax() * 0.99) - 2) / 2, ((int)(application.getGame()->getXMax() * 0.633) - 2) / 2, m_selectedClass);
     return;
 }
 
@@ -36,6 +36,12 @@ void CMap::demo_loadMap()
     spawnProp((ROOM_HEIGHT/2), (ROOM_WIDTH - (ROOM_WIDTH/20)), WALL);
     spawnProp((ROOM_HEIGHT/2), (ROOM_WIDTH - (ROOM_WIDTH/20) - 1), WALL);
     spawnProp((ROOM_HEIGHT/2), (ROOM_WIDTH - (ROOM_WIDTH/20) - 2), WALL);
+    spawnProp((ROOM_HEIGHT/2), (ROOM_WIDTH - (ROOM_WIDTH/20) - 5), STONE);
+    spawnProp((ROOM_HEIGHT/2), (ROOM_WIDTH - (ROOM_WIDTH/20) - 7), TREE);
+    spawnProp((ROOM_HEIGHT/2 + 2), (ROOM_WIDTH - (ROOM_WIDTH/20) - 5), BUSH);
+    spawnEnemy(((ROOM_HEIGHT - (ROOM_HEIGHT/7))/2), (ROOM_WIDTH - 2) / 2, NOONWRAITH);
+    spawnEnemy(((ROOM_HEIGHT - (ROOM_HEIGHT/7))/2), (ROOM_WIDTH - 5) / 2, UNDEAD);
+
 
     return;
 }
@@ -124,7 +130,7 @@ void CMap::catchPlayer()
         moveableDoAction();
         renderObjects();
         wrefresh(m_mapWindow);
-        wrefresh(application.getGame().getPlayerWindow());
+        wrefresh(application.getGame()->getPlayerWindow());
 
     }   
     
@@ -160,6 +166,20 @@ void CMap::spawnProp(int posY, int posX, prop_type type)
     m_imoveableObjects.push_back(prop);
 
     return;
+}
+
+CLoot* CMap::spawnLoot(int posY, int posX)
+{
+    std::pair<int, int> pair = std::make_pair(posY, posX);
+
+    if(collisionDetect(pair))
+        throw std::invalid_argument("received overlapping coordinates with other object");
+
+    CLoot* loot = new CLoot(m_mapWindow, posY, posX);
+    m_imoveableObjects.push_back(loot);
+    m_targets.push_back(loot);
+
+    return loot;
 }
 
 void CMap::staticCamera(direction & dir, int & steps)

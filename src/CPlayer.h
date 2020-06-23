@@ -4,8 +4,13 @@
 #include "CCharacter.h"
 #include "CInventory.h"
 #include "CWeapon.fwd.h"
+#include "CPrimaryAttack.fwd.h"
+#include "CPlayer.fwd.h"
+#include "CPickup.fwd.h"
 #include <map>
 #include <string>
+#include <ctype.h>
+
 
 class CPlayer : public CCharacter
 {
@@ -17,21 +22,29 @@ class CPlayer : public CCharacter
             m_objectForm = '^';
             m_speed = 1;
             m_sprint = false;
-            m_playerName = "jirik";
             keypad(m_objectSpace, true);
         }
 
-        void getLable(std::string & lable) const override
+        void getLabel(std::string & label) const override
         {
-            lable = "you";
+            label = "YOU";
             return;
         }
 
         ~CPlayer()
         {}
 
-        virtual const float getChanceOfCriticalAttack() const = 0;
+        bool acceptSource(CAttack* attack) override;
 
+        bool acceptTarget(CAttack* attack) override;
+
+        bool updateSource(CAttack* attack) override;
+
+        bool updateTarget(CAttack* attack) override;
+
+        friend class CAttack;
+        friend class CPickup;
+        
     protected:
 
         void changeForm(const char & objectForm);
@@ -39,24 +52,20 @@ class CPlayer : public CCharacter
         bool defaultMove(int move) override;
         void goToInventory();
 
+        bool itemPickup(CGameObject* target);
+
+        CGameObject* directionGetTarget(); 
+
         CGameObject* fetchTarget() const override
         {
             return nullptr;
         }
 
-        void die() override
-        {
-            return;
-        }
-
         int m_posY_real, m_posX_real;
         int m_move;
         bool m_sprint;
-        int m_inventorySize;
-        int m_level = 1;
+        unsigned m_inventorySize;
         int m_currentExp = 0; 
-        int m_expTarget = 20;
-        std::string m_playerName;
         CInventory* m_inventory;
         CWeapon* m_weaponEquiped;
 

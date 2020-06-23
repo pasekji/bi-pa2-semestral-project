@@ -6,11 +6,14 @@
 class CWand : public CWeapon
 {
     public:
-        CWand() : CWeapon()
-        {
-        }
+        CWand() = default;
         ~CWand()
         {}
+
+        std::string getLabel() const override
+        {
+            return "WAND";
+        }
 
         bool accept(CPlayerPaladin* paladin) override
         {

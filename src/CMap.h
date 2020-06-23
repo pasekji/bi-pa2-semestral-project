@@ -37,6 +37,9 @@ class CMap
         void catchPlayer();
         void save(ofstream& os);
         void load(ifstream& is);
+        CLoot* spawnLoot(int posY, int posX);
+
+        player_class m_selectedClass;
 
     private:
         std::string m_pathToFile;

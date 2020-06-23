@@ -6,11 +6,14 @@
 class CSword : public CWeapon
 {
     public:
-        CSword() : CWeapon()
-        {
-        }
+        CSword() = default;
         ~CSword()
         {}
+
+        std::string getLabel() const override
+        {
+            return "SWORD";
+        }
 
         bool accept(CPlayerPaladin* paladin) override
         {

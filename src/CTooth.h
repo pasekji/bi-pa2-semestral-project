@@ -6,11 +6,14 @@
 class CTooth : public CMisc
 {
     public:
-        CTooth() : CMisc()
-        {
-        }
+        CTooth() = default;
         ~CTooth()
         {}
+
+        std::string getLabel() const override
+        {
+            return "TOOTH";
+        }
 };
 
 #endif

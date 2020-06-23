@@ -1,4 +1,5 @@
 #include "CGame.h"
+#include <cstring>
 
 void CGame::run() 
 {
@@ -52,6 +53,7 @@ void CGame::initBars()
     wborder(m_objectWindow, 0, 0, 0, 0, 0, 0, 0, 0);
     wborder(m_inventoryWindow, 0, 0, 0, 0, 0, 0, 0, 0);
     wborder(m_playerWindow, 0, 0, 0, 0, 0, 0, 0, 0);
+    keypad(m_inventoryWindow, true);
     refreshBars();
 
     return;
@@ -159,6 +161,37 @@ void CGame::loadGame()
 
 }
 
+void CGame::pushEvent(CEvent* event)
+{
+    m_eventQueue.push_back(event);
+    printEvents();
+}
+
+void CGame::printEvents()
+{
+    unsigned height, width;
+    getmaxyx(m_eventWindow, height, width);
+
+    if(m_eventQueue.size() == (height - 2))
+        m_eventQueue.pop_front();
+    
+    wclear(m_eventWindow);
+
+    int y_pos = 1;
+    for(int i = m_eventQueue.size() - 1; i >= 0; i--)
+    {
+        wmove(m_eventWindow, y_pos, 0);
+        wclrtoeol(m_eventWindow);
+        mvwprintw(m_eventWindow, y_pos, 1, "%s", m_eventQueue[i]->getPhrase().c_str());
+        y_pos++;
+    }
+    
+    wborder(m_eventWindow, 0, 0, 0, 0, 0, 0, 0, 0);   
+    wrefresh(m_eventWindow);
+
+    return;
+}
+
 CMap* CGame::getMap() const
 {
     return m_currentMap;
@@ -202,10 +235,4 @@ const int & CGame::getYMax() const
 const int & CGame::getXMax() const
 {
     return m_xMax;   
-}
-
-void CGame::showObjectStats(CGameObject* object) const          // probably not needed
-{
-    object->showStats();
-    return;
 }

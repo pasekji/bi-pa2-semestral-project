@@ -1,7 +1,7 @@
 #include "CPlayerRogue.h"
 #include "CApplication.h"
-#include "CAttack.h"
-
+#include "CPrimaryAttack.h"
+#include "CPickup.h"
 
 
 extern CApplication application;
@@ -26,19 +26,24 @@ bool CPlayerRogue::interactWith()
     return false;
 }
 
-bool CPlayerRogue::acceptSource(CAttack* attack)
-{
-    attack->visitSource(this);
-    return true;
-}
-
-bool CPlayerRogue::acceptTarget(CAttack* attack)
-{
-    attack->visitTarget(this);
-    return true;
-}
-
 void CPlayerRogue::showStats() const
 {
     return;
+}
+
+bool CPlayerRogue::updateSource(CPickup* pickup)
+{
+    pickup->updateSource(this);
+    return true;
+}
+
+bool CPlayerRogue::acceptSource(CPickup* pickup)
+{
+    pickup->visitSource(this);
+    return true;
+}
+
+bool CPlayerRogue::acceptTarget(CPickup* pickup)
+{
+    return false;
 }

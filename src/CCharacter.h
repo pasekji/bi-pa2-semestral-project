@@ -3,6 +3,7 @@
 
 #include "CGameObject.h"
 #include "enums.h"
+#include "CPrimaryAttack.fwd.h"
 #include <algorithm>
 class CCharacter : public CGameObject
 {
@@ -22,9 +23,7 @@ class CCharacter : public CGameObject
         float m_chanceOfBlock;
         attack_type m_attackType;
 
-        virtual void die() = 0;
-
-        virtual void rest()
+        void rest()
         {
             if(m_currentEnergy < m_energy)
                 for(int i = 0; i < m_energyRegain; i++)
@@ -36,18 +35,18 @@ class CCharacter : public CGameObject
             return;
         }
 
-        virtual void takeStep()
+        void takeStep()
         {
             m_currentEnergy -= m_energyForStep;
         }
 
-        virtual bool spareEnergyToStep() const
+        bool spareEnergyToStep() const
         {
             if((m_currentEnergy - m_energyForStep) >= 0)
                 return true;
             else
                 return false;
-        } 
+        }
 
         virtual bool defaultMove(int move) = 0;
 
@@ -55,18 +54,22 @@ class CCharacter : public CGameObject
         {
             return nullptr;
         }
+        
+        CGameObject* defaultGetTarget();
 
     public:
         virtual int getAction() = 0;
         virtual const int getForce() const = 0;
         virtual bool interactWith() = 0;
 
-        int & getHealth()
+        int getHealth()
         {
             return m_currentHealth;
         }
 
-        int & getEnergy()
+        virtual const float getChanceOfCriticalAttack() const = 0;
+
+        int getEnergy()
         {
             return m_currentEnergy;
         }
@@ -76,10 +79,12 @@ class CCharacter : public CGameObject
             return m_chanceOfBlock;
         }
 
-        bool isDead() const
+        bool isDead() const override
         {
             if(m_currentHealth <= 0)
                 return true;
+            else
+                return false;
         }
 
         const attack_type getAttackType() const

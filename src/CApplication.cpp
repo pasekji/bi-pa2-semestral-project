@@ -33,40 +33,115 @@ void CApplication::endApplication()
     return;    
 }
 
-const CGame & CApplication::getGame() const
+const CGame* CApplication::getGame() const
 {
     return m_game;
 }
 
-const CMainMenu & CApplication::getMainMenu() const
+CGame* CApplication::getGame()
 {
-    return m_mainMenu;
+    return m_game;
 }
 
 void CApplication::initMainMenu()
 {
-    if(!m_mainMenu.is_init)
-        m_mainMenu.initMenu();
+    if(!m_mainMenu->is_init)
+        m_mainMenu->initMenu();
     else
-        m_mainMenu.loadMenu();
+        m_mainMenu->loadMenu();
     
 
-    while(m_mainMenu.getAction() == 0);
+    while(m_mainMenu->getAction() == 0);
 
     clear();
     
-    switch(m_mainMenu.getSelected())
+    switch(m_mainMenu->getSelected())
     {
         case 0:
-            m_game.run(); 
-            initMainMenu();          
+            initPlayerSelect();          
             break;
         case 1:
-            m_game.run();
+            if(m_game->is_init)
+                m_game->run();
             initMainMenu();
             break;
         case 2:
+            initMainMenu();
+            break;
+        case 3:
+            initMainMenu();
+            break;
+        case 4: 
             endApplication();
+        default:
+            break;
+    }
+
+    return;
+}
+
+
+void CApplication::initPlayerSelect()
+{
+    if(!m_playerSelect->is_init)
+        m_playerSelect->initMenu();
+    else
+        m_playerSelect->loadMenu();
+    
+
+    while(m_playerSelect->getAction() == 0);
+
+    clear();
+    
+    switch(m_playerSelect->getSelected())
+    {
+        case 0:
+            m_game->getMap()->m_selectedClass = PALADIN; 
+            initMapSelect();          
+            break;
+        case 1:
+            m_game->getMap()->m_selectedClass = MAGE;
+            initMapSelect();
+            break;
+        case 2:
+            m_game->getMap()->m_selectedClass = ROGUE;
+            initMapSelect();
+            break;
+        case 3:
+            initMainMenu();
+            break;
+
+        default:
+            break;
+    }
+
+    return;
+}
+
+
+void CApplication::initMapSelect()
+{
+    if(!m_mapSelect->is_init)
+        m_mapSelect->initMenu();
+    else
+        m_mapSelect->loadMenu();
+    
+
+    while(m_mapSelect->getAction() == 0);
+
+    clear();
+    
+    switch(m_mapSelect->getSelected())
+    {
+        case 0:
+            m_game->run();
+            initMainMenu();          
+            break;
+
+        case 1:
+            initPlayerSelect();
+            break;
+
         default:
             break;
     }

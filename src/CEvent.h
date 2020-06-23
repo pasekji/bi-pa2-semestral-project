@@ -6,15 +6,17 @@
 class CEvent
 {
     public:
-        virtual void print() const = 0;
-
+        const std::string& getPhrase() const;
+        
     protected:
         CEvent(CGameObject* source, CGameObject* target) : m_source(source), m_target(target)
         {}
         virtual ~CEvent()
         {}
         virtual void updateObjects() = 0;
-        void pushToDisplay() const;
+        virtual void print() = 0;
+        void pushToDisplay();
+        std::string m_phrase;
         CGameObject* m_source;
         CGameObject* m_target;
 };

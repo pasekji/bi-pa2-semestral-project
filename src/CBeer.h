@@ -6,11 +6,14 @@
 class CBeer : public CConsumable
 {
     public:
-        CBeer() : CConsumable()
-        {
-        }
+        CBeer() = default;
         ~CBeer()
         {}
+
+        std::string getLabel() const override
+        {
+            return "BEER";
+        }
 
         bool itemApply() override
         {

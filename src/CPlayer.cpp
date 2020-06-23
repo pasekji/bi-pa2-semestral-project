@@ -1,5 +1,8 @@
 #include "CPlayer.h"
 #include "CApplication.h"
+#include "CPickup.h"
+#include "CAttack.h"
+#include "CItem.h"
 
 extern CApplication application;
 
@@ -27,6 +30,38 @@ void CPlayer::defaultStep(int & move)       // basic player movement, every clas
 
 }
 
+CGameObject* CPlayer::directionGetTarget()
+{
+    int tmppos;    
+    std::pair<int, int> pair;
+    CGameObject* target = nullptr;
+
+    switch (m_objectForm)
+    {
+        case '^':
+            target = application.getGame()->getMap()->getTargetObject(pair = std::make_pair(tmppos = m_posY - 1, m_posX));
+            break;
+    
+        case 'v':
+            target = application.getGame()->getMap()->getTargetObject(pair = std::make_pair(tmppos = m_posY + 1, m_posX));        
+            break;
+
+        case '<':
+            target = application.getGame()->getMap()->getTargetObject(pair = std::make_pair(m_posY, tmppos = m_posX - 1));
+            break;
+
+        case '>':
+            target = application.getGame()->getMap()->getTargetObject(pair = std::make_pair(m_posY, tmppos = m_posX + 1));
+            break;
+
+        default:
+            break;
+    }
+
+    return target;
+} 
+
+
 bool CPlayer::defaultMove(int move)
 {
     // if default speed and delay move up, down etc...
@@ -43,7 +78,7 @@ bool CPlayer::defaultMove(int move)
         case KEY_UP:
             tmpstep = 1;
 
-            while((!application.getGame().getMap()->collisionDetect(pair = std::make_pair(tmppos = m_posY - tmpstep, m_posX))) && (tmpstep <=  m_speed))
+            while((!application.getGame()->getMap()->collisionDetect(pair = std::make_pair(tmppos = m_posY - tmpstep, m_posX))) && (tmpstep <=  m_speed))
                 tmpstep++;
 
             if(!spareEnergyToStep())
@@ -54,7 +89,7 @@ bool CPlayer::defaultMove(int move)
             takeStep();
             moveUp(tmpstep);
             m_posY_real -= tmpstep;
-            application.getGame().getMap()->staticCamera(tmpdir = UP, tmpstep);
+            application.getGame()->getMap()->staticCamera(tmpdir = UP, tmpstep);
             changeForm('^');
             used = true;
             break;
@@ -64,7 +99,7 @@ bool CPlayer::defaultMove(int move)
         case KEY_DOWN:
             tmpstep = 1;
 
-            while((!application.getGame().getMap()->collisionDetect(pair = std::make_pair(tmppos = m_posY + tmpstep, m_posX))) && (tmpstep <= m_speed))
+            while((!application.getGame()->getMap()->collisionDetect(pair = std::make_pair(tmppos = m_posY + tmpstep, m_posX))) && (tmpstep <= m_speed))
                 tmpstep++;
 
             if(!spareEnergyToStep())
@@ -75,7 +110,7 @@ bool CPlayer::defaultMove(int move)
             takeStep();
             moveDown(tmpstep);
             m_posY_real += tmpstep;
-            application.getGame().getMap()->staticCamera(tmpdir = DOWN, tmpstep);
+            application.getGame()->getMap()->staticCamera(tmpdir = DOWN, tmpstep);
             changeForm('v');
             used = true;
             break;
@@ -85,7 +120,7 @@ bool CPlayer::defaultMove(int move)
         case KEY_LEFT:
             tmpstep = 1;
 
-            while((!application.getGame().getMap()->collisionDetect(pair = std::make_pair(m_posY, tmppos = m_posX - tmpstep))) && (tmpstep <= m_speed))
+            while((!application.getGame()->getMap()->collisionDetect(pair = std::make_pair(m_posY, tmppos = m_posX - tmpstep))) && (tmpstep <= m_speed))
                 tmpstep++;
 
             if(!spareEnergyToStep())
@@ -96,7 +131,7 @@ bool CPlayer::defaultMove(int move)
             takeStep();
             moveLeft(tmpstep);
             m_posX_real -= tmpstep;
-            application.getGame().getMap()->staticCamera(tmpdir = LEFT, tmpstep);
+            application.getGame()->getMap()->staticCamera(tmpdir = LEFT, tmpstep);
             changeForm('<');
             used = true;
             break;
@@ -106,7 +141,7 @@ bool CPlayer::defaultMove(int move)
         case KEY_RIGHT:
             tmpstep = 1;
 
-            while((!application.getGame().getMap()->collisionDetect(pair = std::make_pair(m_posY, tmppos = m_posX + tmpstep))) && (tmpstep <= m_speed))
+            while((!application.getGame()->getMap()->collisionDetect(pair = std::make_pair(m_posY, tmppos = m_posX + tmpstep))) && (tmpstep <= m_speed))
                 tmpstep++;
 
             if(!spareEnergyToStep())
@@ -117,14 +152,17 @@ bool CPlayer::defaultMove(int move)
             takeStep();
             moveRight(tmpstep);
             m_posX_real += tmpstep;
-            application.getGame().getMap()->staticCamera(tmpdir = RIGHT, tmpstep);
+            application.getGame()->getMap()->staticCamera(tmpdir = RIGHT, tmpstep);
             changeForm('>');
             used = true;
             break;
 
         case 'i':
-        case 'I':   // go to invetory
+        case 'I':
+            goToInventory();
+            used = true;
             break;
+
         default:
             break;
     }
@@ -132,3 +170,95 @@ bool CPlayer::defaultMove(int move)
     return used;
 }
 
+bool CPlayer::itemPickup(CGameObject* target)
+{
+    CEvent* pickup = new CPickup(this, target);
+    if(pickup != nullptr) return true;
+    return false;
+}
+
+bool CPlayer::acceptSource(CAttack* attack)
+{
+    attack->visitSource(this);
+    return true;
+}   
+
+bool CPlayer::acceptTarget(CAttack* attack)
+{
+    attack->visitTarget(this);
+    return true;
+}
+
+bool CPlayer::updateSource(CAttack* attack)
+{
+    attack->updateSource(this);
+    return true;
+}
+
+bool CPlayer::updateTarget(CAttack* attack)
+{
+    attack->updateTarget(this);
+    return true;
+}
+
+void CPlayer::goToInventory()
+{
+    int action, height, width;
+    std::string label;
+    unsigned selected = 0;
+    getmaxyx(application.getGame()->getInventoryWindow(), height, width);
+
+    while((action = toupper(wgetch(application.getGame()->getInventoryWindow()))) != 'I')
+    {
+        if(action == 'X')
+        {
+            wattroff(application.getGame()->getInventoryWindow(), A_REVERSE);
+            werase(application.getGame()->getInventoryWindow());
+            wborder(application.getGame()->getInventoryWindow(), 0, 0, 0, 0, 0, 0, 0, 0);   
+            wrefresh(application.getGame()->getInventoryWindow());
+            return;
+        }
+        
+        switch (action)
+        {
+            case KEY_UP:
+                if(selected != 0)
+                    selected--;
+            break;
+        
+            case KEY_DOWN:
+                selected++;
+                if(selected == m_inventory->getSize())
+                    selected = m_inventory->getSize() - 1;
+            break;
+
+            default:
+                break;
+        }
+
+        CItem* item = m_inventory->getItemAt(selected);
+
+        if(item == nullptr)
+        {
+            wattron(application.getGame()->getInventoryWindow(), A_REVERSE);
+            mvwprintw(application.getGame()->getInventoryWindow(),(height - 2) / 2, (width - strlen("NOTHING")) / 2, "  %s  ", "NOTHING");
+        }
+        else
+        {
+            wattron(application.getGame()->getInventoryWindow(), A_REVERSE);
+            mvwprintw(application.getGame()->getInventoryWindow(), (height - 2) / 2, (width - strlen(item->getLabel().c_str()) - 4) / 2, "   %s   ", item->getLabel().c_str());
+        }
+
+        wborder(application.getGame()->getInventoryWindow(), 0, 0, 0, 0, 0, 0, 0, 0);   
+        wrefresh(application.getGame()->getInventoryWindow());
+  
+        if(action == 10)
+            return;
+    }
+    wattroff(application.getGame()->getInventoryWindow(), A_REVERSE);
+    werase(application.getGame()->getInventoryWindow());
+    wborder(application.getGame()->getInventoryWindow(), 0, 0, 0, 0, 0, 0, 0, 0);   
+    wrefresh(application.getGame()->getInventoryWindow());
+
+    return;
+}

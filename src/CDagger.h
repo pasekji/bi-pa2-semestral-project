@@ -6,11 +6,14 @@
 class CDagger : public CWeapon
 {
     public:
-        CDagger() : CWeapon()
-        {
-        }
+        CDagger() = default;
         ~CDagger()
         {}
+
+        std::string getLabel() const override
+        {
+            return "DAGGER";
+        }
 
         bool accept(CPlayerPaladin* paladin) override
         {

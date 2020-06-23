@@ -4,6 +4,7 @@
 #include <ncurses.h>
 #include "CAttack.fwd.h"
 #include "CItem.fwd.h"
+#include "CPickup.fwd.h"   
 #include "enums.h"
 #include <utility>
 #include <string>
@@ -32,13 +33,26 @@ class CGameObject
 
         virtual bool acceptSource(CAttack* attack) = 0;
         virtual bool acceptTarget(CAttack* attack) = 0;
-        virtual void getLable(std::string & lable) const = 0;
+        virtual bool updateSource(CAttack* attack) = 0;
+        virtual bool updateTarget(CAttack* attack) = 0;
+
+        virtual bool acceptSource(CPickup* pickup) = 0;
+        virtual bool acceptTarget(CPickup* pickup) = 0;
+        virtual bool updateSource(CPickup* pickup) = 0;
+
+        virtual bool isDead() const
+        {
+            return true;
+        }
+        
+        virtual void getLabel(std::string & label) const = 0;
         std::pair<int, int> & getPos();
-        WINDOW * m_objectSpace;
         virtual void save(std::ofstream & os) = 0;
         virtual string getTypeName() = 0;
     
     protected:
+
+        WINDOW * m_objectSpace;
         int m_posY, m_posX;
         char m_objectForm;
         std::pair<int, int> pair;
