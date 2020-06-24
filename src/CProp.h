@@ -96,10 +96,10 @@ class CProp : public CGameObject
 
         void save(ofstream& os) override
         {
-            os << getTypeName() << endl;
-            os << (int)m_type;
-            os << m_posX;
-            os << m_posY;
+            os << getTypeName() << " ";
+            os << (int)m_type << " ";
+            os << m_posX << " ";
+            os << m_posY << endl;
         }
 
         static std::shared_ptr<CGameObject> loadGameObject(ifstream& is)

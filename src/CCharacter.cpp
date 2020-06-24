@@ -1,5 +1,6 @@
 #include "CCharacter.h"
 #include "CApplication.h"
+#include <iostream>
 
 extern CApplication application;
 
@@ -27,6 +28,7 @@ std::shared_ptr<CCharacter> loadCharacter(ifstream& is)
 {
     string type;
     is >> type;
+    std::cerr << "Loading character " << type << endl;
     if (type == "CPlayerPaladin")
         return loadPlayerPaladin(is);
     if (type == "CPlayerRogue")
@@ -35,6 +37,8 @@ std::shared_ptr<CCharacter> loadCharacter(ifstream& is)
         return loadPlayerMage(is);
     if (type == "CEnemy")
         return loadEnemy(is);
+    if (type == "neukladat")
+        return nullptr;
     std::shared_ptr<CCharacter> result;
     return result;
     // TODO

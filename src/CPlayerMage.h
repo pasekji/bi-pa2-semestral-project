@@ -33,8 +33,8 @@ class CPlayerMage : public CPlayer
 
         void save(ofstream& os) override
         {
-            os << getTypeName();
-            os << m_posX;
+            os << getTypeName() << " ";
+            os << m_posX << " ";
             os << m_posY;
             os << endl;
         }
@@ -62,10 +62,7 @@ class CPlayerMage : public CPlayer
         int m_wisdom;
         float m_chanceOfCriticalAttack;
         attack_type m_primaryAttackType;
-        attack_type m_secondaryAttackType;
-        bool magePrimaryAttack();
-        bool mageSecondaryAttack();
-        bool mageSpecialAbility();
+        bool magePrimaryAttack(std::shared_ptr<CGameObject> target);
 
 };
 

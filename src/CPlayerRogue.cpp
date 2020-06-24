@@ -29,8 +29,6 @@ int CPlayerRogue::getAction()
 
     if(!isDead())
     {
-        if(toupper(m_move) == 'Q')
-            quickJump();
         if(!defaultMove(m_move))
             if(!interactWith())
                 rest();
@@ -38,10 +36,6 @@ int CPlayerRogue::getAction()
     return m_move;
 }
 
-void CPlayerRogue::quickJump()
-{
-    return;
-}
 
 bool CPlayerRogue::interactWith()
 {
@@ -76,12 +70,23 @@ bool CPlayerRogue::interactWith()
 
 bool CPlayerRogue::roguePrimaryAttack(std::shared_ptr<CGameObject> target)
 {
-
-    return false;
+    std::shared_ptr<CAttack> attack;
+    attack = (new CPrimaryAttack(m_sharedDerived, target, m_primaryAttackType))->getPtr();
+    application.getGame()->pushEvent(attack);
+    return true;
 }
 
 void CPlayerRogue::showStats() const
 {
+    int height, width;
+    getmaxyx(application.getGame()->getPlayerWindow(), height, width);
+    mvwprintw(application.getGame()->getPlayerWindow(), (height - 14) / 2, (width - strlen("PLAYER")) / 2, "PLAYER ");
+    mvwprintw(application.getGame()->getPlayerWindow(), (height - 10) / 2, (width - strlen("Class:     ROGUE")) / 2, "Class:     ROGUE ");
+    mvwprintw(application.getGame()->getPlayerWindow(), (height - 6) / 2, (width - strlen("Experience:  %d") - 2) / 2, "Experience:  %d ", m_currentExp);
+    mvwprintw(application.getGame()->getPlayerWindow(), (height - 2) / 2, (width - strlen("Health:    %d/%d") - 2) / 2, "Health:    %d/%d ", m_currentHealth, m_health);
+    mvwprintw(application.getGame()->getPlayerWindow(), (height + 2) / 2, (width - strlen("Energy:    %d/%d") - 2) / 2, "Energy:    %d/%d ", m_currentEnergy, m_energy);
+    mvwprintw(application.getGame()->getPlayerWindow(), (height + 6) / 2, (width - strlen("Agility:     %d") - 1) / 2, "Agility:     %d ", m_agility);
+    wrefresh(application.getGame()->getPlayerWindow());
     return;
 }
 

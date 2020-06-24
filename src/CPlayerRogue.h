@@ -34,8 +34,8 @@ class CPlayerRogue : public CPlayer
 
         void save(ofstream& os) override
         {
-            os << getTypeName();
-            os << m_posX;
+            os << getTypeName() << " ";
+            os << m_posX << " ";
             os << m_posY;
             os << endl;
         }
@@ -57,7 +57,6 @@ class CPlayerRogue : public CPlayer
             m_agility += added;
         }
 
-        void quickJump();
         std::shared_ptr<CPlayerRogue> m_sharedDerived;
         int m_agility;
         float m_chanceOfDoubleHit;

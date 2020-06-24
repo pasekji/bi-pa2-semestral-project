@@ -24,6 +24,9 @@ class CMap
         ~CMap() = default;    
         void loadMap();                                 // load all objects in map and render
         void demo_loadMap();                            // demo loadMap() for testing only
+        void demo_loadMapOriginal();
+        void demo_loadMapLoading();
+        void demo_loadMapSave();
         bool loadMapFromFile(const std::string & pathToFile);
         bool collisionDetect(std::pair<int, int> & pair);
         void staticCamera(direction & dir, int & steps);
@@ -38,8 +41,11 @@ class CMap
         void loadWithPlayer(ifstream& is);
         void loadWOPlayer(ifstream& is);
         std::shared_ptr<CLoot> spawnLoot(int posY, int posX);
+        
+        void saveWithPlayer(ofstream& os);
 
         player_class m_selectedClass;
+        friend class CPlayerPaladin;
 
     private:
         std::shared_ptr<CPlayer> m_player;

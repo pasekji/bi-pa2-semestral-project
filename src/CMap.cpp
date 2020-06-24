@@ -1,13 +1,15 @@
 #include "CMap.h"
 #include "CApplication.h"
 #include <ctype.h>
+#include <iostream>
 
 extern CApplication application;
 
 void CMap::loadMap()            
 {
     // no predef ROOM_HEIGHT othr. will be used 
-    spawnPlayer(((int)(application.getGame()->getYMax() * 0.99) - 2) / 2, ((int)(application.getGame()->getXMax() * 0.633) - 2) / 2, m_selectedClass);
+    //spawnPlayer(((int)(application.getGame()->getYMax() * 0.99) - 2) / 2, ((int)(application.getGame()->getXMax() * 0.633) - 2) / 2, m_selectedClass);
+    demo_loadMapOriginal();
     return;
 }
 
@@ -28,10 +30,10 @@ bool CMap::collisionDetect(std::pair<int, int> & pair)
     return false;
 }
 
-void CMap::demo_loadMap()
+void CMap::demo_loadMapOriginal()
 {
-
-    // no predef ROOM_HEIGHT or othr. will be used 
+// no predef ROOM_HEIGHT or othr. will be used 
+    spawnPlayer(((int)(application.getGame()->getYMax() * 0.99) - 2) / 2, ((int)(application.getGame()->getXMax() * 0.633) - 2) / 2, m_selectedClass);
     spawnEnemy(((ROOM_HEIGHT - (ROOM_HEIGHT/5))/2), (ROOM_WIDTH - 2) / 2, BASILISK);
     spawnProp((ROOM_HEIGHT/2), (ROOM_WIDTH - (ROOM_WIDTH/20)), WALL);
     spawnProp((ROOM_HEIGHT/2), (ROOM_WIDTH - (ROOM_WIDTH/20) - 1), WALL);
@@ -42,7 +44,30 @@ void CMap::demo_loadMap()
     spawnEnemy(((ROOM_HEIGHT - (ROOM_HEIGHT/7))/2), (ROOM_WIDTH - 2) / 2, NOONWRAITH);
     spawnEnemy(((ROOM_HEIGHT - (ROOM_HEIGHT/7))/2), (ROOM_WIDTH - 5) / 2, UNDEAD);
 
+    catchPlayer();
 
+    return;
+}
+
+void CMap::demo_loadMapLoading()
+{
+    ifstream is;
+    is.open("saveGame.txt");
+    std::cerr << "loading file." << std::endl;
+    //loadWOPlayer(is);
+    loadWithPlayer(is);
+}
+
+void CMap::demo_loadMapSave()
+{
+    ofstream os;
+    os.open("saveGame.txt");
+    saveWithPlayer(os);
+}
+
+void CMap::demo_loadMap()
+{   
+    
     return;
 }
 
@@ -95,10 +120,7 @@ void CMap::spawnPlayer(int posY, int posX, player_class playerClass)
         
     m_moveableObjects.push_back(m_player);
     m_targets.push_back(m_player);
-    demo_loadMap();
     wrefresh(application.getGame()->getWindow());
-    catchPlayer();
-
 
     return;
 }
@@ -276,6 +298,11 @@ void CMap::camera_objectsLeft(int & steps)
     return;  
 }
 
+void CMap::saveWithPlayer(ofstream& os)
+{
+    m_player->save(os);
+    save(os);
+}
 
 void CMap::save(ofstream& os)
 {
@@ -306,14 +333,9 @@ void CMap::loadWithPlayer(ifstream& is)
 
 void CMap::loadWOPlayer(ifstream& is)
 {
-    size_t m_moveableObjectsSize;
-    is >> m_moveableObjectsSize;
-    for(size_t i = 0; i < m_moveableObjectsSize; i++)
-    {
-        m_moveableObjects.push_back(nullptr); // zavolat CGameObject::load()
-    }
     size_t moveableObjectsSize;
     is >> moveableObjectsSize;
+    std::cerr << "movable size:" << moveableObjectsSize << std::endl;
     for (unsigned i = 0; i < moveableObjectsSize; i++)
     {
         shared_ptr<CCharacter> obj = loadCharacter(is);
@@ -322,6 +344,7 @@ void CMap::loadWOPlayer(ifstream& is)
     }
     size_t imoveableObjectsSize;
     is >> imoveableObjectsSize;
+    std::cerr << "imovable size:" << imoveableObjectsSize << std::endl;
     for (unsigned i = 0; i < imoveableObjectsSize; i++)
     {
         shared_ptr<CGameObject> obj = loadGameObject(is);
@@ -330,6 +353,7 @@ void CMap::loadWOPlayer(ifstream& is)
     }
     size_t targetsSize;
     is >> targetsSize;
+    std::cerr << "targets size:" << targetsSize << std::endl;
     for (unsigned i = 0; i < targetsSize; i++)
     {
         shared_ptr<CGameObject> obj = loadGameObject(is);

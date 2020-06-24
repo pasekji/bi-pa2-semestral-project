@@ -87,7 +87,6 @@ void CPlayerPaladin::showStats() const
     mvwprintw(application.getGame()->getPlayerWindow(), (height - 2) / 2, (width - strlen("Health:    %d/%d") - 2) / 2, "Health:    %d/%d ", m_currentHealth, m_health);
     mvwprintw(application.getGame()->getPlayerWindow(), (height + 2) / 2, (width - strlen("Energy:    %d/%d") - 2) / 2, "Energy:    %d/%d ", m_currentEnergy, m_energy);
     mvwprintw(application.getGame()->getPlayerWindow(), (height + 6) / 2, (width - strlen("Strength:     %d") - 1) / 2, "Strength:     %d ", m_strength);
-
     wrefresh(application.getGame()->getPlayerWindow());
     return;
 }

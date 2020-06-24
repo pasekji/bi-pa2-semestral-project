@@ -66,12 +66,16 @@ void CApplication::initMainMenu()
             initMainMenu();
             break;
         case 2:
+            if(m_game->is_init)
+                m_game->getMap()->demo_loadMapSave();
             initMainMenu();
             break;
         case 3:
+            if(!m_game->is_init)
+                m_game->getMap()->demo_loadMapLoading();
             initMainMenu();
             break;
-        case 4: 
+        case 4:
             endApplication();
         default:
             break;

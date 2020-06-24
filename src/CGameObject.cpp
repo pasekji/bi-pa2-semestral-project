@@ -2,6 +2,7 @@
 #include "CGame.h"
 #include "CApplication.h"
 #include <string>
+#include <iostream>
 
 extern CApplication application;
 
@@ -50,6 +51,7 @@ std::shared_ptr<CGameObject> loadGameObject(ifstream& is)
 {
     string typeName;
     is >> typeName;
+    std::cerr << "Loading object " << typeName << endl;
     if (typeName == "CProp") {
         return CProp::loadGameObject(is);
     }

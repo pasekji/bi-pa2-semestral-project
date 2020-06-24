@@ -27,8 +27,8 @@ class CPlayerPaladin : public CPlayer
 
         void save(ofstream& os) override
         {
-            os << getTypeName();
-            os << m_posX;
+            os << getTypeName() << " ";
+            os << m_posX << " ";
             os << m_posY;
             os << endl;
         }
@@ -62,7 +62,6 @@ class CPlayerPaladin : public CPlayer
         float m_chanceOfCriticalAttack;
         attack_type m_primaryAttackType;
         bool paladinPrimaryAttack(std::shared_ptr<CGameObject> target);
-        bool paladinSpecialAbility();                       // knockout the enemy for x rounds ?? 
 
 };
 

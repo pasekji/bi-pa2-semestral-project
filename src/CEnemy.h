@@ -91,13 +91,15 @@ class CEnemy : public CCharacter
 
         void save(ofstream& os) override
         {
-            os << getTypeName();
+            if(isDead())
+                 os << "neukladat" << endl;
+            os << getTypeName() << " ";
             //os << m_triggerDistance;
             //os << m_triggerAttack;
-            os << (int)m_type;
+            os << (int)m_type << " ";
             //os << m_force;
             //os << (int)m_primaryAttackType;
-            os << m_posX;
+            os << m_posX << " ";
             os << m_posY;
             os << endl;
         }
