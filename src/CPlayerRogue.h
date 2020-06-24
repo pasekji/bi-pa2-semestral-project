@@ -34,7 +34,10 @@ class CPlayerRogue : public CPlayer
 
         void save(ofstream& os) override
         {
-            os << getTypeName() << endl;
+            os << getTypeName();
+            os << m_posX;
+            os << m_posY;
+            os << endl;
         }
 
         bool updateSource(std::shared_ptr<CPickup> pickup) override;
@@ -61,5 +64,7 @@ class CPlayerRogue : public CPlayer
         attack_type m_primaryAttackType;
         bool roguePrimaryAttack(std::shared_ptr<CGameObject> target);
 };
+
+std::shared_ptr<CCharacter> loadPlayerRogue(ifstream& is);
 
 #endif

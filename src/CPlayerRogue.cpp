@@ -101,3 +101,20 @@ bool CPlayerRogue::acceptTarget(std::shared_ptr<CPickup> pickup)
 {
     return false;
 }
+
+std::shared_ptr<CCharacter> loadPlayerRogue(ifstream& is)
+{
+    int posX;
+    is >> posX;
+    int posY;
+    is >> posY;
+    /*int experience;
+    is >> experience;
+    int strenght;
+    is >> strenght;*/
+
+    std::shared_ptr<CCharacter> result;
+    result.reset(new CPlayerRogue(posY, posX));
+    
+    return result;
+}

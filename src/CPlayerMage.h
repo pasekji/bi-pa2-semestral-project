@@ -69,6 +69,6 @@ class CPlayerMage : public CPlayer
 
 };
 
-std::shared_ptr<CGameObject> loadPlayerMage(ifstream& is);
+std::shared_ptr<CCharacter> loadPlayerMage(ifstream& is);
 
 #endif

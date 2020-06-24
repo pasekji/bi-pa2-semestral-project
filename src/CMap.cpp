@@ -296,7 +296,15 @@ void CMap::save(ofstream& os)
     }
 }
 
-void CMap::load(ifstream& is)
+void CMap::loadWithPlayer(ifstream& is)
+{
+    m_player = std::dynamic_pointer_cast<CPlayer>(loadCharacter(is));
+    m_moveableObjects.push_back(m_player);
+    m_targets.push_back(m_player);
+    loadWOPlayer(is);
+}
+
+void CMap::loadWOPlayer(ifstream& is)
 {
     size_t m_moveableObjectsSize;
     is >> m_moveableObjectsSize;

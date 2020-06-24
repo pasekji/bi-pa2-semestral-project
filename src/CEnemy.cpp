@@ -494,24 +494,24 @@ void CEnemy::showStats() const
     return;
 }
 
-std::shared_ptr<CGameObject> loadEnemy(ifstream& is)
+std::shared_ptr<CCharacter> loadEnemy(ifstream& is)
 {
-    int triggerDistance;
-    is >> triggerDistance;
-    bool triggerAttack;
-    is >> triggerAttack;
+    // int triggerDistance;
+    // is >> triggerDistance;
+    // bool triggerAttack;
+    // is >> triggerAttack;
     int type;
     is >> type;
-    int force;
-    is >> force;
-    int primaryAttackType;
-    is >> primaryAttackType;
+    // int force;
+    // is >> force;
+    // int primaryAttackType;
+    // is >> primaryAttackType;
     int posX;
     is >> posX;
     int posY;
     is >> posY;
-    std::shared_ptr<CGameObject> result;
-    // TODO doplnit do Cenemy zbyle udaje
-    result.reset(new CEnemy(posY, posX));
+    std::shared_ptr<CCharacter> result;
+    // TODO doplnit do CEnemy zbyle udaje
+    result.reset(new CEnemy(posY, posX, (enemy_type) type));
     return result;
 }

@@ -115,3 +115,20 @@ bool CPlayerPaladin::acceptTarget(std::shared_ptr<CPickup> pickup)
 {
     return false;
 }
+
+std::shared_ptr<CCharacter> loadPlayerPaladin(ifstream& is)
+{
+    int posX;
+    is >> posX;
+    int posY;
+    is >> posY;
+    /*int experience;
+    is >> experience;
+    int strenght;
+    is >> strenght;*/
+
+    std::shared_ptr<CCharacter> result;
+    result.reset(new CPlayerPaladin(posY, posX));
+    
+    return result;
+}

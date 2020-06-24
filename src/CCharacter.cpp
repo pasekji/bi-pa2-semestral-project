@@ -25,6 +25,16 @@ std::shared_ptr<CGameObject> CCharacter::defaultGetTarget()
 
 std::shared_ptr<CCharacter> loadCharacter(ifstream& is)
 {
+    string type;
+    is >> type;
+    if (type == "CPlayerPaladin")
+        return loadPlayerPaladin(is);
+    if (type == "CPlayerRogue")
+        return loadPlayerRogue(is);
+    if (type == "CPlayerMage")
+        return loadPlayerMage(is);
+    if (type == "CEnemy")
+        return loadEnemy(is);
     std::shared_ptr<CCharacter> result;
     return result;
     // TODO

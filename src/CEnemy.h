@@ -92,11 +92,11 @@ class CEnemy : public CCharacter
         void save(ofstream& os) override
         {
             os << getTypeName();
-            os << m_triggerDistance;
-            os << m_triggerAttack;
+            //os << m_triggerDistance;
+            //os << m_triggerAttack;
             os << (int)m_type;
-            os << m_force;
-            os << (int)m_primaryAttackType;
+            //os << m_force;
+            //os << (int)m_primaryAttackType;
             os << m_posX;
             os << m_posY;
             os << endl;
@@ -130,6 +130,6 @@ class CEnemy : public CCharacter
 
 };
 
-std::shared_ptr<CGameObject> loadEnemy(ifstream& is);
+std::shared_ptr<CCharacter> loadEnemy(ifstream& is);
 
 #endif

@@ -35,7 +35,8 @@ class CMap
 
         void catchPlayer();
         void save(ofstream& os);
-        void load(ifstream& is);
+        void loadWithPlayer(ifstream& is);
+        void loadWOPlayer(ifstream& is);
         std::shared_ptr<CLoot> spawnLoot(int posY, int posX);
 
         player_class m_selectedClass;

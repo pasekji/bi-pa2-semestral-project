@@ -48,14 +48,14 @@ bool CPlayerMage::acceptTarget(std::shared_ptr<CPickup> pickup)
     return false;
 }
 
-std::shared_ptr<CGameObject> loadPlayerMage(ifstream& is)
+std::shared_ptr<CCharacter> loadPlayerMage(ifstream& is)
 {
     int posX;
     is >> posX;
     int posY;
     is >> posY;
 
-    std::shared_ptr<CGameObject> result;
+    std::shared_ptr<CCharacter> result;
     result.reset(new CPlayerMage(posY, posX));
     return result;
 }

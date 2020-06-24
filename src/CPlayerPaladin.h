@@ -27,7 +27,10 @@ class CPlayerPaladin : public CPlayer
 
         void save(ofstream& os) override
         {
-            os << getTypeName() << endl;
+            os << getTypeName();
+            os << m_posX;
+            os << m_posY;
+            os << endl;
         }
 
         virtual string getTypeName()
@@ -62,5 +65,7 @@ class CPlayerPaladin : public CPlayer
         bool paladinSpecialAbility();                       // knockout the enemy for x rounds ?? 
 
 };
+
+std::shared_ptr<CCharacter> loadPlayerPaladin(ifstream& is);
 
 #endif
