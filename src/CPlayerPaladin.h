@@ -12,9 +12,8 @@ class CPlayerPaladin : public CPlayer
     public:
         int getAction() override;
         void showStats() const override;
-        CPlayerPaladin(WINDOW* objectSpace, int posY, int posX);
-        ~CPlayerPaladin()
-        {}
+        CPlayerPaladin(int posY, int posX);
+        virtual ~CPlayerPaladin() = default;
 
         const int getForce() const override
         {
@@ -36,19 +35,30 @@ class CPlayerPaladin : public CPlayer
             return "CPlayerPaladin";
         }
 
-        bool updateSource(CPickup* pickup) override;
-        bool acceptSource(CPickup* pickup) override;
-        bool acceptTarget(CPickup* pickup) override;
+        bool updateSource(std::shared_ptr<CPickup> pickup) override;
+        bool acceptSource(std::shared_ptr<CPickup> pickup) override;
+        bool acceptTarget(std::shared_ptr<CPickup> pickup) override;
 
         friend class CAttack;
         friend class CPickup;
+        friend class CCoffee;
+        friend class CApple;
+        friend class CBeer;
+        friend class CSword;
 
     private:
+        void addForce(int added) override
+        {
+            m_strength += added;
+        }
+
+        void slowTime(int& move);
+        std::shared_ptr<CPlayerPaladin> m_sharedDerived;
         bool interactWith() override;
         int m_strength;
         float m_chanceOfCriticalAttack;
         attack_type m_primaryAttackType;
-        bool paladinPrimaryAttack(CGameObject* target);
+        bool paladinPrimaryAttack(std::shared_ptr<CGameObject> target);
         bool paladinSpecialAbility();                       // knockout the enemy for x rounds ?? 
 
 };

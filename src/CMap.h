@@ -28,26 +28,23 @@ class CMap
         bool collisionDetect(std::pair<int, int> & pair);
         void staticCamera(direction & dir, int & steps);
         int m_width, m_height;
-        WINDOW* m_mapWindow;
 
-        CPlayer* getPlayer() const;
+        std::shared_ptr<CPlayer> getPlayer() const;
 
-        CGameObject* getTargetObject(std::pair<int, int> & pair) const;
+        std::shared_ptr<CGameObject> getTargetObject(std::pair<int, int> & pair) const;
 
         void catchPlayer();
         void save(ofstream& os);
         void load(ifstream& is);
-        CLoot* spawnLoot(int posY, int posX);
+        std::shared_ptr<CLoot> spawnLoot(int posY, int posX);
 
         player_class m_selectedClass;
 
     private:
-        std::string m_pathToFile;
-        std::string m_locationName;     
-        CPlayer* m_player;
-        std::vector<CCharacter*> m_moveableObjects;
-        std::vector<CGameObject*> m_imoveableObjects;
-        std::vector<CGameObject*> m_targets;
+        std::shared_ptr<CPlayer> m_player;
+        std::vector<std::shared_ptr<CCharacter>> m_moveableObjects;
+        std::vector<std::shared_ptr<CGameObject>> m_imoveableObjects;
+        std::vector<std::shared_ptr<CGameObject>> m_targets;
         void spawnPlayer(int posY, int posX, player_class playerClass);           // (int posY, int posX)
         void spawnEnemy(int posY, int posX, enemy_type type);
         void spawnProp(int posY, int posX, prop_type type);

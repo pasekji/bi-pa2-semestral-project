@@ -4,32 +4,22 @@
 #include <string>
 #include <cstdlib>
 #include "CItem.fwd.h"
-#include "CPlayerPaladin.h"
-#include "CPlayerRogue.h"
-#include "CPlayerMage.h"
+#include "CPlayer.fwd.h"
 #include "enums.h"
+#include <memory>
 
 
 class CItem
 {
     public:
-        virtual bool accept(CPlayerPaladin* paladin) = 0;
-        virtual bool accept(CPlayerMage* mage) = 0;
-        virtual bool accept(CPlayerRogue* rogue) = 0;
         virtual std::string getLabel() const = 0;
 
         CItem() = default;
-        virtual ~CItem()
-        {}
+        virtual ~CItem() = default;
 
-    protected:
-        std::string m_name;
-        std::string m_label;
-        std::size_t m_price;
-        std::size_t m_useability;            // count of possible uses
+        virtual bool itemApply(std::shared_ptr<CPlayer> player) = 0;
 
-        virtual bool itemApply() = 0;
-
+        bool m_used = false;    
 };
 
 #endif

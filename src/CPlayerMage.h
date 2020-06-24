@@ -12,10 +12,9 @@ class CPlayerMage : public CPlayer
         int getAction() override;
         bool interactWith() override;
         void showStats() const override;
-        CPlayerMage(WINDOW* objectSpace, int posY, int posX);
+        CPlayerMage(int posY, int posX);
 
-        ~CPlayerMage()
-        {}
+        virtual ~CPlayerMage() = default;
 
         const int getForce() const override
         {
@@ -40,14 +39,26 @@ class CPlayerMage : public CPlayer
             os << endl;
         }
 
-        bool updateSource(CPickup* pickup) override;
-        bool acceptSource(CPickup* pickup) override;
-        bool acceptTarget(CPickup* pickup) override;
+        bool updateSource(std::shared_ptr<CPickup> pickup) override;
+        bool acceptSource(std::shared_ptr<CPickup> pickup) override;
+        bool acceptTarget(std::shared_ptr<CPickup> pickup) override;
         
         friend class CAttack;
         friend class CPickup;
+        friend class CCoffee;
+        friend class CApple;
+        friend class CBeer;
+        friend class CWand;
+
 
     private:
+
+        void addForce(int added) override
+        {
+            m_wisdom += added;
+        }
+
+        std::shared_ptr<CPlayerMage> m_sharedDerived;
         int m_wisdom;
         float m_chanceOfCriticalAttack;
         attack_type m_primaryAttackType;
@@ -55,8 +66,9 @@ class CPlayerMage : public CPlayer
         bool magePrimaryAttack();
         bool mageSecondaryAttack();
         bool mageSpecialAbility();
+
 };
 
-CGameObject* loadPlayerMage(ifstream& is, WINDOW* objectSpace);
+std::shared_ptr<CGameObject> loadPlayerMage(ifstream& is);
 
 #endif

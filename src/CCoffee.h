@@ -6,19 +6,15 @@
 class CCoffee : public CConsumable
 {
     public:
-        CCoffee() = default;
-        ~CCoffee()
-        {}
+        CCoffee();
+        virtual ~CCoffee() = default;
 
-        std::string getLabel() const override
-        {
-            return "COFFEE";
-        }
+        std::string getLabel() const override;
 
-        bool itemApply() override
-        {
-            return false;
-        }
+        bool itemApply(std::shared_ptr<CPlayer> player) override;
+    
+    private:
+        int m_energyRegainAdd = 3;
 
 };
 

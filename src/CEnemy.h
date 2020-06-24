@@ -9,29 +9,35 @@
 #include <math.h>
 #include <random>
 #include <ctime>
+#include <memory>
 
 class CEnemy : public CCharacter
 {
     public:
-        CEnemy(WINDOW* objectSpace, int posY, int posX, enemy_type type);
-        ~CEnemy()
-        {}
+        CEnemy(int posY, int posX, enemy_type type);
+        virtual ~CEnemy() = default;
 
-        CEnemy(WINDOW* objectSpace, int posY, int posX);
+        CEnemy(int posY, int posX);
         int getAction() override;
-        bool acceptSource(CAttack* attack) override;
-        bool acceptTarget(CAttack* attack) override;
-        bool updateSource(CAttack* attack) override;
-        bool updateTarget(CAttack* attack) override;
-        bool acceptSource(CPickup* pickup) override
+        bool acceptSource(std::shared_ptr<CAttack> attack) override;
+        bool acceptTarget(std::shared_ptr<CAttack> attack) override;
+        bool updateSource(std::shared_ptr<CAttack> attack) override;
+        bool updateTarget(std::shared_ptr<CAttack> attack) override;
+        bool acceptSource(std::shared_ptr<CPickup> pickup) override
         {
             return false;
         }
-        bool acceptTarget(CPickup* pickup) override
+
+        bool acceptSource(std::shared_ptr<CEquip> equip) override
         {
             return false;
         }
-        bool updateSource(CPickup* pickup) override
+
+        bool acceptTarget(std::shared_ptr<CPickup> pickup) override
+        {
+            return false;
+        }
+        bool updateSource(std::shared_ptr<CPickup> pickup) override
         {
             return false;
         }
@@ -96,6 +102,11 @@ class CEnemy : public CCharacter
             os << endl;
         }
 
+        std::shared_ptr<CEnemy> getPtr()
+        {
+            return m_sharedThis;
+        }
+
         friend class CAttack;
 
     private:
@@ -104,16 +115,12 @@ class CEnemy : public CCharacter
         enemy_type m_type;
         int m_force;
         attack_type m_primaryAttackType;
-        CLoot* m_loot = nullptr;                            // will generate loot chest after death
+        std::shared_ptr<CLoot> m_loot = nullptr;                            // will generate loot chest after death
         float m_chanceOfAttack;
         bool interactWith() override;
-        bool primaryAttack(CGameObject* target);
+        bool primaryAttack(std::shared_ptr<CGameObject> target);
         bool defaultMove(int move) override;
-
-        CGameObject* fetchTarget() const override
-        {
-            return nullptr;
-        }
+        std::shared_ptr<CEnemy> m_sharedThis;
 
         void playerNearby(direction & move);
         void die();
@@ -123,6 +130,6 @@ class CEnemy : public CCharacter
 
 };
 
-CGameObject* loadEnemy(ifstream& is, WINDOW* objectSpace);
+std::shared_ptr<CGameObject> loadEnemy(ifstream& is);
 
 #endif

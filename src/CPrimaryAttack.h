@@ -7,10 +7,16 @@
 class CPrimaryAttack : public CAttack
 {
     public:
-        CPrimaryAttack(CGameObject* source, CGameObject* target, attack_type attackType);
-        ~CPrimaryAttack();
+        CPrimaryAttack(std::shared_ptr<CGameObject> source, std::shared_ptr<CGameObject> target, attack_type attackType);
+        virtual ~CPrimaryAttack() = default;
 
+        std::shared_ptr<CPrimaryAttack> getPtr()
+        {
+            return m_sharedThis;        
+        }
+        
     protected:
+        std::shared_ptr<CPrimaryAttack> m_sharedThis;
         void updateObjects() override;
         void evaluateAttack() override;
         void print() override;

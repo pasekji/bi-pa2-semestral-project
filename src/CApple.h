@@ -6,20 +6,14 @@
 class CApple : public CConsumable
 {
     public:
-        CApple() = default;
-        ~CApple()
-        {}
+        CApple();
+        
+        virtual ~CApple() = default;
 
-        std::string getLabel() const override
-        {
-            return "APPLE";
-        }
+        std::string getLabel() const override;
 
-        bool itemApply() override
-        {
-            return false;
-        }
-
+        bool itemApply(std::shared_ptr<CPlayer> player) override;
+        
 };
 
 #endif

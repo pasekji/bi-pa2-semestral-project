@@ -1,8 +1,8 @@
 #include "CLoot.h"
 #include "CPickup.h"
 
-bool CLoot::acceptTarget(CPickup* pickup)
+bool CLoot::acceptTarget(std::shared_ptr<CPickup> pickup)
 {
-    pickup->visitTarget(this);
+    pickup->visitTarget(m_sharedThis);
     return true;
 }

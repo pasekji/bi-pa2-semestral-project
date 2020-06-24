@@ -9,21 +9,14 @@ class CWeapon : public CItem
     public:
     
         CWeapon() = default;
-        ~CWeapon()
-        {}
-
-        bool itemApply() override
-        {
-            return false;
-        }
+        virtual ~CWeapon() = default;
         
-        bool is_equiped;
-
+        bool is_equiped = false;
 
     protected:
         player_class m_compatible;
-        int m_damage;
-        float m_chance_of_hit;
+        int m_damage = 0;
+        float m_chance_of_block = 0;
 };
 
 #endif

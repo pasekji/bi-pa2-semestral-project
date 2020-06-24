@@ -18,14 +18,14 @@ CInventory::CInventory(unsigned size) : m_size(size)
 
 void CInventory::constructFill()
 {
-    CItem* item = nullptr;
+    std::shared_ptr<CItem> item = nullptr;
     for(unsigned i = 0; i < m_size; i++)
         m_contents.push_back(item);
 
     return;
 }
 
-bool CInventory::getItem(CPlayerPaladin* paladin, CPickup* pickup) 
+bool CInventory::getItem(std::shared_ptr<CPlayerPaladin> paladin, std::shared_ptr<CPickup> pickup) 
 {
     if(!(m_itemCount < m_size))
         return false;
@@ -35,24 +35,24 @@ bool CInventory::getItem(CPlayerPaladin* paladin, CPickup* pickup)
 
     int roll = itemRoll(randomGenerator);
 
-    CItem* item = nullptr;
+    std::shared_ptr<CItem> item = nullptr;
 
     switch(roll)
     {
         case 0:
-            item = new CSword();
+            item = std::make_shared<CSword>();
             break;
         case 1:
-            item = new CCoffee();
+            item = std::make_shared<CCoffee>();
             break;
         case 2:
-            item = new CApple();
+            item = std::make_shared<CApple>();
             break;
         case 3:
-            item = new CBeer();
+            item = std::make_shared<CBeer>();
             break;
         case 4:
-            item = new CTooth();
+            item = std::make_shared<CTooth>();
             break;
         default:
             break;
@@ -68,7 +68,7 @@ bool CInventory::getItem(CPlayerPaladin* paladin, CPickup* pickup)
     return true;
 }
 
-bool CInventory::getItem(CPlayerMage* mage, CPickup* pickup) 
+bool CInventory::getItem(std::shared_ptr<CPlayerMage> mage, std::shared_ptr<CPickup> pickup) 
 {
     if(!(m_itemCount < m_size))
         return false;
@@ -78,24 +78,24 @@ bool CInventory::getItem(CPlayerMage* mage, CPickup* pickup)
 
     int roll = itemRoll(randomGenerator);
 
-    CItem* item = nullptr;
+    std::shared_ptr<CItem> item = nullptr;
 
     switch(roll)
     {
         case 0:
-            item = new CWand();
+            item = std::make_shared<CWand>();
             break;
         case 1:
-            item = new CCoffee();
+            item = std::make_shared<CCoffee>();
             break;
         case 2:
-            item = new CApple();
+            item = std::make_shared<CApple>();
             break;
         case 3:
-            item = new CBeer();
+            item = std::make_shared<CBeer>();
             break;
         case 4:
-            item = new CTooth();
+            item = std::make_shared<CTooth>();
             break;
         default:
             break;
@@ -111,7 +111,7 @@ bool CInventory::getItem(CPlayerMage* mage, CPickup* pickup)
     return true;
 }
 
-bool CInventory::getItem(CPlayerRogue* rogue, CPickup* pickup) 
+bool CInventory::getItem(std::shared_ptr<CPlayerRogue> rogue, std::shared_ptr<CPickup> pickup) 
 {
     if(!(m_itemCount < m_size))
         return false;
@@ -121,24 +121,24 @@ bool CInventory::getItem(CPlayerRogue* rogue, CPickup* pickup)
 
     int roll = itemRoll(randomGenerator);
 
-    CItem* item = nullptr;
+    std::shared_ptr<CItem> item = nullptr;
 
     switch(roll)
     {
         case 0:
-            item = new CDagger();
+            item = std::make_shared<CDagger>();
             break;
         case 1:
-            item = new CCoffee();
+            item = std::make_shared<CCoffee>();
             break;
         case 2:
-            item = new CApple();
+            item = std::make_shared<CApple>();
             break;
         case 3:
-            item = new CBeer();
+            item = std::make_shared<CBeer>();
             break;
         case 4:
-            item = new CTooth();
+            item = std::make_shared<CTooth>();
             break;
         default:
             break;

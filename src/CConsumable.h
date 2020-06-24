@@ -2,31 +2,17 @@
 #define CONSUMABLE_H
 
 #include "CItem.h"
+#include <memory>
 
 class CConsumable : public CItem        // could be stackable
 {
     public:
         CConsumable() = default;
-        ~CConsumable()
-        {}
+        virtual ~CConsumable() = default;
 
-        bool accept(CPlayerPaladin* paladin) override
-        {
-            return true;
-        }
-        bool accept(CPlayerMage* mage) override
-        {
-            return true;
-        }
-        bool accept(CPlayerRogue* rogue) override
-        {
-            return true;    
-        }
-
-    private:
-        int m_healthSource;
-        int m_energySource;
-        int m_sideEffect;           // item could be toxic -> negative values
+    protected:
+        int m_healthSource = 0;
+        int m_energySource = 0;
 
 };
 

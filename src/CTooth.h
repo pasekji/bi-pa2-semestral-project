@@ -7,13 +7,9 @@ class CTooth : public CMisc
 {
     public:
         CTooth() = default;
-        ~CTooth()
-        {}
+        virtual ~CTooth() = default;
 
-        std::string getLabel() const override
-        {
-            return "TOOTH";
-        }
+        std::string getLabel() const override;
 };
 
 #endif

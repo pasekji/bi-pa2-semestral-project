@@ -6,8 +6,9 @@
 
 extern CApplication application;
 
-CPlayerPaladin::CPlayerPaladin(WINDOW* objectSpace, int posY, int posX) : CPlayer(objectSpace, posY, posX)
+CPlayerPaladin::CPlayerPaladin(int posY, int posX) : CPlayer(posY, posX)
 {
+    m_sharedDerived = std::dynamic_pointer_cast<CPlayerPaladin> (m_sharedThis);
     halfdelay(1);
     m_inventorySize = 20;
     m_speed = 1;
@@ -19,7 +20,7 @@ CPlayerPaladin::CPlayerPaladin(WINDOW* objectSpace, int posY, int posX) : CPlaye
     m_energyForStep = 2;
     m_energyRegain = 3;
     m_primaryAttackType = SLASH;
-    m_inventory = new CInventory(m_inventorySize);
+    m_inventory.reset(new CInventory(m_inventorySize));
 }
 
 int CPlayerPaladin::getAction()
@@ -27,10 +28,13 @@ int CPlayerPaladin::getAction()
     defaultStep(m_move);                  // sprint is not availiable with paladin
 
     if(!isDead())
+    {
+        if(toupper(m_move) == 'C')
+            slowTime(m_move);
         if(!defaultMove(m_move))
             if(!interactWith())
                 rest();
-  
+    }
     return m_move;
 }
 
@@ -38,7 +42,7 @@ bool CPlayerPaladin::interactWith()
 {
     bool used = false;
 
-    CGameObject* target = directionGetTarget();
+    std::shared_ptr<CGameObject> target = directionGetTarget();
 
     if(target == nullptr)
         return used;
@@ -49,11 +53,6 @@ bool CPlayerPaladin::interactWith()
         case 'e':
             if(m_currentEnergy >= m_strength)
                 paladinPrimaryAttack(target);
-            used = true;
-            break;
-
-        case 'G':
-        case 'g':
             used = true;
             break;
 
@@ -70,11 +69,12 @@ bool CPlayerPaladin::interactWith()
     return used;
 }
 
-bool CPlayerPaladin::paladinPrimaryAttack(CGameObject* target)
+bool CPlayerPaladin::paladinPrimaryAttack(std::shared_ptr<CGameObject> target)
 {
-    CAttack* attack = new CPrimaryAttack(this, target, m_primaryAttackType);
-    if(attack != nullptr) return true;
-    return false;
+    std::shared_ptr<CAttack> attack;
+    attack = (new CPrimaryAttack(m_sharedDerived, target, m_primaryAttackType))->getPtr();
+    application.getGame()->pushEvent(attack);
+    return true;
 }
 
 void CPlayerPaladin::showStats() const
@@ -92,19 +92,26 @@ void CPlayerPaladin::showStats() const
     return;
 }
 
-bool CPlayerPaladin::updateSource(CPickup* pickup)
+void CPlayerPaladin::slowTime(int& move)
+{    
+    while(toupper(move) == 'C')
+        defaultStep(move);
+    changeForm('^');
+}
+
+bool CPlayerPaladin::updateSource(std::shared_ptr<CPickup> pickup)
 {
-    pickup->updateSource(this);
+    pickup->updateSource(m_sharedDerived);
     return true;
 }
 
-bool CPlayerPaladin::acceptSource(CPickup* pickup)
+bool CPlayerPaladin::acceptSource(std::shared_ptr<CPickup> pickup)
 {
-    pickup->visitSource(this);
+    pickup->visitSource(m_sharedDerived);
     return true;
 }
 
-bool CPlayerPaladin::acceptTarget(CPickup* pickup)
+bool CPlayerPaladin::acceptTarget(std::shared_ptr<CPickup> pickup)
 {
     return false;
 }

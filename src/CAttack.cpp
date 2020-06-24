@@ -4,7 +4,7 @@
 
 extern CApplication application;
 
-void CAttack::visitSource(CPlayer* player)
+void CAttack::visitSource(std::shared_ptr<CPlayer> player)
 {  
     player->getLabel(m_sourceLabel);
     m_chanceOfCritical = player->getChanceOfCriticalAttack();
@@ -14,7 +14,7 @@ void CAttack::visitSource(CPlayer* player)
     return;
 }
 
-void CAttack::visitSource(CEnemy* enemy)
+void CAttack::visitSource(std::shared_ptr<CEnemy> enemy)
 {
     enemy->getLabel(m_sourceLabel);
     m_chanceOfCritical = enemy->getChanceOfCriticalAttack() / 3;
@@ -24,8 +24,8 @@ void CAttack::visitSource(CEnemy* enemy)
     return;
 }
 
-void CAttack::visitTarget(CPlayer* player)
-{  
+void CAttack::visitTarget(std::shared_ptr<CPlayer> player)
+{
     player->getLabel(m_targetLabel);
     m_chanceOfBlockTarget = player->getChanceOfBlock();
     m_healthTarget = player->getHealth();
@@ -34,7 +34,7 @@ void CAttack::visitTarget(CPlayer* player)
     return;
 }
 
-void CAttack::visitTarget(CEnemy* enemy)
+void CAttack::visitTarget(std::shared_ptr<CEnemy> enemy)
 {
     enemy->getLabel(m_targetLabel);
     m_chanceOfBlockTarget = enemy->getChanceOfBlock();
@@ -44,7 +44,7 @@ void CAttack::visitTarget(CEnemy* enemy)
     return;
 }
 
-void CAttack::updateSource(CPlayer* player)
+void CAttack::updateSource(std::shared_ptr<CPlayer> player)
 {
     player->m_currentEnergy -= m_energyLostSource;
     player->m_currentExp += m_expGain;
@@ -52,7 +52,7 @@ void CAttack::updateSource(CPlayer* player)
     return;
 }
 
-void CAttack::updateSource(CEnemy* enemy)
+void CAttack::updateSource(std::shared_ptr<CEnemy> enemy)
 {
     enemy->m_currentEnergy -= m_energyLostSource;
     enemy->m_triggerAttack = false;
@@ -60,7 +60,7 @@ void CAttack::updateSource(CEnemy* enemy)
     return;
 }
 
-void CAttack::updateTarget(CPlayer* player)
+void CAttack::updateTarget(std::shared_ptr<CPlayer> player)
 {
     player->m_currentHealth -= m_healthLostTarget;
     player->m_currentEnergy -= m_energyLostTarget;
@@ -68,7 +68,7 @@ void CAttack::updateTarget(CPlayer* player)
     return;
 }
 
-void CAttack::updateTarget(CEnemy* enemy)
+void CAttack::updateTarget(std::shared_ptr<CEnemy> enemy)
 {
     enemy->m_currentHealth -= m_healthLostTarget;
     enemy->m_currentEnergy -= m_energyLostTarget;

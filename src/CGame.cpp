@@ -23,7 +23,6 @@ void CGame::run()
 void CGame::initMap()
 {
     // load paramets Y,X if box or not and pass to renderSpace for new WINDOW
-    m_currentMap->m_mapWindow = m_Window;
     m_currentMap->loadMap();
 
     return;
@@ -161,7 +160,7 @@ void CGame::loadGame()
 
 }
 
-void CGame::pushEvent(CEvent* event)
+void CGame::pushEvent(std::shared_ptr<CEvent> event)
 {
     m_eventQueue.push_back(event);
     printEvents();
@@ -192,7 +191,7 @@ void CGame::printEvents()
     return;
 }
 
-CMap* CGame::getMap() const
+std::shared_ptr<CMap> CGame::getMap() const
 {
     return m_currentMap;
 }

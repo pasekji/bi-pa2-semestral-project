@@ -6,20 +6,15 @@
 class CBeer : public CConsumable
 {
     public:
-        CBeer() = default;
-        ~CBeer()
-        {}
+        CBeer();
+        virtual ~CBeer() = default;
 
-        std::string getLabel() const override
-        {
-            return "BEER";
-        }
+        std::string getLabel() const override;
 
-        bool itemApply() override
-        {
-            return false;
-        }
+        bool itemApply(std::shared_ptr<CPlayer> player) override;
 
+    private:
+        int m_energyForStepAdd = 3;
 };
 
 #endif

@@ -3,6 +3,7 @@
 
 #include "CMenu.h"
 #include "CGame.h"
+#include <memory>
 
 class CApplication
 {
@@ -22,8 +23,8 @@ class CApplication
         void endApplication();
         void run();
 
-        const CGame* getGame() const;
-        CGame* getGame();
+        const std::shared_ptr<CGame> getGame() const;
+        std::shared_ptr<CGame> getGame();
 
         bool is_new;
         bool is_loaded;
@@ -32,11 +33,11 @@ class CApplication
 
     private:
         int m_yMax, m_xMax;
-        CMenu* m_mainMenu = new CMenu();
-        CMenu* m_playerSelect = new CMenu();
-        CMenu* m_mapSelect = new CMenu();
-        CMenu* m_loadGames = new CMenu();
-        CGame* m_game = new CGame();
+        std::shared_ptr<CMenu> m_mainMenu = std::make_shared<CMenu>();
+        std::shared_ptr<CMenu> m_playerSelect = std::make_shared<CMenu>();
+        std::shared_ptr<CMenu> m_mapSelect = std::make_shared<CMenu>();
+        std::shared_ptr<CMenu> m_loadGames = std::make_shared<CMenu>();
+        std::shared_ptr<CGame> m_game = std::make_shared<CGame>();
         void initMainMenu();
         void initPlayerSelect();
         void initMapSelect();

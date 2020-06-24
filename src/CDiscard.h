@@ -7,22 +7,20 @@
 class CDiscard : public CEvent
 {
     public:
-        CDiscard(CPlayer* source, CGameObject* target, CItem* item) : CEvent(source, target)
-        {
-            m_item = item;
-        }
-        CDiscard(CPlayer* source, CItem* item) : CEvent(source, nullptr)
-        {
-            m_item = item;
-        }
-        ~CDiscard()
-        {}
-        void print() const override;
+        CDiscard(std::shared_ptr<CGameObject> source, std::shared_ptr<CItem> item);
+        virtual ~CDiscard() = default;
+        void print() override;
         void updateObjects() override;
+
+        std::shared_ptr<CDiscard> getPtr()
+        {
+            return m_sharedThis;
+        }
         
     private:
-        CItem* m_item;
-        bool m_success;
+        std::shared_ptr<CItem> m_item;
+        std::shared_ptr<CDiscard> m_sharedThis;
+        bool m_success = false;
 
 };
 

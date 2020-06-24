@@ -4,6 +4,7 @@
 #include <deque>
 #include <ncurses.h>
 #include <unistd.h>
+#include <memory>
 #include "CEvent.h"
 #include "CMap.h"
 
@@ -11,14 +12,22 @@ class CGame
 {
     public:
         CGame() = default;
-        ~CGame() = default;
+        ~CGame()
+        {
+            delwin(m_Window);
+            delwin(m_eventWindow);
+            delwin(m_effectWindow);
+            delwin(m_objectWindow);
+            delwin(m_playerWindow);
+            delwin(m_inventoryWindow);
+        }
 
         void run();
-        void pushEvent(CEvent* event);
+        void pushEvent(std::shared_ptr<CEvent> event);
         bool isRunning();
         void backToGame();
 
-        CMap* getMap() const;
+        std::shared_ptr<CMap> getMap() const;
         WINDOW* getWindow() const;
         WINDOW* getPlayerWindow() const;
         WINDOW* getEventWindow() const;
@@ -55,8 +64,8 @@ class CGame
         void correctEffectWindow() const;
         void refreshBars() const;
         void printEvents();
-        std::deque<CEvent*> m_eventQueue;
-        CMap* m_currentMap = new CMap;
+        std::deque<std::shared_ptr<CEvent>> m_eventQueue;
+        std::shared_ptr<CMap> m_currentMap = std::make_shared<CMap>();
 
 };
 

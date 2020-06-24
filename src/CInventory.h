@@ -9,12 +9,14 @@
 #include <vector>
 #include <map>
 #include <random>
+#include <memory>
+#include <algorithm>
 
 class CInventory
 {
     public:
         CInventory(unsigned size);
-
+        ~CInventory() = default;
         void incrementSelected();
         void decrementSelected();
         void useItem();
@@ -27,19 +29,28 @@ class CInventory
             return m_size;
         }
 
-        CItem* getItemAt(unsigned i) const
+        std::shared_ptr<CItem> emptyItem = nullptr;
+        std::shared_ptr<CItem> getItemAt(unsigned i) const
         {
             return m_contents[i]; 
         }
 
-        bool getItem(CPlayerRogue* rogue, CPickup* pickup);
-        bool getItem(CPlayerPaladin* paladin, CPickup* pickup);
-        bool getItem(CPlayerMage* mage, CPickup* pickup);
+        void eraseItemAt(unsigned i)
+        {
+            m_contents[i] = emptyItem;
+            std::sort(m_contents.begin(), m_contents.end(), std::greater<std::shared_ptr<CItem>>());
+            if(m_itemCount != 0)
+                m_itemCount--;
+        }
+
+        bool getItem(std::shared_ptr<CPlayerRogue> rogue, std::shared_ptr<CPickup> pickup);
+        bool getItem(std::shared_ptr<CPlayerPaladin> paladin, std::shared_ptr<CPickup> pickup);
+        bool getItem(std::shared_ptr<CPlayerMage> mage, std::shared_ptr<CPickup> pickup);
 
     private:
         unsigned m_size;
         unsigned m_itemCount;
-        std::vector<CItem*> m_contents;
+        std::vector<std::shared_ptr<CItem>> m_contents;
 
 };
 

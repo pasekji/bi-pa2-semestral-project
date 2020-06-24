@@ -13,10 +13,9 @@ class CPlayerRogue : public CPlayer
         int getAction() override;
         bool interactWith() override;
         void showStats() const override;
-        CPlayerRogue(WINDOW* objectSpace, int posY, int posX);
+        CPlayerRogue(int posY, int posX);
 
-        ~CPlayerRogue()
-        {}
+        virtual ~CPlayerRogue() = default;
 
         const int getForce() const override
         {
@@ -38,19 +37,29 @@ class CPlayerRogue : public CPlayer
             os << getTypeName() << endl;
         }
 
-        bool updateSource(CPickup* pickup) override;
-        bool acceptSource(CPickup* pickup) override;
-        bool acceptTarget(CPickup* pickup) override;
+        bool updateSource(std::shared_ptr<CPickup> pickup) override;
+        bool acceptSource(std::shared_ptr<CPickup> pickup) override;
+        bool acceptTarget(std::shared_ptr<CPickup> pickup) override;
 
         friend class CAttack;
         friend class CPickup;
+        friend class CCoffee;
+        friend class CApple;
+        friend class CBeer;
+        friend class CDagger;
 
     private:
+        void addForce(int added) override
+        {
+            m_agility += added;
+        }
+
+        void quickJump();
+        std::shared_ptr<CPlayerRogue> m_sharedDerived;
         int m_agility;
         float m_chanceOfDoubleHit;
         attack_type m_primaryAttackType;
-        bool roguePrimaryAttack();
-        void rogueSpecialAbility();     // jump over x spaces in direction of player
+        bool roguePrimaryAttack(std::shared_ptr<CGameObject> target);
 };
 
 #endif

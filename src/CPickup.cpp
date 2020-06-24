@@ -5,10 +5,11 @@
 #include "CPlayerMage.h"
 #include "CPlayerRogue.h"
 
-CPickup::CPickup(CGameObject* source, CGameObject* target) : CEvent(source, target)
+CPickup::CPickup(std::shared_ptr<CGameObject> source, std::shared_ptr<CGameObject> target) : CEvent(source, target)
 {
-    source->acceptSource(this);
-    if(!(target->acceptTarget(this)))
+    m_sharedThis.reset(this);
+    source->acceptSource(m_sharedThis);
+    if(!(target->acceptTarget(m_sharedThis)))
         m_accessTarget = false;
     else
         m_accessTarget = true;
@@ -16,7 +17,7 @@ CPickup::CPickup(CGameObject* source, CGameObject* target) : CEvent(source, targ
     updateObjects();
 }
 
-void CPickup::visitTarget(CLoot* loot)
+void CPickup::visitTarget(std::shared_ptr<CLoot> loot)
 {
     loot->getLabel(m_targetLabel);
     if(loot->pick())
@@ -24,45 +25,45 @@ void CPickup::visitTarget(CLoot* loot)
     return;
 }
 
-void CPickup::visitSource(CPlayerPaladin* paladin)
+void CPickup::visitSource(std::shared_ptr<CPlayerPaladin> paladin)
 {
     paladin->getLabel(m_sourceLabel);
     return;
 }
 
-void CPickup::visitSource(CPlayerRogue* rogue)
+void CPickup::visitSource(std::shared_ptr<CPlayerRogue> rogue)
 {
     rogue->getLabel(m_sourceLabel);
     return;
 }
 
-void CPickup::visitSource(CPlayerMage* mage)
+void CPickup::visitSource(std::shared_ptr<CPlayerMage> mage)
 {
     mage->getLabel(m_sourceLabel);
     return;
 }
 
-void CPickup::updateSource(CPlayerPaladin* paladin)
+void CPickup::updateSource(std::shared_ptr<CPlayerPaladin> paladin)
 {
-    if(paladin->m_inventory->getItem(paladin, this))
+    if(paladin->m_inventory->getItem(paladin, m_sharedThis))
         m_success = true;
     else
         m_success = false;    
     return;
 }
 
-void CPickup::updateSource(CPlayerRogue* rogue)
+void CPickup::updateSource(std::shared_ptr<CPlayerRogue> rogue)
 {
-    if(rogue->m_inventory->getItem(rogue, this))
+    if(rogue->m_inventory->getItem(rogue, m_sharedThis))
         m_success = true;
     else
         m_success = false;    
     return;
 }
 
-void CPickup::updateSource(CPlayerMage* mage)
+void CPickup::updateSource(std::shared_ptr<CPlayerMage> mage)
 {
-    if(mage->m_inventory->getItem(mage, this))
+    if(mage->m_inventory->getItem(mage, m_sharedThis))
         m_success = true;
     else
         m_success = false;    
@@ -72,10 +73,9 @@ void CPickup::updateSource(CPlayerMage* mage)
 void CPickup::updateObjects()
 {
     if(m_accessTarget && m_canPick)
-        m_source->updateSource(this);
+        m_source->updateSource(m_sharedThis);
 
     print();
-    pushToDisplay();
     
     return;
 }

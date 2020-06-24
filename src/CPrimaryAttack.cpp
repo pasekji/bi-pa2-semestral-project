@@ -1,13 +1,15 @@
 #include "CPrimaryAttack.h"
 #include "CApplication.h"
 #include <iostream>
+#include <memory>
 
 extern CApplication application;
 
-CPrimaryAttack::CPrimaryAttack(CGameObject* source, CGameObject* target, attack_type attackType) : CAttack(source, target, attackType)
+CPrimaryAttack::CPrimaryAttack(std::shared_ptr<CGameObject> source, std::shared_ptr<CGameObject> target, attack_type attackType) : CAttack(source, target, attackType)
 {
-    source->acceptSource(this);
-    if(!target->acceptTarget(this))
+    m_sharedThis.reset(this);
+    source->acceptSource(m_sharedThis);
+    if(!target->acceptTarget(m_sharedThis))
     {
         m_canAttack = false;
         m_targetDead = true;
@@ -23,9 +25,6 @@ CPrimaryAttack::CPrimaryAttack(CGameObject* source, CGameObject* target, attack_
     }
     evaluateAttack();
 }
-
-CPrimaryAttack::~CPrimaryAttack()
-{}
 
 void CPrimaryAttack::print()
 {
@@ -146,12 +145,11 @@ void CPrimaryAttack::updateObjects()
 {
     if(m_canAttack && !m_target->isDead())
     {
-        m_source->updateSource(this);
-        m_target->updateTarget(this);
+        m_source->updateSource(m_sharedThis);
+        m_target->updateTarget(m_sharedThis);
     }
 
     print();
-    pushToDisplay();
 
     return;
 }

@@ -7,6 +7,13 @@
 #include "CPrimaryAttack.fwd.h"
 #include "CPlayer.fwd.h"
 #include "CPickup.fwd.h"
+#include "CCoffee.h"
+#include "CSword.h"
+#include "CWand.h"
+#include "CDagger.h"
+#include "CApple.h"
+#include "CBeer.h"
+#include "CTooth.h"
 #include <map>
 #include <string>
 #include <ctype.h>
@@ -15,15 +22,7 @@
 class CPlayer : public CCharacter
 {
     public:
-        CPlayer(WINDOW* objectSpace, int posY, int posX) : CCharacter(objectSpace, posY, posX)
-        {
-            m_posY_real = posY;
-            m_posX_real = posX;
-            m_objectForm = '^';
-            m_speed = 1;
-            m_sprint = false;
-            keypad(m_objectSpace, true);
-        }
+        CPlayer(int posY, int posX);
 
         void getLabel(std::string & label) const override
         {
@@ -31,19 +30,31 @@ class CPlayer : public CCharacter
             return;
         }
 
-        ~CPlayer()
-        {}
+        virtual ~CPlayer() = default;
 
-        bool acceptSource(CAttack* attack) override;
+        bool acceptSource(std::shared_ptr<CAttack> attack) override;
 
-        bool acceptTarget(CAttack* attack) override;
+        bool acceptTarget(std::shared_ptr<CAttack> attack) override;
 
-        bool updateSource(CAttack* attack) override;
+        bool acceptSource(std::shared_ptr<CEquip> equip) override;
+   
+        bool updateSource(std::shared_ptr<CAttack> attack) override;
 
-        bool updateTarget(CAttack* attack) override;
+        bool updateTarget(std::shared_ptr<CAttack> attack) override;
+
+        std::shared_ptr<CPlayer> getPtr()
+        {
+            return m_sharedThis;
+        }
 
         friend class CAttack;
         friend class CPickup;
+        friend class CCoffee;
+        friend class CApple;
+        friend class CBeer;
+        friend class CWand;
+        friend class CSword;
+        friend class CDagger;
         
     protected:
 
@@ -51,23 +62,21 @@ class CPlayer : public CCharacter
         void defaultStep(int & move);
         bool defaultMove(int move) override;
         void goToInventory();
+        virtual void addForce(int added) = 0;
 
-        bool itemPickup(CGameObject* target);
+        std::shared_ptr<CPlayer> m_sharedThis;
+        bool itemPickup(std::shared_ptr<CGameObject> target);
+        bool useItem(std::shared_ptr<CItem> item);
+        bool dumpItem(std::shared_ptr<CItem> item);
 
-        CGameObject* directionGetTarget(); 
-
-        CGameObject* fetchTarget() const override
-        {
-            return nullptr;
-        }
-
+        std::shared_ptr<CGameObject> directionGetTarget(); 
         int m_posY_real, m_posX_real;
         int m_move;
         bool m_sprint;
         unsigned m_inventorySize;
         int m_currentExp = 0; 
-        CInventory* m_inventory;
-        CWeapon* m_weaponEquiped;
+        std::shared_ptr<CInventory> m_inventory;
+        std::shared_ptr<CWeapon> m_weaponEquiped;
 
 };
 

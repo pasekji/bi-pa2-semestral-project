@@ -6,29 +6,15 @@
 class CSword : public CWeapon
 {
     public:
-        CSword() = default;
-        ~CSword()
-        {}
+        CSword();
+        virtual ~CSword() = default;
 
-        std::string getLabel() const override
-        {
-            return "SWORD";
-        }
+        std::string getLabel() const override;
 
-        bool accept(CPlayerPaladin* paladin) override
-        {
-            return true;
-        }
-        
-        bool accept(CPlayerMage* mage) override
-        {
-            return false;
-        }
+        bool itemApply(std::shared_ptr<CPlayer> player) override;
 
-        bool accept(CPlayerRogue* rogue) override
-        {
-            return false;    
-        }
+    private:
+        std::shared_ptr<CSword> m_sharedThis;
 
 };
 

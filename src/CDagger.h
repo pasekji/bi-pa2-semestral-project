@@ -6,30 +6,15 @@
 class CDagger : public CWeapon
 {
     public:
-        CDagger() = default;
-        ~CDagger()
-        {}
+        CDagger();
+        virtual ~CDagger() = default;
 
-        std::string getLabel() const override
-        {
-            return "DAGGER";
-        }
+        std::string getLabel() const override;
 
-        bool accept(CPlayerPaladin* paladin) override
-        {
-            return false;
-        }
-        
-        bool accept(CPlayerMage* mage) override
-        {
-            return false;
-        }
+        bool itemApply(std::shared_ptr<CPlayer> player) override;
 
-        bool accept(CPlayerRogue* rogue) override
-        {
-            return true;    
-        }
-
+    private:
+        std::shared_ptr<CDagger> m_sharedThis;
 };
 
 #endif

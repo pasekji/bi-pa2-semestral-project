@@ -9,29 +9,9 @@ class CMisc : public CItem          // could be stackable
 
         CMisc() = default;
         
-        ~CMisc()
-        {}
+        virtual ~CMisc() = default;
         
-        bool itemApply()            // these items can't be applied f.e. - bone 
-        {
-            return false;
-        }
-
-        bool accept(CPlayerPaladin* paladin) override
-        {
-            return false;
-        }
-        
-        bool accept(CPlayerMage* mage) override
-        {
-            return false;
-        }
-
-        bool accept(CPlayerRogue* rogue) override
-        {
-            return false;    
-        }
-
+        bool itemApply(std::shared_ptr<CPlayer> player);
 };
 
 #endif

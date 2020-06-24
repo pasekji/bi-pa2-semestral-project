@@ -5,13 +5,14 @@
 #include "enums.h"
 #include "CPrimaryAttack.fwd.h"
 #include <algorithm>
+#include <memory>
 class CCharacter : public CGameObject
 {
     protected:    
 
-        CCharacter(WINDOW* objectSpace, int posY, int posX) : CGameObject(objectSpace, posY, posX)
+        CCharacter(int posY, int posX) : CGameObject(posY, posX)
         {}
-        ~CCharacter(){}
+        virtual ~CCharacter() = default;
 
         int m_speed;
         int m_currentHealth;
@@ -49,13 +50,8 @@ class CCharacter : public CGameObject
         }
 
         virtual bool defaultMove(int move) = 0;
-
-        virtual CGameObject* fetchTarget() const
-        {
-            return nullptr;
-        }
         
-        CGameObject* defaultGetTarget();
+        std::shared_ptr<CGameObject> defaultGetTarget();
 
     public:
         virtual int getAction() = 0;
@@ -97,5 +93,7 @@ class CCharacter : public CGameObject
             return "CCharacter";
         }
 };
+
+std::shared_ptr<CCharacter> loadCharacter(ifstream& is);
 
 #endif

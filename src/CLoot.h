@@ -12,16 +12,16 @@
 class CLoot : public CGameObject
 {
     public:
-        CLoot(WINDOW* objectSpace, int posY, int posX) : CGameObject(objectSpace, posY, posX)
+        CLoot(int posY, int posX) : CGameObject(posY, posX)
         {
+            m_sharedThis.reset(this);
             m_objectForm = 'H';
             std::default_random_engine randomGenerator(rand());
             std::uniform_int_distribution<unsigned> rollSize(0, 4);
             m_items = rollSize(randomGenerator);
         }
 
-        ~CLoot()
-        {}
+        virtual ~CLoot() = default;
 
         bool pick()
         {
@@ -40,17 +40,17 @@ class CLoot : public CGameObject
         }
 
 
-        bool acceptSource(CAttack* attack) override
+        bool acceptSource(std::shared_ptr<CAttack> attack) override
         {
             return false;
         }
 
-        bool updateSource(CAttack* attack) override
+        bool updateSource(std::shared_ptr<CAttack> attack) override
         {
             return false;
         }
 
-        bool updateTarget(CAttack* attack) override
+        bool updateTarget(std::shared_ptr<CAttack> attack) override
         {
             return false;
         }
@@ -59,13 +59,8 @@ class CLoot : public CGameObject
         {
             return "CLoot";
         }
-
-        void save(ofstream& os) override
-        {
-            os << getTypeName() << endl;
-        }
-
-        bool acceptTarget(CAttack* attack) override
+        
+        bool acceptTarget(std::shared_ptr<CAttack> attack) override
         {
             return false;
         }
@@ -81,17 +76,32 @@ class CLoot : public CGameObject
             return;
         }
 
-        bool acceptSource(CPickup* pickup) override
-        {
-            return false;
-        }
-        bool acceptTarget(CPickup* pickup) override;
-        bool updateSource(CPickup* pickup) override
+        bool acceptSource(std::shared_ptr<CPickup> pickup) override
         {
             return false;
         }
 
+        bool acceptSource(std::shared_ptr<CEquip> equip) override
+        {
+            return false;
+        }
+
+        bool acceptTarget(std::shared_ptr<CPickup> pickup) override;
+        bool updateSource(std::shared_ptr<CPickup> pickup) override
+        {
+            return false;
+        }
+
+        std::shared_ptr<CLoot> getPtr()
+        {
+            return m_sharedThis;
+        }
+
+        virtual void save(std::ofstream & os)
+        {}
+
     private:
+        std::shared_ptr<CLoot> m_sharedThis;
         unsigned m_items;
 };
 

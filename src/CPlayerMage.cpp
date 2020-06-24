@@ -5,12 +5,13 @@
 
 extern CApplication application;
 
-CPlayerMage::CPlayerMage(WINDOW* objectSpace, int posY, int posX) : CPlayer(objectSpace, posY, posX)
+CPlayerMage::CPlayerMage(int posY, int posX) : CPlayer(posY, posX)
 {
+    m_sharedDerived = std::dynamic_pointer_cast<CPlayerMage> (m_sharedThis);
     halfdelay(1);
     m_inventorySize = 15;
     m_speed = 1;
-    m_inventory = new CInventory(m_inventorySize);
+    m_inventory.reset(new CInventory(m_inventorySize));
 }
 
 int CPlayerMage::getAction()
@@ -30,28 +31,31 @@ void CPlayerMage::showStats() const
     return;
 }
 
-bool CPlayerMage::updateSource(CPickup* pickup)
+bool CPlayerMage::updateSource(std::shared_ptr<CPickup> pickup)
 {
-    pickup->updateSource(this);
+    pickup->updateSource(m_sharedDerived);    
     return true;
 }
 
-bool CPlayerMage::acceptSource(CPickup* pickup)
+bool CPlayerMage::acceptSource(std::shared_ptr<CPickup> pickup)
 {
-    pickup->visitSource(this);
+    pickup->visitSource(m_sharedDerived);
     return true;
 }
 
-bool CPlayerMage::acceptTarget(CPickup* pickup)
+bool CPlayerMage::acceptTarget(std::shared_ptr<CPickup> pickup)
 {
     return false;
 }
 
-CGameObject* loadPlayerMage(ifstream& is, WINDOW* objectSpace)
+std::shared_ptr<CGameObject> loadPlayerMage(ifstream& is)
 {
     int posX;
     is >> posX;
     int posY;
     is >> posY;
-    return new CPlayerMage(objectSpace, posY, posX);
+
+    std::shared_ptr<CGameObject> result;
+    result.reset(new CPlayerMage(posY, posX));
+    return result;
 }

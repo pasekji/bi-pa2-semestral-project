@@ -3,9 +3,22 @@
 #include "CPickup.h"
 #include "CAttack.h"
 #include "CItem.h"
+#include "CEquip.h"
+#include "CDiscard.h"
 
 extern CApplication application;
 
+
+CPlayer::CPlayer(int posY, int posX) : CCharacter(posY, posX)
+{
+    m_sharedThis.reset(this);
+    m_posY_real = posY;
+    m_posX_real = posX;
+    m_objectForm = '^';
+    m_speed = 1;
+    m_sprint = false;
+    keypad(application.getGame()->getWindow(), true);
+}
 void CPlayer::changeForm(const char & objectForm)
 {
     m_objectForm = objectForm;
@@ -15,14 +28,14 @@ void CPlayer::defaultStep(int & move)       // basic player movement, every clas
 {
     int tmpmove;
     int delay = 0;
-    if((move = wgetch(m_objectSpace)) != ERR)
+    if((move = wgetch(application.getGame()->getWindow())) != ERR)
     {
         do
         {
             if(delay == 3)
                 break;
                 
-            tmpmove = wgetch(m_objectSpace);
+            tmpmove = wgetch(application.getGame()->getWindow());
             delay++;
         } 
         while((tmpmove == move) || (tmpmove != ERR));
@@ -30,11 +43,11 @@ void CPlayer::defaultStep(int & move)       // basic player movement, every clas
 
 }
 
-CGameObject* CPlayer::directionGetTarget()
+std::shared_ptr<CGameObject> CPlayer::directionGetTarget()
 {
     int tmppos;    
     std::pair<int, int> pair;
-    CGameObject* target = nullptr;
+    std::shared_ptr<CGameObject> target = nullptr;
 
     switch (m_objectForm)
     {
@@ -170,34 +183,41 @@ bool CPlayer::defaultMove(int move)
     return used;
 }
 
-bool CPlayer::itemPickup(CGameObject* target)
+bool CPlayer::itemPickup(std::shared_ptr<CGameObject> target)
 {
-    CEvent* pickup = new CPickup(this, target);
-    if(pickup != nullptr) return true;
-    return false;
+    std::shared_ptr<CEvent> pickup;
+    pickup = (new CPickup(m_sharedThis, target))->getPtr();
+    application.getGame()->pushEvent(pickup);
+    return true;
 }
 
-bool CPlayer::acceptSource(CAttack* attack)
+bool CPlayer::acceptSource(std::shared_ptr<CAttack> attack)
 {
-    attack->visitSource(this);
+    attack->visitSource(m_sharedThis);
     return true;
 }   
 
-bool CPlayer::acceptTarget(CAttack* attack)
+bool CPlayer::acceptTarget(std::shared_ptr<CAttack> attack)
 {
-    attack->visitTarget(this);
+    attack->visitTarget(m_sharedThis);
     return true;
 }
 
-bool CPlayer::updateSource(CAttack* attack)
+bool CPlayer::updateSource(std::shared_ptr<CAttack> attack)
 {
-    attack->updateSource(this);
+    attack->updateSource(m_sharedThis);
     return true;
 }
 
-bool CPlayer::updateTarget(CAttack* attack)
+bool CPlayer::updateTarget(std::shared_ptr<CAttack> attack)
 {
-    attack->updateTarget(this);
+    attack->updateTarget(m_sharedThis);
+    return true;
+}
+
+bool CPlayer::acceptSource(std::shared_ptr<CEquip> equip)
+{
+    equip->visitSource(m_sharedThis);
     return true;
 }
 
@@ -236,7 +256,7 @@ void CPlayer::goToInventory()
                 break;
         }
 
-        CItem* item = m_inventory->getItemAt(selected);
+        std::shared_ptr<CItem> item = m_inventory->getItemAt(selected);
 
         if(item == nullptr)
         {
@@ -253,7 +273,31 @@ void CPlayer::goToInventory()
         wrefresh(application.getGame()->getInventoryWindow());
   
         if(action == 10)
+        {
+            useItem(item);
+            if(item != nullptr)
+                if(item->m_used)
+                    m_inventory->eraseItemAt(selected);
+
+            wattroff(application.getGame()->getInventoryWindow(), A_REVERSE);
+            werase(application.getGame()->getInventoryWindow());
+            wborder(application.getGame()->getInventoryWindow(), 0, 0, 0, 0, 0, 0, 0, 0);   
+            wrefresh(application.getGame()->getInventoryWindow());
             return;
+        }
+
+        if(action == KEY_BACKSPACE)
+        {
+            dumpItem(item);
+            if(item != nullptr)
+                m_inventory->eraseItemAt(selected);
+
+            wattroff(application.getGame()->getInventoryWindow(), A_REVERSE);
+            werase(application.getGame()->getInventoryWindow());
+            wborder(application.getGame()->getInventoryWindow(), 0, 0, 0, 0, 0, 0, 0, 0);   
+            wrefresh(application.getGame()->getInventoryWindow());
+            return;
+        }
     }
     wattroff(application.getGame()->getInventoryWindow(), A_REVERSE);
     werase(application.getGame()->getInventoryWindow());
@@ -261,4 +305,21 @@ void CPlayer::goToInventory()
     wrefresh(application.getGame()->getInventoryWindow());
 
     return;
+}
+
+bool CPlayer::useItem(std::shared_ptr<CItem> item)
+{
+    std::shared_ptr<CEvent> equip;
+    equip = (new CEquip(m_sharedThis, item))->getPtr();
+    application.getGame()->pushEvent(equip);
+    return true;    
+}
+
+bool CPlayer::dumpItem(std::shared_ptr<CItem> item)
+{
+    std::shared_ptr<CEvent> discard;
+    discard = (new CDiscard(m_sharedThis, item))->getPtr();
+    application.getGame()->pushEvent(discard);
+
+    return true;
 }

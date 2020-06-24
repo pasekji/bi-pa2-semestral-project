@@ -14,7 +14,10 @@ class CMenu
         CMenu();
 
         ~CMenu()
-        {}
+        {
+            if (m_logoWindow) delwin(m_logoWindow);
+            if (m_menuWindow) delwin(m_menuWindow);
+        };
 
         unsigned int getAction();
 
@@ -45,7 +48,8 @@ class CMenu
             "\\_| \\_/\\___/  \\_| \\_/\\_| |_/\\_|  |_/\\____/  \\_| \\_\\_|    \\____/"
         };
         
-        WINDOW* m_logoWindow;
+        WINDOW* m_logoWindow = nullptr;
+        WINDOW* m_menuWindow = nullptr;
 
         int m_width, m_height;
 
@@ -53,7 +57,6 @@ class CMenu
         std::vector<std::string> m_options;
         unsigned int m_selected;
         int m_action;
-        WINDOW* m_menuWindow;
         
 };
 

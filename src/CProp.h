@@ -9,7 +9,7 @@
 class CProp : public CGameObject
 {
     public:
-        CProp(WINDOW* objectSpace, int posY, int posX, prop_type type) : CGameObject(objectSpace, posY, posX)
+        CProp(int posY, int posX, prop_type type) : CGameObject(posY, posX)
         {
             switch (type)
             {
@@ -37,39 +37,44 @@ class CProp : public CGameObject
                     break;
             }
         }
-        
-        virtual ~CProp()
-        {}
 
-        bool acceptSource(CAttack* attack) override
-        {
-            return false;
-        }
+        virtual ~CProp() = default;
 
-        bool acceptTarget(CAttack* attack) override
+
+        bool acceptSource(std::shared_ptr<CAttack> attack) override
         {
             return false;
         }
 
-        bool updateSource(CAttack* attack) override
+        bool acceptSource(std::shared_ptr<CEquip> equip) override
         {
             return false;
         }
 
-        bool updateTarget(CAttack* attack) override
+        bool acceptTarget(std::shared_ptr<CAttack> attack) override
         {
             return false;
         }
 
-        bool acceptSource(CPickup* pickup) override
+        bool updateSource(std::shared_ptr<CAttack> attack) override
         {
             return false;
         }
-        bool acceptTarget(CPickup* pickup) override
+
+        bool updateTarget(std::shared_ptr<CAttack> attack) override
         {
             return false;
         }
-        bool updateSource(CPickup* pickup) override
+
+        bool acceptSource(std::shared_ptr<CPickup> pickup) override
+        {
+            return false;
+        }
+        bool acceptTarget(std::shared_ptr<CPickup> pickup) override
+        {
+            return false;
+        }
+        bool updateSource(std::shared_ptr<CPickup> pickup) override
         {
             return false;
         }
@@ -97,7 +102,7 @@ class CProp : public CGameObject
             os << m_posY;
         }
 
-        static CGameObject* loadGameObject(ifstream& is, WINDOW* objectSpace)
+        static std::shared_ptr<CGameObject> loadGameObject(ifstream& is)
         {
             int _type;
             is >> _type;
@@ -105,8 +110,10 @@ class CProp : public CGameObject
             int posY;
             is >> posX;
             is >> posY;
-            CProp* res = new CProp(objectSpace, posY, posX, (prop_type)_type);
-            return res;
+
+            std::shared_ptr<CProp> result;
+            result.reset(new CProp(posY, posX, (prop_type)_type));
+            return result;
         }
     
     private:

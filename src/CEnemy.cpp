@@ -6,7 +6,7 @@
 
 extern CApplication application;
 
-CEnemy::CEnemy(WINDOW* objectSpace, int posY, int posX, enemy_type type) : CCharacter(objectSpace, posY, posX)
+CEnemy::CEnemy(int posY, int posX, enemy_type type) : CCharacter(posY, posX)
 {
     switch (type)
     {
@@ -109,20 +109,22 @@ CEnemy::CEnemy(WINDOW* objectSpace, int posY, int posX, enemy_type type) : CChar
         default:
             break;
     }
+
+    m_sharedThis.reset(this);
 }
 
-CEnemy::CEnemy(WINDOW* objectSpace, int posY, int posX) : CCharacter(objectSpace, posY, posX)
+CEnemy::CEnemy(int posY, int posX) : CCharacter(posY, posX)
 {}
 
-bool CEnemy::updateSource(CAttack* attack)
+bool CEnemy::updateSource(std::shared_ptr<CAttack> attack)
 {
-    attack->updateSource(this);
+    attack->updateSource(m_sharedThis);
     return true;
 }
 
-bool CEnemy::updateTarget(CAttack* attack)
+bool CEnemy::updateTarget(std::shared_ptr<CAttack> attack)
 {
-    attack->updateTarget(this);
+    attack->updateTarget(m_sharedThis);
     return true;
 }
 
@@ -410,7 +412,7 @@ int CEnemy::getAction()     // just demo testing - TODO - AI
 
 bool CEnemy::interactWith()
 {
-    CGameObject* target = defaultGetTarget();
+    std::shared_ptr<CGameObject> target = defaultGetTarget();
 
     if(target != nullptr)
     {
@@ -429,22 +431,23 @@ bool CEnemy::interactWith()
     return false;
 }
 
-bool CEnemy::primaryAttack(CGameObject* target)
+bool CEnemy::primaryAttack(std::shared_ptr<CGameObject> target)
 {
-    CAttack* attack = new CPrimaryAttack(this, target, m_primaryAttackType);
-    if(attack != nullptr) return true;
-    return false;
-}
-
-bool CEnemy::acceptSource(CAttack* attack)
-{
-    attack->visitSource(this);
+    std::shared_ptr<CAttack> attack;
+    attack = (new CPrimaryAttack(m_sharedThis, target, m_primaryAttackType))->getPtr();
+    application.getGame()->pushEvent(attack);
     return true;
 }
 
-bool CEnemy::acceptTarget(CAttack* attack)
+bool CEnemy::acceptSource(std::shared_ptr<CAttack> attack)
 {
-    attack->visitTarget(this);
+    attack->visitSource(m_sharedThis);
+    return true;
+}
+
+bool CEnemy::acceptTarget(std::shared_ptr<CAttack> attack)
+{
+    attack->visitTarget(m_sharedThis);
     return true;
 }
 
@@ -491,7 +494,7 @@ void CEnemy::showStats() const
     return;
 }
 
-CGameObject* loadEnemy(ifstream& is, WINDOW* objectSpace)
+std::shared_ptr<CGameObject> loadEnemy(ifstream& is)
 {
     int triggerDistance;
     is >> triggerDistance;
@@ -507,5 +510,8 @@ CGameObject* loadEnemy(ifstream& is, WINDOW* objectSpace)
     is >> posX;
     int posY;
     is >> posY;
-    return new CEnemy(objectSpace, posY, posX); // TODO doplnit do Cenemy zbyle udaje
+    std::shared_ptr<CGameObject> result;
+    // TODO doplnit do Cenemy zbyle udaje
+    result.reset(new CEnemy(posY, posX));
+    return result;
 }

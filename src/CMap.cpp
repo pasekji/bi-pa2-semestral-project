@@ -81,13 +81,13 @@ void CMap::spawnPlayer(int posY, int posX, player_class playerClass)
     switch (playerClass)
     {
         case PALADIN:
-            m_player = new CPlayerPaladin(m_mapWindow, posY, posX);
+            m_player = (new CPlayerPaladin(posY, posX))->getPtr();
             break;
         case MAGE:
-            m_player = new CPlayerMage(m_mapWindow, posY, posX);
+            m_player = (new CPlayerMage(posY, posX))->getPtr();
             break;
         case ROGUE:
-            m_player = new CPlayerRogue(m_mapWindow, posY, posX);
+            m_player = (new CPlayerRogue(posY, posX))->getPtr();
             break;
         default:
             break;
@@ -96,19 +96,19 @@ void CMap::spawnPlayer(int posY, int posX, player_class playerClass)
     m_moveableObjects.push_back(m_player);
     m_targets.push_back(m_player);
     demo_loadMap();
-    wrefresh(m_mapWindow);
+    wrefresh(application.getGame()->getWindow());
     catchPlayer();
 
 
     return;
 }
 
-CPlayer* CMap::getPlayer() const            // not needed
+std::shared_ptr<CPlayer> CMap::getPlayer() const            // not needed
 {
     return m_player;
 }
 
-CGameObject* CMap::getTargetObject(std::pair<int, int> & pair) const
+std::shared_ptr<CGameObject> CMap::getTargetObject(std::pair<int, int> & pair) const
 {
     for(auto i : m_targets)
     {
@@ -129,7 +129,7 @@ void CMap::catchPlayer()
         m_player->showStats();
         moveableDoAction();
         renderObjects();
-        wrefresh(m_mapWindow);
+        wrefresh(application.getGame()->getWindow());
         wrefresh(application.getGame()->getPlayerWindow());
 
     }   
@@ -148,7 +148,8 @@ void CMap::spawnEnemy(int posY, int posX, enemy_type type)
     if(collisionDetect(pair))
         throw std::invalid_argument("received overlapping coordinates with other object");
     
-    CEnemy* enemy = new CEnemy(m_mapWindow, posY, posX, type);
+    std::shared_ptr<CEnemy> enemy;
+    enemy = (new CEnemy(posY, posX, type))->getPtr();
     m_moveableObjects.push_back(enemy);
     m_targets.push_back(enemy);
 
@@ -162,20 +163,22 @@ void CMap::spawnProp(int posY, int posX, prop_type type)
     if(collisionDetect(pair))
         throw std::invalid_argument("received overlapping coordinates with other object");
 
-    CProp* prop = new CProp(m_mapWindow, posY, posX, type);
+    std::shared_ptr<CProp> prop;
+    prop.reset(new CProp(posY, posX, type));
     m_imoveableObjects.push_back(prop);
 
     return;
 }
 
-CLoot* CMap::spawnLoot(int posY, int posX)
+std::shared_ptr<CLoot> CMap::spawnLoot(int posY, int posX)
 {
     std::pair<int, int> pair = std::make_pair(posY, posX);
 
     if(collisionDetect(pair))
         throw std::invalid_argument("received overlapping coordinates with other object");
 
-    CLoot* loot = new CLoot(m_mapWindow, posY, posX);
+    std::shared_ptr<CLoot> loot;
+    loot = (new CLoot(posY, posX))->getPtr();    
     m_imoveableObjects.push_back(loot);
     m_targets.push_back(loot);
 
@@ -276,24 +279,53 @@ void CMap::camera_objectsLeft(int & steps)
 
 void CMap::save(ofstream& os)
 {
-    os << m_locationName << endl;
-    m_player->save(os);
-    os << m_moveableObjects.size();
-    for (auto moveable : m_moveableObjects)
+    os << m_moveableObjects.size()-1 << endl;
+    for (unsigned i = 1; i < m_moveableObjects.size(); i++)
     {
-        moveable->save(os);
+        m_moveableObjects[i]->save(os);
     }
-    // std::vector<CGameObject*> m_imoveableObjects;
-    // std::vector<CGameObject*> m_targets;
+    os << m_imoveableObjects.size() << endl;
+    for (unsigned i = 0; i < m_imoveableObjects.size(); i++)
+    {
+        m_imoveableObjects[i]->save(os);
+    }
+    os << m_targets.size()-1 << endl;
+    for (unsigned i = 1; i < m_targets.size(); i++)
+    {
+        m_targets[i]->save(os);
+    }
 }
 
 void CMap::load(ifstream& is)
 {
-    is >> m_locationName;
     size_t m_moveableObjectsSize;
     is >> m_moveableObjectsSize;
     for(size_t i = 0; i < m_moveableObjectsSize; i++)
     {
         m_moveableObjects.push_back(nullptr); // zavolat CGameObject::load()
+    }
+    size_t moveableObjectsSize;
+    is >> moveableObjectsSize;
+    for (unsigned i = 0; i < moveableObjectsSize; i++)
+    {
+        shared_ptr<CCharacter> obj = loadCharacter(is);
+        if (obj != nullptr)
+            m_moveableObjects.push_back(obj);
+    }
+    size_t imoveableObjectsSize;
+    is >> imoveableObjectsSize;
+    for (unsigned i = 0; i < imoveableObjectsSize; i++)
+    {
+        shared_ptr<CGameObject> obj = loadGameObject(is);
+        if (obj != nullptr)
+            m_imoveableObjects.push_back(obj);
+    }
+    size_t targetsSize;
+    is >> targetsSize;
+    for (unsigned i = 0; i < targetsSize; i++)
+    {
+        shared_ptr<CGameObject> obj = loadGameObject(is);
+        if (obj != nullptr)
+            m_targets.push_back(obj);
     }
 }

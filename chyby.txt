@@ -1,120 +1,77 @@
-==18819== Memcheck, a memory error detector
-==18819== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==18819== Using Valgrind-3.14.0 and LibVEX; rerun with -h for copyright info
-==18819== Command: ./rpg
-==18819== 
-a
-A
-b
-c
-d
-a
-b
-c
-d
-D
-a
-A
-b
-c
-d
-a
-b
-c
-d
-D
-a
-b
-c
-d
-D
-a
-A
-b
-c
-d
-a
-A
-b
-c
-d
-a
-A
-b
-c
-d
-a
-A
-b
-c
-d
-a
-b
-c
-d
-D
-a
-b
-B
-c
-d
-a
-b
-B
-c
-d
-a
-A
-b
-c
-d
-a
-b
-c
-d
-D
-a
-b
-c
-d
-D
-a
-A
-b
-c
-d
-a
-b
-B
-c
-d
-a
-b
-c
-d
-D
-a
-A
-b
-c
-d
-a
-b
-B
-c
-d
-==18819== 
-==18819== HEAP SUMMARY:
-==18819==     in use at exit: 345,537 bytes in 812 blocks
-==18819==   total heap usage: 893 allocs, 81 frees, 433,673 bytes allocated
-==18819== 
-==18819== LEAK SUMMARY:
-==18819==    definitely lost: 0 bytes in 0 blocks
-==18819==    indirectly lost: 0 bytes in 0 blocks
-==18819==      possibly lost: 0 bytes in 0 blocks
-==18819==    still reachable: 345,537 bytes in 812 blocks
-==18819==         suppressed: 0 bytes in 0 blocks
-==18819== Rerun with --leak-check=full to see details of leaked memory
-==18819== 
-==18819== For counts of detected and suppressed errors, rerun with: -v
-==18819== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==25572== Memcheck, a memory error detector
+==25572== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==25572== Using Valgrind-3.14.0 and LibVEX; rerun with -h for copyright info
+==25572== Command: ./rpg
+==25572== 
+==25572== 
+==25572== HEAP SUMMARY:
+==25572==     in use at exit: 277,787 bytes in 654 blocks
+==25572==   total heap usage: 1,045 allocs, 391 frees, 447,081 bytes allocated
+==25572== 
+==25572== 2,104 (1,664 direct, 440 indirect) bytes in 8 blocks are definitely lost in loss record 67 of 78
+==25572==    at 0x4835DEF: operator new(unsigned long) (vg_replace_malloc.c:334)
+==25572==    by 0x11516A: CEnemy::primaryAttack(std::shared_ptr<CGameObject>) (in /mnt/rpg)
+==25572==    by 0x115067: CEnemy::interactWith() (in /mnt/rpg)
+==25572==    by 0x114E82: CEnemy::getAction() (in /mnt/rpg)
+==25572==    by 0x1181E0: CMap::moveableDoAction() (in /mnt/rpg)
+==25572==    by 0x118733: CMap::catchPlayer() (in /mnt/rpg)
+==25572==    by 0x118497: CMap::spawnPlayer(int, int, player_class) (in /mnt/rpg)
+==25572==    by 0x117CC1: CMap::loadMap() (in /mnt/rpg)
+==25572==    by 0x10F1FD: CGame::initMap() (in /mnt/rpg)
+==25572==    by 0x10F1A7: CGame::run() (in /mnt/rpg)
+==25572==    by 0x12A3BA: CApplication::initMapSelect() (in /mnt/rpg)
+==25572==    by 0x12A24C: CApplication::initPlayerSelect() (in /mnt/rpg)
+==25572== 
+==25572== 2,500 (1,920 direct, 580 indirect) bytes in 10 blocks are definitely lost in loss record 68 of 78
+==25572==    at 0x4835DEF: operator new(unsigned long) (vg_replace_malloc.c:334)
+==25572==    by 0x12B87C: CPlayer::itemPickup(std::shared_ptr<CGameObject>) (in /mnt/rpg)
+==25572==    by 0x12CE0F: CPlayerPaladin::interactWith() (in /mnt/rpg)
+==25572==    by 0x12CD02: CPlayerPaladin::getAction() (in /mnt/rpg)
+==25572==    by 0x1186F3: CMap::catchPlayer() (in /mnt/rpg)
+==25572==    by 0x118497: CMap::spawnPlayer(int, int, player_class) (in /mnt/rpg)
+==25572==    by 0x117CC1: CMap::loadMap() (in /mnt/rpg)
+==25572==    by 0x10F1FD: CGame::initMap() (in /mnt/rpg)
+==25572==    by 0x10F1A7: CGame::run() (in /mnt/rpg)
+==25572==    by 0x12A3BA: CApplication::initMapSelect() (in /mnt/rpg)
+==25572==    by 0x12A24C: CApplication::initPlayerSelect() (in /mnt/rpg)
+==25572==    by 0x12A0DC: CApplication::initMainMenu() (in /mnt/rpg)
+==25572== 
+==25572== 5,193 (3,120 direct, 2,073 indirect) bytes in 15 blocks are definitely lost in loss record 72 of 78
+==25572==    at 0x4835DEF: operator new(unsigned long) (vg_replace_malloc.c:334)
+==25572==    by 0x11516A: CEnemy::primaryAttack(std::shared_ptr<CGameObject>) (in /mnt/rpg)
+==25572==    by 0x115067: CEnemy::interactWith() (in /mnt/rpg)
+==25572==    by 0x114F24: CEnemy::getAction() (in /mnt/rpg)
+==25572==    by 0x1181E0: CMap::moveableDoAction() (in /mnt/rpg)
+==25572==    by 0x118733: CMap::catchPlayer() (in /mnt/rpg)
+==25572==    by 0x118497: CMap::spawnPlayer(int, int, player_class) (in /mnt/rpg)
+==25572==    by 0x117CC1: CMap::loadMap() (in /mnt/rpg)
+==25572==    by 0x10F1FD: CGame::initMap() (in /mnt/rpg)
+==25572==    by 0x10F1A7: CGame::run() (in /mnt/rpg)
+==25572==    by 0x12A3BA: CApplication::initMapSelect() (in /mnt/rpg)
+==25572==    by 0x12A24C: CApplication::initPlayerSelect() (in /mnt/rpg)
+==25572== 
+==25572== 8,385 (6,448 direct, 1,937 indirect) bytes in 31 blocks are definitely lost in loss record 73 of 78
+==25572==    at 0x4835DEF: operator new(unsigned long) (vg_replace_malloc.c:334)
+==25572==    by 0x12CEE5: CPlayerPaladin::paladinPrimaryAttack(std::shared_ptr<CGameObject>) (in /mnt/rpg)
+==25572==    by 0x12CDD1: CPlayerPaladin::interactWith() (in /mnt/rpg)
+==25572==    by 0x12CD02: CPlayerPaladin::getAction() (in /mnt/rpg)
+==25572==    by 0x1186F3: CMap::catchPlayer() (in /mnt/rpg)
+==25572==    by 0x118497: CMap::spawnPlayer(int, int, player_class) (in /mnt/rpg)
+==25572==    by 0x117CC1: CMap::loadMap() (in /mnt/rpg)
+==25572==    by 0x10F1FD: CGame::initMap() (in /mnt/rpg)
+==25572==    by 0x10F1A7: CGame::run() (in /mnt/rpg)
+==25572==    by 0x12A3BA: CApplication::initMapSelect() (in /mnt/rpg)
+==25572==    by 0x12A24C: CApplication::initPlayerSelect() (in /mnt/rpg)
+==25572==    by 0x12A0DC: CApplication::initMainMenu() (in /mnt/rpg)
+==25572== 
+==25572== LEAK SUMMARY:
+==25572==    definitely lost: 13,152 bytes in 64 blocks
+==25572==    indirectly lost: 5,030 bytes in 144 blocks
+==25572==      possibly lost: 0 bytes in 0 blocks
+==25572==    still reachable: 259,605 bytes in 446 blocks
+==25572==         suppressed: 0 bytes in 0 blocks
+==25572== Reachable blocks (those to which a pointer was found) are not shown.
+==25572== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==25572== 
+==25572== For counts of detected and suppressed errors, rerun with: -v
+==25572== ERROR SUMMARY: 4 errors from 4 contexts (suppressed: 0 from 0)
