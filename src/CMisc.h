@@ -11,7 +11,7 @@ class CMisc : public CItem          // could be stackable
         
         virtual ~CMisc() = default;
         
-        bool itemApply(std::shared_ptr<CPlayer> player);
+        bool itemApply(CPlayer* player);
 };
 
 #endif

@@ -11,7 +11,7 @@ class CEvent
         virtual ~CEvent() = default;
         
     protected:
-        CEvent(std::shared_ptr<CGameObject> source, std::shared_ptr<CGameObject> target) : m_source(source), m_target(target)
+        CEvent(CGameObject* source, CGameObject* target) : m_source(source), m_target(target)
         {}
         virtual void updateObjects() = 0;
         virtual void print() = 0;
@@ -19,8 +19,8 @@ class CEvent
         std::string m_sourceLabel;
         std::string m_targetLabel;
         std::string m_itemLabel;
-        std::shared_ptr<CGameObject> m_source;
-        std::shared_ptr<CGameObject> m_target;
+        CGameObject* m_source;
+        CGameObject* m_target;
 };
 
 #endif

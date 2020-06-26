@@ -9,20 +9,20 @@
 class CEquip : public CEvent
 {
     public:
-        CEquip(std::shared_ptr<CGameObject> source, std::shared_ptr<CItem> item);
+        CEquip(CGameObject* source, CItem* item);
         virtual ~CEquip() = default;
         void print() override;
         void updateObjects() override;
 
-        void visitSource(std::shared_ptr<CPlayer> player);
+        void visitSource(CPlayer* player);
 
-        std::shared_ptr<CEquip> getPtr();
+        CEquip* getPtr();
 
     private:
 
-        void evaluateEquip(std::shared_ptr<CPlayer> player);
-        std::shared_ptr<CEquip> m_sharedThis;
-        std::shared_ptr<CItem> m_item;
+        void evaluateEquip(CPlayer* player);
+        CEquip* m_sharedThis;
+        CItem* m_item;
         bool m_success = false;
         bool m_isSomething = false;
         int m_forceBenefit;

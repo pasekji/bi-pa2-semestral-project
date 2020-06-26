@@ -23,9 +23,9 @@ class CPlayerPaladin : public CPlayer
 
         virtual string getTypeName();
 
-        bool updateSource(std::shared_ptr<CPickup> pickup) override;
-        bool acceptSource(std::shared_ptr<CPickup> pickup) override;
-        bool acceptTarget(std::shared_ptr<CPickup> pickup) override;
+        bool updateSource(CPickup* pickup) override;
+        bool acceptSource(CPickup* pickup) override;
+        bool acceptTarget(CPickup* pickup) override;
 
         friend class CAttack;
         friend class CPickup;
@@ -37,15 +37,15 @@ class CPlayerPaladin : public CPlayer
     private:
         void addForce(int added) override;
         void hide(int& move);
-        std::shared_ptr<CPlayerPaladin> m_sharedDerived;
+        CPlayerPaladin* m_sharedDerived;
         bool interactWith() override;
         int m_strength;
         float m_chanceOfCriticalAttack;
         attack_type m_primaryAttackType;
-        bool paladinPrimaryAttack(std::shared_ptr<CGameObject> target);
+        bool paladinPrimaryAttack(CGameObject* target);
 
 };
 
-std::shared_ptr<CCharacter> loadPlayerPaladin(ifstream& is);
+CCharacter* loadPlayerPaladin(ifstream& is);
 
 #endif

@@ -26,19 +26,19 @@ class CInventory
 
         unsigned getSize() const;
 
-        std::shared_ptr<CItem> emptyItem = nullptr;
-        std::shared_ptr<CItem> getItemAt(unsigned i) const;
+        CItem* emptyItem = nullptr;
+        CItem* getItemAt(unsigned i) const;
 
         void eraseItemAt(unsigned i);
 
-        bool getItem(std::shared_ptr<CPlayerRogue> rogue, std::shared_ptr<CPickup> pickup);
-        bool getItem(std::shared_ptr<CPlayerPaladin> paladin, std::shared_ptr<CPickup> pickup);
-        bool getItem(std::shared_ptr<CPlayerMage> mage, std::shared_ptr<CPickup> pickup);
+        bool getItem(CPlayerRogue* rogue, CPickup* pickup);
+        bool getItem(CPlayerPaladin* paladin, CPickup* pickup);
+        bool getItem(CPlayerMage* mage, CPickup* pickup);
 
     private:
         unsigned m_size;
         unsigned m_itemCount;
-        std::vector<std::shared_ptr<CItem>> m_contents;
+        std::vector<CItem*> m_contents;
 
 };
 

@@ -32,16 +32,16 @@ class CGameObject
         void moveRight(int & steps);
         void objectRender();
 
-        virtual bool acceptSource(std::shared_ptr<CAttack> attack) = 0;
-        virtual bool acceptTarget(std::shared_ptr<CAttack> attack) = 0;
-        virtual bool updateSource(std::shared_ptr<CAttack> attack) = 0;
-        virtual bool updateTarget(std::shared_ptr<CAttack> attack) = 0;
+        virtual bool acceptSource(CAttack* attack) = 0;
+        virtual bool acceptTarget(CAttack* attack) = 0;
+        virtual bool updateSource(CAttack* attack) = 0;
+        virtual bool updateTarget(CAttack* attack) = 0;
 
-        virtual bool acceptSource(std::shared_ptr<CPickup> pickup) = 0;
-        virtual bool acceptTarget(std::shared_ptr<CPickup> pickup) = 0;
-        virtual bool updateSource(std::shared_ptr<CPickup> pickup) = 0;
+        virtual bool acceptSource(CPickup* pickup) = 0;
+        virtual bool acceptTarget(CPickup* pickup) = 0;
+        virtual bool updateSource(CPickup* pickup) = 0;
 
-        virtual bool acceptSource(std::shared_ptr<CEquip> equip) = 0;
+        virtual bool acceptSource(CEquip* equip) = 0;
 
         virtual bool isDead() const;
         virtual void getLabel(std::string & label) const = 0;
@@ -57,6 +57,6 @@ class CGameObject
 
 };
 
-std::shared_ptr<CGameObject> loadGameObject(ifstream& is);
+CGameObject* loadGameObject(ifstream& is);
 
 #endif

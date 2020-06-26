@@ -12,26 +12,26 @@
 class CPickup : public CEvent
 {
     public:
-        CPickup(std::shared_ptr<CGameObject> source, std::shared_ptr<CGameObject> target);
+        CPickup(CGameObject* source, CGameObject* target);
         virtual ~CPickup() = default;
 
-        void visitSource(std::shared_ptr<CPlayerPaladin> paladin);
-        void visitSource(std::shared_ptr<CPlayerMage> mage);
-        void visitSource(std::shared_ptr<CPlayerRogue> rogue);
-        void visitTarget(std::shared_ptr<CLoot> loot);
+        void visitSource(CPlayerPaladin* paladin);
+        void visitSource(CPlayerMage* mage);
+        void visitSource(CPlayerRogue* rogue);
+        void visitTarget(CLoot* loot);
 
-        void updateSource(std::shared_ptr<CPlayerPaladin> paladin);
-        void updateSource(std::shared_ptr<CPlayerRogue> rogue);
-        void updateSource(std::shared_ptr<CPlayerMage> mage);
+        void updateSource(CPlayerPaladin* paladin);
+        void updateSource(CPlayerRogue* rogue);
+        void updateSource(CPlayerMage* mage);
 
 
         void setItemLabel(std::string label);
 
-        std::shared_ptr<CPickup> getPtr();
+        CPickup* getPtr();
     
     private:
 
-        std::shared_ptr<CPickup> m_sharedThis;
+        CPickup* m_sharedThis;
         void print() override;
         void updateObjects() override;
         bool m_success = false;

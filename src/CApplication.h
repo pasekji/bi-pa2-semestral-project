@@ -18,18 +18,18 @@ class CApplication
         void endApplication();
         void run();
 
-        const std::shared_ptr<CGame> getGame() const;
-        std::shared_ptr<CGame> getGame();
+        const CGame* getGame() const;
+        CGame* getGame();
 
         friend class CGame;
 
     private:
         int m_yMax, m_xMax;
-        std::shared_ptr<CMenu> m_mainMenu = std::make_shared<CMenu>();
-        std::shared_ptr<CMenu> m_playerSelect = std::make_shared<CMenu>();
-        std::shared_ptr<CMenu> m_mapSelect = std::make_shared<CMenu>();
-        std::shared_ptr<CMenu> m_loadGames = std::make_shared<CMenu>();
-        std::shared_ptr<CGame> m_game = std::make_shared<CGame>();
+        CMenu* m_mainMenu = std::make_shared<CMenu>();
+        CMenu* m_playerSelect = std::make_shared<CMenu>();
+        CMenu* m_mapSelect = std::make_shared<CMenu>();
+        CMenu* m_loadGames = std::make_shared<CMenu>();
+        CGame* m_game = std::make_shared<CGame>();
         void initMainMenu();
         void initPlayerSelect();
         void initMapSelect();

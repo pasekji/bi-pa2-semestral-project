@@ -13,20 +13,20 @@ class CProp : public CGameObject
 
         virtual ~CProp() = default;
 
-        bool acceptSource(std::shared_ptr<CAttack> attack) override;
-        bool acceptSource(std::shared_ptr<CEquip> equip) override;
-        bool acceptTarget(std::shared_ptr<CAttack> attack) override;
-        bool updateSource(std::shared_ptr<CAttack> attack) override;
-        bool updateTarget(std::shared_ptr<CAttack> attack) override;
-        bool acceptSource(std::shared_ptr<CPickup> pickup) override;
-        bool acceptTarget(std::shared_ptr<CPickup> pickup) override;
-        bool updateSource(std::shared_ptr<CPickup> pickup) override;
+        bool acceptSource(CAttack* attack) override;
+        bool acceptSource(CEquip* equip) override;
+        bool acceptTarget(CAttack* attack) override;
+        bool updateSource(CAttack* attack) override;
+        bool updateTarget(CAttack* attack) override;
+        bool acceptSource(CPickup* pickup) override;
+        bool acceptTarget(CPickup* pickup) override;
+        bool updateSource(CPickup* pickup) override;
         
         void showStats() const override;
         void getLabel(std::string & label) const override;
         virtual string getTypeName();
         void save(ofstream& os) override;
-        static std::shared_ptr<CGameObject> loadGameObject(ifstream& is);
+        static CGameObject* loadGameObject(ifstream& is);
     
     private:
         prop_type m_type;

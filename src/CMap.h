@@ -33,15 +33,15 @@ class CMap
         void staticCamera(direction & dir, int & steps);
         int m_width, m_height;
 
-        std::shared_ptr<CPlayer> getPlayer() const;
+        CPlayer* getPlayer() const;
 
-        std::shared_ptr<CGameObject> getTargetObject(std::pair<int, int> & pair) const;
+        CGameObject* getTargetObject(std::pair<int, int> & pair) const;
 
         void catchPlayer();
         void save(ofstream& os);
         void loadWithPlayer(ifstream& is);
         void loadWOPlayer(ifstream& is);
-        std::shared_ptr<CLoot> spawnLoot(int posY, int posX);
+        CLoot* spawnLoot(int posY, int posX);
         
         void saveWithPlayer(ofstream& os);
 
@@ -51,10 +51,10 @@ class CMap
         friend class CBuilder;
 
     private:
-        std::shared_ptr<CPlayer> m_player;
-        std::vector<std::shared_ptr<CCharacter>> m_moveableObjects;
-        std::vector<std::shared_ptr<CGameObject>> m_imoveableObjects;
-        std::vector<std::shared_ptr<CGameObject>> m_targets;
+        CPlayer* m_player;
+        std::vector<CCharacter*> m_moveableObjects;
+        std::vector<CGameObject*> m_imoveableObjects;
+        std::vector<CGameObject*> m_targets;
         void catchBuilder();
         void spawnPlayer(int posY, int posX, player_class playerClass);           // (int posY, int posX)
         void spawnEnemy(int posY, int posX, enemy_type type);

@@ -52,10 +52,10 @@ class CCharacter : public CGameObject
 
         virtual bool defaultMove(int move) = 0;
         
-        std::shared_ptr<CGameObject> defaultGetTarget();
+        CGameObject* defaultGetTarget();
 
 };
 
-std::shared_ptr<CCharacter> loadCharacter(ifstream& is);
+CCharacter* loadCharacter(ifstream& is);
 
 #endif

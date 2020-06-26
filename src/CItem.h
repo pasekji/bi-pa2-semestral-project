@@ -17,7 +17,7 @@ class CItem
         CItem() = default;
         virtual ~CItem() = default;
 
-        virtual bool itemApply(std::shared_ptr<CPlayer> player) = 0;
+        virtual bool itemApply(CPlayer* player) = 0;
 
         bool m_used = false;    
 };

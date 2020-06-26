@@ -15,17 +15,17 @@ class CBuilder : public CPlayer
 
         virtual string getTypeName() const;
 
-        bool updateSource(std::shared_ptr<CPickup> pickup) override
+        bool updateSource(CPickup* pickup) override
         {
             return false;
         }
 
-        bool acceptSource(std::shared_ptr<CPickup> pickup) override
+        bool acceptSource(CPickup* pickup) override
         {
             return false;
         }
 
-        bool acceptTarget(std::shared_ptr<CPickup> pickup) override
+        bool acceptTarget(CPickup* pickup) override
         {
             return false;
         }

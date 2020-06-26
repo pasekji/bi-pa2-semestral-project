@@ -11,10 +11,10 @@ class CDagger : public CWeapon
 
         std::string getLabel() const override;
 
-        bool itemApply(std::shared_ptr<CPlayer> player) override;
+        bool itemApply(CPlayer* player) override;
 
     private:
-        std::shared_ptr<CDagger> m_sharedThis;
+        CDagger* m_sharedThis;
 };
 
 #endif

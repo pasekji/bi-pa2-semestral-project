@@ -28,17 +28,17 @@ class CPlayer : public CCharacter
 
         virtual ~CPlayer() = default;
 
-        bool acceptSource(std::shared_ptr<CAttack> attack) override;
+        bool acceptSource(CAttack* attack) override;
 
-        bool acceptTarget(std::shared_ptr<CAttack> attack) override;
+        bool acceptTarget(CAttack* attack) override;
 
-        bool acceptSource(std::shared_ptr<CEquip> equip) override;
+        bool acceptSource(CEquip* equip) override;
    
-        bool updateSource(std::shared_ptr<CAttack> attack) override;
+        bool updateSource(CAttack* attack) override;
 
-        bool updateTarget(std::shared_ptr<CAttack> attack) override;
+        bool updateTarget(CAttack* attack) override;
 
-        std::shared_ptr<CPlayer> getPtr();
+        CPlayer* getPtr();
 
         friend class CAttack;
         friend class CPickup;
@@ -57,19 +57,19 @@ class CPlayer : public CCharacter
         void goToInventory();
         virtual void addForce(int added) = 0;
 
-        std::shared_ptr<CPlayer> m_sharedThis;
-        bool itemPickup(std::shared_ptr<CGameObject> target);
-        bool useItem(std::shared_ptr<CItem> item);
-        bool dumpItem(std::shared_ptr<CItem> item);
+        CPlayer* m_sharedThis;
+        bool itemPickup(CGameObject* target);
+        bool useItem(CItem* item);
+        bool dumpItem(CItem* item);
 
-        std::shared_ptr<CGameObject> directionGetTarget(); 
+        CGameObject* directionGetTarget(); 
         int m_posY_real, m_posX_real;
         int m_move;
         bool m_sprint;
         unsigned m_inventorySize;
         int m_currentExp = 0; 
-        std::shared_ptr<CInventory> m_inventory;
-        std::shared_ptr<CWeapon> m_weaponEquiped = nullptr;
+        CInventory* m_inventory;
+        CWeapon* m_weaponEquiped = nullptr;
 
 };
 

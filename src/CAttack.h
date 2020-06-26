@@ -11,20 +11,20 @@
 class CAttack : public CEvent
 {
     public:
-        CAttack(std::shared_ptr<CGameObject> source, std::shared_ptr<CGameObject> target, attack_type attackType);
+        CAttack(CGameObject* source, CGameObject* target, attack_type attackType);
         virtual ~CAttack() = default;
 
-        void visitSource(std::shared_ptr<CPlayer> player);
-        void visitSource(std::shared_ptr<CEnemy> enemy);
+        void visitSource(CPlayer* player);
+        void visitSource(CEnemy* enemy);
 
-        void visitTarget(std::shared_ptr<CPlayer> player);
-        void visitTarget(std::shared_ptr<CEnemy> enemy);
+        void visitTarget(CPlayer* player);
+        void visitTarget(CEnemy* enemy);
 
-        void updateSource(std::shared_ptr<CPlayer> player);
-        void updateSource(std::shared_ptr<CEnemy> enemy);
+        void updateSource(CPlayer* player);
+        void updateSource(CEnemy* enemy);
 
-        void updateTarget(std::shared_ptr<CPlayer> player);
-        void updateTarget(std::shared_ptr<CEnemy> enemy);
+        void updateTarget(CPlayer* player);
+        void updateTarget(CEnemy* enemy);
 
     protected:
         virtual void evaluateAttack() = 0;

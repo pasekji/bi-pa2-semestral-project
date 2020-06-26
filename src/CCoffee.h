@@ -11,7 +11,7 @@ class CCoffee : public CConsumable
 
         std::string getLabel() const override;
 
-        bool itemApply(std::shared_ptr<CPlayer> player) override;
+        bool itemApply(CPlayer* player) override;
     
     private:
         int m_energyRegainAdd = 3;

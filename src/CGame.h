@@ -23,11 +23,11 @@ class CGame
         }
 
         void run();
-        void pushEvent(std::shared_ptr<CEvent> event);
+        void pushEvent(CEvent* event);
         bool isRunning();
         void backToGame();
 
-        std::shared_ptr<CMap> getMap() const;
+        CMap* getMap() const;
         WINDOW* getWindow() const;
         WINDOW* getPlayerWindow() const;
         WINDOW* getEventWindow() const;
@@ -65,8 +65,8 @@ class CGame
         void correctEffectWindow() const;
         void refreshBars() const;
         void printEvents();
-        std::deque<std::shared_ptr<CEvent>> m_eventQueue;
-        std::shared_ptr<CMap> m_currentMap = std::make_shared<CMap>();
+        std::deque<CEvent*> m_eventQueue;
+        CMap* m_currentMap = std::make_shared<CMap>();
 
 };
 

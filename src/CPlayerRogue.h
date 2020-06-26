@@ -24,9 +24,9 @@ class CPlayerRogue : public CPlayer
 
         void save(ofstream& os) override;
 
-        bool updateSource(std::shared_ptr<CPickup> pickup) override;
-        bool acceptSource(std::shared_ptr<CPickup> pickup) override;
-        bool acceptTarget(std::shared_ptr<CPickup> pickup) override;
+        bool updateSource(CPickup* pickup) override;
+        bool acceptSource(CPickup* pickup) override;
+        bool acceptTarget(CPickup* pickup) override;
 
         friend class CAttack;
         friend class CPickup;
@@ -38,13 +38,13 @@ class CPlayerRogue : public CPlayer
     private:
         void addForce(int added) override;
         void quickJump();
-        std::shared_ptr<CPlayerRogue> m_sharedDerived;
+        CPlayerRogue* m_sharedDerived;
         int m_agility;
         float m_chanceOfDoubleHit;
         attack_type m_primaryAttackType;
-        bool roguePrimaryAttack(std::shared_ptr<CGameObject> target);
+        bool roguePrimaryAttack(CGameObject* target);
 };
 
-std::shared_ptr<CCharacter> loadPlayerRogue(ifstream& is);
+CCharacter* loadPlayerRogue(ifstream& is);
 
 #endif

@@ -39,9 +39,9 @@ class CPlayerMage : public CPlayer
             os << endl;
         }
 
-        bool updateSource(std::shared_ptr<CPickup> pickup) override;
-        bool acceptSource(std::shared_ptr<CPickup> pickup) override;
-        bool acceptTarget(std::shared_ptr<CPickup> pickup) override;
+        bool updateSource(CPickup* pickup) override;
+        bool acceptSource(CPickup* pickup) override;
+        bool acceptTarget(CPickup* pickup) override;
         
         friend class CAttack;
         friend class CPickup;
@@ -56,14 +56,14 @@ class CPlayerMage : public CPlayer
         void addForce(int added) override;
         void meditation();
         bool m_meditation = false;
-        std::shared_ptr<CPlayerMage> m_sharedDerived;
+        CPlayerMage* m_sharedDerived;
         int m_wisdom;
         float m_chanceOfCriticalAttack;
         attack_type m_primaryAttackType;
-        bool magePrimaryAttack(std::shared_ptr<CGameObject> target);
+        bool magePrimaryAttack(CGameObject* target);
 
 };
 
-std::shared_ptr<CCharacter> loadPlayerMage(ifstream& is);
+CCharacter* loadPlayerMage(ifstream& is);
 
 #endif

@@ -20,33 +20,33 @@ class CLoot : public CGameObject
 
         unsigned getItemsCount() const;
 
-        bool acceptSource(std::shared_ptr<CAttack> attack) override;
+        bool acceptSource(CAttack* attack) override;
 
-        bool updateSource(std::shared_ptr<CAttack> attack) override;
+        bool updateSource(CAttack* attack) override;
 
-        bool updateTarget(std::shared_ptr<CAttack> attack) override;
+        bool updateTarget(CAttack* attack) override;
 
         virtual string getTypeName();
         
-        bool acceptTarget(std::shared_ptr<CAttack> attack) override;
+        bool acceptTarget(CAttack* attack) override;
 
         void getLabel(std::string & label) const override;
 
         void showStats() const override;
 
-        bool acceptSource(std::shared_ptr<CPickup> pickup) override;
+        bool acceptSource(CPickup* pickup) override;
 
-        bool acceptSource(std::shared_ptr<CEquip> equip) override;
+        bool acceptSource(CEquip* equip) override;
 
-        bool acceptTarget(std::shared_ptr<CPickup> pickup) override;
-        bool updateSource(std::shared_ptr<CPickup> pickup) override;
+        bool acceptTarget(CPickup* pickup) override;
+        bool updateSource(CPickup* pickup) override;
 
-        std::shared_ptr<CLoot> getPtr();
+        CLoot* getPtr();
 
         virtual void save(std::ofstream & os);
 
     private:
-        std::shared_ptr<CLoot> m_sharedThis;
+        CLoot* m_sharedThis;
         unsigned m_items;
 };
 

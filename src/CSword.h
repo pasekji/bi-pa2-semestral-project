@@ -11,10 +11,10 @@ class CSword : public CWeapon
 
         std::string getLabel() const override;
 
-        bool itemApply(std::shared_ptr<CPlayer> player) override;
+        bool itemApply(CPlayer* player) override;
 
     private:
-        std::shared_ptr<CSword> m_sharedThis;
+        CSword* m_sharedThis;
 
 };
 
