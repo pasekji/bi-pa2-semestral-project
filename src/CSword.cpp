@@ -14,7 +14,7 @@ std::string CSword::getLabel() const
     return "SWORD";
 }
 
-bool CSword::itemApply(std::shared_ptr<CPlayer> player)
+bool CSword::itemApply(CPlayer* player)
 {
     if(player->m_weaponEquiped == nullptr)
     {

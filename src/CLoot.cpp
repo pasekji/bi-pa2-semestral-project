@@ -11,7 +11,7 @@ CLoot::CLoot(int posY, int posX) : CGameObject(posY, posX)
     m_items = rollSize(randomGenerator);
 }
 
-bool CLoot::acceptTarget(std::shared_ptr<CPickup> pickup)
+bool CLoot::acceptTarget(CPickup* pickup)
 {
     pickup->visitTarget(m_sharedThis);
     return true;
@@ -34,17 +34,17 @@ unsigned CLoot::getItemsCount() const
 }
 
 
-bool CLoot::acceptSource(std::shared_ptr<CAttack> attack)
+bool CLoot::acceptSource(CAttack* attack)
 {
     return false;
 }
 
-bool CLoot::updateSource(std::shared_ptr<CAttack> attack)
+bool CLoot::updateSource(CAttack* attack)
 {
     return false;
 }
 
-bool CLoot::updateTarget(std::shared_ptr<CAttack> attack)
+bool CLoot::updateTarget(CAttack* attack)
 {
     return false;
 }
@@ -54,7 +54,7 @@ string CLoot::getTypeName()
     return "CLoot";
 }
 
-bool CLoot::acceptTarget(std::shared_ptr<CAttack> attack)
+bool CLoot::acceptTarget(CAttack* attack)
 {
     return false;
 }
@@ -70,22 +70,22 @@ void CLoot::showStats() const
     return;
 }
 
-bool CLoot::acceptSource(std::shared_ptr<CPickup> pickup)
+bool CLoot::acceptSource(CPickup* pickup)
 {
     return false;
 }
 
-bool CLoot::acceptSource(std::shared_ptr<CEquip> equip)
+bool CLoot::acceptSource(CEquip* equip)
 {
     return false;
 }
 
-bool CLoot::updateSource(std::shared_ptr<CPickup> pickup)
+bool CLoot::updateSource(CPickup* pickup)
 {
     return false;
 }
 
-std::shared_ptr<CLoot> CLoot::getPtr()
+CLoot* CLoot::getPtr()
 {
     return m_sharedThis;
 }

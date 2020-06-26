@@ -14,7 +14,7 @@ std::string CWand::getLabel() const
     return "WAND";
 }
 
-bool CWand::itemApply(std::shared_ptr<CPlayer> player)
+bool CWand::itemApply(CPlayer* player)
 {
     if(player->m_weaponEquiped == nullptr)
     {

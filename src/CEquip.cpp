@@ -1,7 +1,7 @@
 #include "CEquip.h"
 #include "CPlayer.h"
 
-CEquip::CEquip(std::shared_ptr<CGameObject> source, std::shared_ptr<CItem> item) : CEvent(source, nullptr)
+CEquip::CEquip(CGameObject* source, CItem* item) : CEvent(source, nullptr)
 {
     m_sharedThis.reset(this);
     m_item = item;
@@ -16,7 +16,7 @@ CEquip::CEquip(std::shared_ptr<CGameObject> source, std::shared_ptr<CItem> item)
     }
 }
 
-std::shared_ptr<CEquip> CEquip::getPtr()
+CEquip* CEquip::getPtr()
 {
     return m_sharedThis;
 }
@@ -36,14 +36,14 @@ void CEquip::print()
     return;
 }
 
-void CEquip::visitSource(std::shared_ptr<CPlayer> player)
+void CEquip::visitSource(CPlayer* player)
 {
     player->getLabel(m_sourceLabel);
     evaluateEquip(player);
     return;
 }
 
-void CEquip::evaluateEquip(std::shared_ptr<CPlayer> player)
+void CEquip::evaluateEquip(CPlayer* player)
 {
     if(m_isSomething)
     {

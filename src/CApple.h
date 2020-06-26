@@ -12,7 +12,7 @@ class CApple : public CConsumable
 
         std::string getLabel() const override;
 
-        bool itemApply(std::shared_ptr<CPlayer> player) override;
+        bool itemApply(CPlayer* player) override;
         
 };
 

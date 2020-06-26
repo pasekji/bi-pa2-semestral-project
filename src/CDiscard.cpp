@@ -1,6 +1,6 @@
 #include "CDiscard.h"
 
-CDiscard::CDiscard(std::shared_ptr<CGameObject> source, std::shared_ptr<CItem> item) : CEvent(source, nullptr)
+CDiscard::CDiscard(CGameObject* source, CItem* item) : CEvent(source, nullptr)
 {
     m_sharedThis.reset(this);
     m_item = item;;
@@ -15,7 +15,7 @@ CDiscard::CDiscard(std::shared_ptr<CGameObject> source, std::shared_ptr<CItem> i
         updateObjects();    
 }
 
-std::shared_ptr<CDiscard> CDiscard::getPtr()
+CDiscard* CDiscard::getPtr()
 {
     return m_sharedThis;
 }

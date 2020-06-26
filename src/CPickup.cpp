@@ -5,7 +5,7 @@
 #include "CPlayerMage.h"
 #include "CPlayerRogue.h"
 
-CPickup::CPickup(std::shared_ptr<CGameObject> source, std::shared_ptr<CGameObject> target) : CEvent(source, target)
+CPickup::CPickup(CGameObject* source, CGameObject* target) : CEvent(source, target)
 {
     m_sharedThis.reset(this);
     source->acceptSource(m_sharedThis);
@@ -17,7 +17,7 @@ CPickup::CPickup(std::shared_ptr<CGameObject> source, std::shared_ptr<CGameObjec
     updateObjects();
 }
 
-void CPickup::visitTarget(std::shared_ptr<CLoot> loot)
+void CPickup::visitTarget(CLoot* loot)
 {
     loot->getLabel(m_targetLabel);
     if(loot->pick())
@@ -25,25 +25,25 @@ void CPickup::visitTarget(std::shared_ptr<CLoot> loot)
     return;
 }
 
-void CPickup::visitSource(std::shared_ptr<CPlayerPaladin> paladin)
+void CPickup::visitSource(CPlayerPaladin* paladin)
 {
     paladin->getLabel(m_sourceLabel);
     return;
 }
 
-void CPickup::visitSource(std::shared_ptr<CPlayerRogue> rogue)
+void CPickup::visitSource(CPlayerRogue* rogue)
 {
     rogue->getLabel(m_sourceLabel);
     return;
 }
 
-void CPickup::visitSource(std::shared_ptr<CPlayerMage> mage)
+void CPickup::visitSource(CPlayerMage* mage)
 {
     mage->getLabel(m_sourceLabel);
     return;
 }
 
-void CPickup::updateSource(std::shared_ptr<CPlayerPaladin> paladin)
+void CPickup::updateSource(CPlayerPaladin* paladin)
 {
     if(paladin->m_inventory->getItem(paladin, m_sharedThis))
         m_success = true;
@@ -52,7 +52,7 @@ void CPickup::updateSource(std::shared_ptr<CPlayerPaladin> paladin)
     return;
 }
 
-void CPickup::updateSource(std::shared_ptr<CPlayerRogue> rogue)
+void CPickup::updateSource(CPlayerRogue* rogue)
 {
     if(rogue->m_inventory->getItem(rogue, m_sharedThis))
         m_success = true;
@@ -61,7 +61,7 @@ void CPickup::updateSource(std::shared_ptr<CPlayerRogue> rogue)
     return;
 }
 
-void CPickup::updateSource(std::shared_ptr<CPlayerMage> mage)
+void CPickup::updateSource(CPlayerMage* mage)
 {
     if(mage->m_inventory->getItem(mage, m_sharedThis))
         m_success = true;
@@ -107,7 +107,7 @@ void CPickup::setItemLabel(std::string label)
     m_itemLabel = label;
 }
 
-std::shared_ptr<CPickup> CPickup::getPtr()
+CPickup* CPickup::getPtr()
 {
     return m_sharedThis;
 }

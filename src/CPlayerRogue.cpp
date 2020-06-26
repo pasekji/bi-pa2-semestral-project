@@ -46,7 +46,7 @@ bool CPlayerRogue::interactWith()
 {
     bool used = false;
 
-    std::shared_ptr<CGameObject> target = defaultGetTarget();
+    CGameObject* target = defaultGetTarget();
 
     if(target == nullptr)
         return used;
@@ -73,9 +73,9 @@ bool CPlayerRogue::interactWith()
     return used;
 }
 
-bool CPlayerRogue::roguePrimaryAttack(std::shared_ptr<CGameObject> target)
+bool CPlayerRogue::roguePrimaryAttack(CGameObject* target)
 {
-    std::shared_ptr<CAttack> attack;
+    CAttack* attack;
     attack = (new CPrimaryAttack(m_sharedDerived, target, m_primaryAttackType))->getPtr();
     application.getGame()->pushEvent(attack);
     return true;
@@ -130,19 +130,19 @@ void CPlayerRogue::showStats() const
     return;
 }
 
-bool CPlayerRogue::updateSource(std::shared_ptr<CPickup> pickup)
+bool CPlayerRogue::updateSource(CPickup* pickup)
 {
     pickup->updateSource(m_sharedDerived);
     return true;
 }
 
-bool CPlayerRogue::acceptSource(std::shared_ptr<CPickup> pickup)
+bool CPlayerRogue::acceptSource(CPickup* pickup)
 {
     pickup->visitSource(m_sharedDerived);
     return true;
 }
 
-bool CPlayerRogue::acceptTarget(std::shared_ptr<CPickup> pickup)
+bool CPlayerRogue::acceptTarget(CPickup* pickup)
 {
     return false;
 }
@@ -177,14 +177,14 @@ void CPlayerRogue::addForce(int added)
     m_agility += added;
 }
 
-std::shared_ptr<CCharacter> loadPlayerRogue(ifstream& is)
+CCharacter* loadPlayerRogue(ifstream& is)
 {
     int posX;
     is >> posX;
     int posY;
     is >> posY;
 
-    std::shared_ptr<CCharacter> result;
+    CCharacter* result;
     result.reset(new CPlayerRogue(posY, posX));
     
     return result;

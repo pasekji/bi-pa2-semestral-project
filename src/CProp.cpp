@@ -29,42 +29,42 @@ CProp::CProp(int posY, int posX, prop_type type) : CGameObject(posY, posX)
     }
 }
 
-bool CProp::acceptSource(std::shared_ptr<CAttack> attack)
+bool CProp::acceptSource(CAttack* attack)
 {
     return false;
 }
 
-bool CProp::acceptSource(std::shared_ptr<CEquip> equip)
+bool CProp::acceptSource(CEquip* equip)
 {
     return false;
 }
 
-bool CProp::acceptTarget(std::shared_ptr<CAttack> attack)
+bool CProp::acceptTarget(CAttack* attack)
 {
     return false;
 }
 
-bool CProp::updateSource(std::shared_ptr<CAttack> attack)
+bool CProp::updateSource(CAttack* attack)
 {
     return false;
 }
 
-bool CProp::updateTarget(std::shared_ptr<CAttack> attack)
+bool CProp::updateTarget(CAttack* attack)
 {
     return false;
 }
 
-bool CProp::acceptSource(std::shared_ptr<CPickup> pickup)
+bool CProp::acceptSource(CPickup* pickup)
 {
     return false;
 }
 
-bool CProp::acceptTarget(std::shared_ptr<CPickup> pickup)
+bool CProp::acceptTarget(CPickup* pickup)
 {
     return false;
 }
 
-bool CProp::updateSource(std::shared_ptr<CPickup> pickup)
+bool CProp::updateSource(CPickup* pickup)
 {
     return false;
 }
@@ -92,7 +92,7 @@ void CProp::save(ofstream& os)
     os << m_posY << endl;
 }
 
-std::shared_ptr<CGameObject> CProp::loadGameObject(ifstream& is)
+CGameObject* CProp::loadGameObject(ifstream& is)
 {
     int _type;
     is >> _type;
@@ -101,7 +101,7 @@ std::shared_ptr<CGameObject> CProp::loadGameObject(ifstream& is)
     is >> posX;
     is >> posY;
 
-    std::shared_ptr<CProp> result;
+    CProp* result;
     result.reset(new CProp(posY, posX, (prop_type)_type));
     return result;
 }

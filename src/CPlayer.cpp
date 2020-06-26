@@ -43,11 +43,11 @@ void CPlayer::defaultStep(int & move)       // basic player movement, every clas
 
 }
 
-std::shared_ptr<CGameObject> CPlayer::directionGetTarget()
+CGameObject* CPlayer::directionGetTarget()
 {
     int tmppos;    
     std::pair<int, int> pair;
-    std::shared_ptr<CGameObject> target = nullptr;
+    CGameObject* target = nullptr;
 
     switch (m_objectForm)
     {
@@ -183,39 +183,39 @@ bool CPlayer::defaultMove(int move)
     return used;
 }
 
-bool CPlayer::itemPickup(std::shared_ptr<CGameObject> target)
+bool CPlayer::itemPickup(CGameObject* target)
 {
-    std::shared_ptr<CEvent> pickup;
+    CEvent* pickup;
     pickup = (new CPickup(m_sharedThis, target))->getPtr();
     application.getGame()->pushEvent(pickup);
     return true;
 }
 
-bool CPlayer::acceptSource(std::shared_ptr<CAttack> attack)
+bool CPlayer::acceptSource(CAttack* attack)
 {
     attack->visitSource(m_sharedThis);
     return true;
 }   
 
-bool CPlayer::acceptTarget(std::shared_ptr<CAttack> attack)
+bool CPlayer::acceptTarget(CAttack* attack)
 {
     attack->visitTarget(m_sharedThis);
     return true;
 }
 
-bool CPlayer::updateSource(std::shared_ptr<CAttack> attack)
+bool CPlayer::updateSource(CAttack* attack)
 {
     attack->updateSource(m_sharedThis);
     return true;
 }
 
-bool CPlayer::updateTarget(std::shared_ptr<CAttack> attack)
+bool CPlayer::updateTarget(CAttack* attack)
 {
     attack->updateTarget(m_sharedThis);
     return true;
 }
 
-bool CPlayer::acceptSource(std::shared_ptr<CEquip> equip)
+bool CPlayer::acceptSource(CEquip* equip)
 {
     equip->visitSource(m_sharedThis);
     return true;
@@ -256,7 +256,7 @@ void CPlayer::goToInventory()
                 break;
         }
 
-        std::shared_ptr<CItem> item = m_inventory->getItemAt(selected);
+        CItem* item = m_inventory->getItemAt(selected);
 
         if(item == nullptr)
         {
@@ -307,17 +307,17 @@ void CPlayer::goToInventory()
     return;
 }
 
-bool CPlayer::useItem(std::shared_ptr<CItem> item)
+bool CPlayer::useItem(CItem* item)
 {
-    std::shared_ptr<CEvent> equip;
+    CEvent* equip;
     equip = (new CEquip(m_sharedThis, item))->getPtr();
     application.getGame()->pushEvent(equip);
     return true;    
 }
 
-bool CPlayer::dumpItem(std::shared_ptr<CItem> item)
+bool CPlayer::dumpItem(CItem* item)
 {
-    std::shared_ptr<CEvent> discard;
+    CEvent* discard;
     discard = (new CDiscard(m_sharedThis, item))->getPtr();
     application.getGame()->pushEvent(discard);
 
@@ -330,7 +330,7 @@ void CPlayer::getLabel(std::string & label) const
     return;
 }
 
-std::shared_ptr<CPlayer> CPlayer::getPtr()
+CPlayer* CPlayer::getPtr()
 {
     return m_sharedThis;
 }

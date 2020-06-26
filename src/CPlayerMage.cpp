@@ -57,7 +57,7 @@ bool CPlayerMage::interactWith()
 {
     bool used = false;
 
-    std::shared_ptr<CGameObject> target = directionGetTarget();
+    CGameObject* target = directionGetTarget();
 
     if(target == nullptr)
         return used;
@@ -84,9 +84,9 @@ bool CPlayerMage::interactWith()
     return used;
 }
 
-bool CPlayerMage::magePrimaryAttack(std::shared_ptr<CGameObject> target)
+bool CPlayerMage::magePrimaryAttack(CGameObject* target)
 {
-    std::shared_ptr<CAttack> attack;
+    CAttack* attack;
     attack = (new CPrimaryAttack(m_sharedDerived, target, m_primaryAttackType))->getPtr();
     application.getGame()->pushEvent(attack);
     return true;
@@ -130,19 +130,19 @@ void CPlayerMage::showStats() const
     return;
 }
 
-bool CPlayerMage::updateSource(std::shared_ptr<CPickup> pickup)
+bool CPlayerMage::updateSource(CPickup* pickup)
 {
     pickup->updateSource(m_sharedDerived);    
     return true;
 }
 
-bool CPlayerMage::acceptSource(std::shared_ptr<CPickup> pickup)
+bool CPlayerMage::acceptSource(CPickup* pickup)
 {
     pickup->visitSource(m_sharedDerived);
     return true;
 }
 
-bool CPlayerMage::acceptTarget(std::shared_ptr<CPickup> pickup)
+bool CPlayerMage::acceptTarget(CPickup* pickup)
 {
     return false;
 }
@@ -152,14 +152,14 @@ void CPlayerMage::addForce(int added)
     m_wisdom += added;
 }
 
-std::shared_ptr<CCharacter> loadPlayerMage(ifstream& is)
+CCharacter* loadPlayerMage(ifstream& is)
 {
     int posX;
     is >> posX;
     int posY;
     is >> posY;
 
-    std::shared_ptr<CCharacter> result;
+    CCharacter* result;
     result.reset(new CPlayerMage(posY, posX));
     return result;
 }

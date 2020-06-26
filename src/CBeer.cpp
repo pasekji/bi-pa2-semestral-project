@@ -12,7 +12,7 @@ std::string CBeer::getLabel() const
     return "BEER";
 }
 
-bool CBeer::itemApply(std::shared_ptr<CPlayer> player)
+bool CBeer::itemApply(CPlayer* player)
 {
     player->m_currentEnergy += m_energySource;
     if(player->m_currentEnergy > player->m_energy)

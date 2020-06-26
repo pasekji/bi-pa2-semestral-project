@@ -70,10 +70,10 @@ string CCharacter::getTypeName()
     return "CCharacter";
 }
 
-std::shared_ptr<CGameObject> CCharacter::defaultGetTarget()
+CGameObject* CCharacter::defaultGetTarget()
 {
     int tmppos;
-    std::shared_ptr<CGameObject> target = nullptr;
+    CGameObject* target = nullptr;
     std::pair<int, int> pair;
 
     target = application.getGame()->getMap()->getTargetObject(pair = std::make_pair(tmppos = m_posY - 1, m_posX));
@@ -90,7 +90,7 @@ std::shared_ptr<CGameObject> CCharacter::defaultGetTarget()
     return target;
 }
 
-std::shared_ptr<CCharacter> loadCharacter(ifstream& is)
+CCharacter* loadCharacter(ifstream& is)
 {
     string type;
     is >> type;
@@ -104,7 +104,7 @@ std::shared_ptr<CCharacter> loadCharacter(ifstream& is)
         return loadEnemy(is);
     if (type == "neukladat")
         return nullptr;
-    std::shared_ptr<CCharacter> result;
+    CCharacter* result;
 
     return result;
 }

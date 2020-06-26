@@ -52,7 +52,7 @@ bool CGameObject::isDead() const
     return true;
 }
 
-std::shared_ptr<CGameObject> loadGameObject(ifstream& is)
+CGameObject* loadGameObject(ifstream& is)
 {
     string typeName;
     is >> typeName;

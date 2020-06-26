@@ -14,7 +14,7 @@ std::string CDagger::getLabel() const
     return "DAGGER";
 }
 
-bool CDagger::itemApply(std::shared_ptr<CPlayer> player)
+bool CDagger::itemApply(CPlayer* player)
 {
     if(player->m_weaponEquiped == nullptr)
     {

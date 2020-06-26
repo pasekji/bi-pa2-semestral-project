@@ -170,7 +170,7 @@ void CGame::loadGame()
 
 }
 
-void CGame::pushEvent(std::shared_ptr<CEvent> event)
+void CGame::pushEvent(CEvent* event)
 {
     m_eventQueue.push_back(event);
     printEvents();
@@ -201,7 +201,7 @@ void CGame::printEvents()
     return;
 }
 
-std::shared_ptr<CMap> CGame::getMap() const
+CMap* CGame::getMap() const
 {
     return m_currentMap;
 }

@@ -41,12 +41,12 @@ void CApplication::endApplication()
     return;    
 }
 
-const std::shared_ptr<CGame> CApplication::getGame() const
+const CGame* CApplication::getGame() const
 {
     return m_game;
 }
 
-std::shared_ptr<CGame> CApplication::getGame()
+CGame* CApplication::getGame()
 {
     return m_game;
 }

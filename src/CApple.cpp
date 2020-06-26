@@ -12,7 +12,7 @@ std::string CApple::getLabel() const
     return "APPLE";
 }
 
-bool CApple::itemApply(std::shared_ptr<CPlayer> player)
+bool CApple::itemApply(CPlayer* player)
 {
     player->m_currentEnergy += m_energySource;
     if(player->m_currentEnergy > player->m_energy)

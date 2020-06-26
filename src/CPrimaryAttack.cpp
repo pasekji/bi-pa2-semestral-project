@@ -5,7 +5,7 @@
 
 extern CApplication application;
 
-CPrimaryAttack::CPrimaryAttack(std::shared_ptr<CGameObject> source, std::shared_ptr<CGameObject> target, attack_type attackType) : CAttack(source, target, attackType)
+CPrimaryAttack::CPrimaryAttack(CGameObject* source, CGameObject* target, attack_type attackType) : CAttack(source, target, attackType)
 {
     m_sharedThis.reset(this);
     source->acceptSource(m_sharedThis);
@@ -144,7 +144,7 @@ void CPrimaryAttack::evaluateAttack()       // na secondary attack lze pouzit ji
     return;
 }
 
-std::shared_ptr<CPrimaryAttack> CPrimaryAttack::getPtr()
+CPrimaryAttack* CPrimaryAttack::getPtr()
 {
     return m_sharedThis;        
 }

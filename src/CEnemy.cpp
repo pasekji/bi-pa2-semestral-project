@@ -116,13 +116,13 @@ CEnemy::CEnemy(int posY, int posX, enemy_type type) : CCharacter(posY, posX)
 CEnemy::CEnemy(int posY, int posX) : CCharacter(posY, posX)
 {}
 
-bool CEnemy::updateSource(std::shared_ptr<CAttack> attack)
+bool CEnemy::updateSource(CAttack* attack)
 {
     attack->updateSource(m_sharedThis);
     return true;
 }
 
-bool CEnemy::updateTarget(std::shared_ptr<CAttack> attack)
+bool CEnemy::updateTarget(CAttack* attack)
 {
     attack->updateTarget(m_sharedThis);
     return true;
@@ -412,7 +412,7 @@ int CEnemy::getAction()     // just demo testing - TODO - AI
 
 bool CEnemy::interactWith()
 {
-    std::shared_ptr<CGameObject> target = defaultGetTarget();
+    CGameObject* target = defaultGetTarget();
 
     if(target != nullptr)
     {
@@ -431,21 +431,21 @@ bool CEnemy::interactWith()
     return false;
 }
 
-bool CEnemy::primaryAttack(std::shared_ptr<CGameObject> target)
+bool CEnemy::primaryAttack(CGameObject* target)
 {
-    std::shared_ptr<CAttack> attack;
+    CAttack* attack;
     attack = (new CPrimaryAttack(m_sharedThis, target, m_primaryAttackType))->getPtr();
     application.getGame()->pushEvent(attack);
     return true;
 }
 
-bool CEnemy::acceptSource(std::shared_ptr<CAttack> attack)
+bool CEnemy::acceptSource(CAttack* attack)
 {
     attack->visitSource(m_sharedThis);
     return true;
 }
 
-bool CEnemy::acceptTarget(std::shared_ptr<CAttack> attack)
+bool CEnemy::acceptTarget(CAttack* attack)
 {
     attack->visitTarget(m_sharedThis);
     return true;
@@ -494,7 +494,7 @@ void CEnemy::showStats() const
     return;
 }
 
-std::shared_ptr<CCharacter> loadEnemy(ifstream& is)
+CCharacter* loadEnemy(ifstream& is)
 {
     int type;
     is >> type;
@@ -502,27 +502,27 @@ std::shared_ptr<CCharacter> loadEnemy(ifstream& is)
     is >> posX;
     int posY;
     is >> posY;
-    std::shared_ptr<CCharacter> result;
+    CCharacter* result;
     result.reset(new CEnemy(posY, posX, (enemy_type) type));
     return result;
 }
 
-bool CEnemy::acceptSource(std::shared_ptr<CPickup> pickup)
+bool CEnemy::acceptSource(CPickup* pickup)
 {
     return false;
 }
 
-bool CEnemy::acceptSource(std::shared_ptr<CEquip> equip)
+bool CEnemy::acceptSource(CEquip* equip)
 {
     return false;
 }
 
-bool CEnemy::acceptTarget(std::shared_ptr<CPickup> pickup)
+bool CEnemy::acceptTarget(CPickup* pickup)
 {
     return false;
 }
 
-bool CEnemy::updateSource(std::shared_ptr<CPickup> pickup)
+bool CEnemy::updateSource(CPickup* pickup)
 {
     return false;
 }
@@ -588,7 +588,7 @@ void CEnemy::save(ofstream& os)
     os << endl;
 }
 
-std::shared_ptr<CEnemy> CEnemy::getPtr()
+CEnemy* CEnemy::getPtr()
 {
     return m_sharedThis;
 }

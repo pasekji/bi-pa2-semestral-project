@@ -152,12 +152,12 @@ void CMap::spawnPlayer(int posY, int posX, player_class playerClass)
     return;
 }
 
-std::shared_ptr<CPlayer> CMap::getPlayer() const            // not needed
+CPlayer* CMap::getPlayer() const            // not needed
 {
     return m_player;
 }
 
-std::shared_ptr<CGameObject> CMap::getTargetObject(std::pair<int, int> & pair) const
+CGameObject* CMap::getTargetObject(std::pair<int, int> & pair) const
 {
     for(auto i : m_targets)
     {
@@ -218,7 +218,7 @@ void CMap::spawnEnemy(int posY, int posX, enemy_type type)
     if(collisionDetect(pair))
         throw std::invalid_argument("received overlapping coordinates with other object");
     
-    std::shared_ptr<CEnemy> enemy;
+    CEnemy* enemy;
     enemy = (new CEnemy(posY, posX, type))->getPtr();
     m_moveableObjects.push_back(enemy);
     m_targets.push_back(enemy);
@@ -233,21 +233,21 @@ void CMap::spawnProp(int posY, int posX, prop_type type)
     if(collisionDetect(pair))
         throw std::invalid_argument("received overlapping coordinates with other object");
 
-    std::shared_ptr<CProp> prop;
+    CProp* prop;
     prop.reset(new CProp(posY, posX, type));
     m_imoveableObjects.push_back(prop);
 
     return;
 }
 
-std::shared_ptr<CLoot> CMap::spawnLoot(int posY, int posX)
+CLoot* CMap::spawnLoot(int posY, int posX)
 {
     std::pair<int, int> pair = std::make_pair(posY, posX);
 
     if(collisionDetect(pair))
         throw std::invalid_argument("received overlapping coordinates with other object");
 
-    std::shared_ptr<CLoot> loot;
+    CLoot* loot;
     loot = (new CLoot(posY, posX))->getPtr();    
     m_imoveableObjects.push_back(loot);
     m_targets.push_back(loot);

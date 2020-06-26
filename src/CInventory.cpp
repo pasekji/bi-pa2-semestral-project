@@ -18,7 +18,7 @@ CInventory::CInventory(unsigned size) : m_size(size)
 
 void CInventory::constructFill()
 {
-    std::shared_ptr<CItem> item = nullptr;
+    CItem* item = nullptr;
     for(unsigned i = 0; i < m_size; i++)
         m_contents.push_back(item);
 
@@ -30,7 +30,7 @@ unsigned CInventory::getSize() const
     return m_size;
 }
 
-std::shared_ptr<CItem> CInventory::getItemAt(unsigned i) const
+CItem* CInventory::getItemAt(unsigned i) const
 {
     return m_contents[i]; 
 }
@@ -38,13 +38,13 @@ std::shared_ptr<CItem> CInventory::getItemAt(unsigned i) const
 void CInventory::eraseItemAt(unsigned i)
 {
     m_contents[i] = emptyItem;
-    std::sort(m_contents.begin(), m_contents.end(), std::greater<std::shared_ptr<CItem>>());
+    std::sort(m_contents.begin(), m_contents.end(), std::greater<CItem*>());
     if(m_itemCount != 0)
         m_itemCount--;
 }
 
 
-bool CInventory::getItem(std::shared_ptr<CPlayerPaladin> paladin, std::shared_ptr<CPickup> pickup) 
+bool CInventory::getItem(CPlayerPaladin* paladin, CPickup* pickup) 
 {
     if(!(m_itemCount < m_size))
         return false;
@@ -54,7 +54,7 @@ bool CInventory::getItem(std::shared_ptr<CPlayerPaladin> paladin, std::shared_pt
 
     int roll = itemRoll(randomGenerator);
 
-    std::shared_ptr<CItem> item = nullptr;
+    CItem* item = nullptr;
 
     switch(roll)
     {
@@ -87,7 +87,7 @@ bool CInventory::getItem(std::shared_ptr<CPlayerPaladin> paladin, std::shared_pt
     return true;
 }
 
-bool CInventory::getItem(std::shared_ptr<CPlayerMage> mage, std::shared_ptr<CPickup> pickup) 
+bool CInventory::getItem(CPlayerMage* mage, CPickup* pickup) 
 {
     if(!(m_itemCount < m_size))
         return false;
@@ -97,7 +97,7 @@ bool CInventory::getItem(std::shared_ptr<CPlayerMage> mage, std::shared_ptr<CPic
 
     int roll = itemRoll(randomGenerator);
 
-    std::shared_ptr<CItem> item = nullptr;
+    CItem* item = nullptr;
 
     switch(roll)
     {
@@ -130,7 +130,7 @@ bool CInventory::getItem(std::shared_ptr<CPlayerMage> mage, std::shared_ptr<CPic
     return true;
 }
 
-bool CInventory::getItem(std::shared_ptr<CPlayerRogue> rogue, std::shared_ptr<CPickup> pickup) 
+bool CInventory::getItem(CPlayerRogue* rogue, CPickup* pickup) 
 {
     if(!(m_itemCount < m_size))
         return false;
@@ -140,7 +140,7 @@ bool CInventory::getItem(std::shared_ptr<CPlayerRogue> rogue, std::shared_ptr<CP
 
     int roll = itemRoll(randomGenerator);
 
-    std::shared_ptr<CItem> item = nullptr;
+    CItem* item = nullptr;
 
     switch(roll)
     {

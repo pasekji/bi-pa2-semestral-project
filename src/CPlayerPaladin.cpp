@@ -55,7 +55,7 @@ bool CPlayerPaladin::interactWith()
 {
     bool used = false;
 
-    std::shared_ptr<CGameObject> target = directionGetTarget();
+    CGameObject* target = directionGetTarget();
 
     if(target == nullptr)
         return used;
@@ -82,9 +82,9 @@ bool CPlayerPaladin::interactWith()
     return used;
 }
 
-bool CPlayerPaladin::paladinPrimaryAttack(std::shared_ptr<CGameObject> target)
+bool CPlayerPaladin::paladinPrimaryAttack(CGameObject* target)
 {
-    std::shared_ptr<CAttack> attack;
+    CAttack* attack;
     attack = (new CPrimaryAttack(m_sharedDerived, target, m_primaryAttackType))->getPtr();
     application.getGame()->pushEvent(attack);
     return true;
@@ -117,31 +117,31 @@ void CPlayerPaladin::hide(int& move)
     return;
 }
 
-bool CPlayerPaladin::updateSource(std::shared_ptr<CPickup> pickup)
+bool CPlayerPaladin::updateSource(CPickup* pickup)
 {
     pickup->updateSource(m_sharedDerived);
     return true;
 }
 
-bool CPlayerPaladin::acceptSource(std::shared_ptr<CPickup> pickup)
+bool CPlayerPaladin::acceptSource(CPickup* pickup)
 {
     pickup->visitSource(m_sharedDerived);
     return true;
 }
 
-bool CPlayerPaladin::acceptTarget(std::shared_ptr<CPickup> pickup)
+bool CPlayerPaladin::acceptTarget(CPickup* pickup)
 {
     return false;
 }
 
-std::shared_ptr<CCharacter> loadPlayerPaladin(ifstream& is)
+CCharacter* loadPlayerPaladin(ifstream& is)
 {
     int posX;
     is >> posX;
     int posY;
     is >> posY;
 
-    std::shared_ptr<CCharacter> result;
+    CCharacter* result;
     result.reset(new CPlayerPaladin(posY, posX));
     
     return result;
