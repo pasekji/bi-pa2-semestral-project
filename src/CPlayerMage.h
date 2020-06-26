@@ -53,11 +53,9 @@ class CPlayerMage : public CPlayer
 
     private:
 
-        void addForce(int added) override
-        {
-            m_wisdom += added;
-        }
-
+        void addForce(int added) override;
+        void meditation();
+        bool m_meditation = false;
         std::shared_ptr<CPlayerMage> m_sharedDerived;
         int m_wisdom;
         float m_chanceOfCriticalAttack;

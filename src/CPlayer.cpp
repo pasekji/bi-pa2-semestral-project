@@ -323,3 +323,14 @@ bool CPlayer::dumpItem(std::shared_ptr<CItem> item)
 
     return true;
 }
+
+void CPlayer::getLabel(std::string & label) const
+{
+    label = "YOU";
+    return;
+}
+
+std::shared_ptr<CPlayer> CPlayer::getPtr()
+{
+    return m_sharedThis;
+}

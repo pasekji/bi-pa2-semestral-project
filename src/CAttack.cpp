@@ -4,6 +4,13 @@
 
 extern CApplication application;
 
+
+CAttack::CAttack(std::shared_ptr<CGameObject> source, std::shared_ptr<CGameObject> target, attack_type attackType) : CEvent(source, target)
+{
+    m_attackType = attackType;
+    m_chanceOfCritical = 0;
+}
+
 void CAttack::visitSource(std::shared_ptr<CPlayer> player)
 {  
     player->getLabel(m_sourceLabel);
@@ -27,6 +34,7 @@ void CAttack::visitSource(std::shared_ptr<CEnemy> enemy)
 void CAttack::visitTarget(std::shared_ptr<CPlayer> player)
 {
     player->getLabel(m_targetLabel);
+    m_targetReachable = player->isReachable();
     m_chanceOfBlockTarget = player->getChanceOfBlock();
     m_healthTarget = player->getHealth();
     m_energyTarget = player->getEnergy();
@@ -37,6 +45,7 @@ void CAttack::visitTarget(std::shared_ptr<CPlayer> player)
 void CAttack::visitTarget(std::shared_ptr<CEnemy> enemy)
 {
     enemy->getLabel(m_targetLabel);
+    m_targetReachable = enemy->isReachable();
     m_chanceOfBlockTarget = enemy->getChanceOfBlock();
     m_healthTarget = enemy->getHealth();
     m_energyTarget = enemy->getEnergy();     

@@ -101,3 +101,13 @@ void CPickup::print()
     m_phrase = m_sourceLabel + " picked up " + m_itemLabel + " from the " + m_targetLabel + ".";
     return;
 }
+
+void CPickup::setItemLabel(std::string label)
+{
+    m_itemLabel = label;
+}
+
+std::shared_ptr<CPickup> CPickup::getPtr()
+{
+    return m_sharedThis;
+}

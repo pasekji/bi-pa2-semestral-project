@@ -12,10 +12,7 @@ class CDiscard : public CEvent
         void print() override;
         void updateObjects() override;
 
-        std::shared_ptr<CDiscard> getPtr()
-        {
-            return m_sharedThis;
-        }
+        std::shared_ptr<CDiscard> getPtr();
         
     private:
         std::shared_ptr<CItem> m_item;

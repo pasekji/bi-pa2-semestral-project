@@ -17,28 +17,12 @@ class CPlayerRogue : public CPlayer
 
         virtual ~CPlayerRogue() = default;
 
-        const int getForce() const override
-        {
-            return m_agility;
-        }
+        const int getForce() const override;
+        const float getChanceOfCriticalAttack() const override;
 
-        const float getChanceOfCriticalAttack() const override
-        {
-            return m_chanceOfDoubleHit;
-        }
+        virtual string getTypeName();
 
-        virtual string getTypeName()
-        {
-            return "CPlayerRogue";
-        }
-
-        void save(ofstream& os) override
-        {
-            os << getTypeName() << " ";
-            os << m_posX << " ";
-            os << m_posY;
-            os << endl;
-        }
+        void save(ofstream& os) override;
 
         bool updateSource(std::shared_ptr<CPickup> pickup) override;
         bool acceptSource(std::shared_ptr<CPickup> pickup) override;
@@ -52,11 +36,8 @@ class CPlayerRogue : public CPlayer
         friend class CDagger;
 
     private:
-        void addForce(int added) override
-        {
-            m_agility += added;
-        }
-
+        void addForce(int added) override;
+        void quickJump();
         std::shared_ptr<CPlayerRogue> m_sharedDerived;
         int m_agility;
         float m_chanceOfDoubleHit;

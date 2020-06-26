@@ -16,10 +16,7 @@ class CEquip : public CEvent
 
         void visitSource(std::shared_ptr<CPlayer> player);
 
-        std::shared_ptr<CEquip> getPtr()
-        {
-            return m_sharedThis;
-        }
+        std::shared_ptr<CEquip> getPtr();
 
     private:
 

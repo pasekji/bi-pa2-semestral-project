@@ -3,11 +3,19 @@
 
 void CGame::run() 
 {
-    if(!is_init)
+    if(!is_init && !m_build)
     {
         initSpace();
         initBars();
         initMap();
+        is_init = true;
+        endGame();
+    }
+    else if(m_build && !is_init)
+    {
+        initSpace();
+        initBars();
+        m_currentMap->buildMap();
         is_init = true;
         endGame();
     }
@@ -19,6 +27,8 @@ void CGame::run()
 
     return;
 }
+
+
 
 void CGame::initMap()
 {

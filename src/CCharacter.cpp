@@ -4,6 +4,72 @@
 
 extern CApplication application;
 
+CCharacter::CCharacter(int posY, int posX) : CGameObject(posY, posX)
+{}
+
+void CCharacter::rest()
+{
+    if(m_currentEnergy < m_energy)
+        for(int i = 0; i < m_energyRegain; i++)
+        {
+            if(m_currentEnergy != m_energy)
+                m_currentEnergy++;
+        }
+
+    return;
+}
+
+void CCharacter::takeStep()
+{
+    m_currentEnergy -= m_energyForStep;
+}
+
+bool CCharacter::spareEnergyToStep() const
+{
+    if((m_currentEnergy - m_energyForStep) >= 0)
+        return true;
+    else
+        return false;
+}
+
+int CCharacter::getHealth() const
+{
+    return m_currentHealth;
+}
+
+int CCharacter::getEnergy() const
+{
+    return m_currentEnergy;
+}
+
+bool CCharacter::isReachable() const
+{
+    return m_isReachable;
+}
+
+const float CCharacter::getChanceOfBlock() const
+{
+    return m_chanceOfBlock;
+}
+
+bool CCharacter::isDead() const
+{
+    if(m_currentHealth <= 0)
+        return true;
+    else
+        return false;
+}
+
+const attack_type CCharacter::getAttackType() const
+{
+    return m_attackType;
+}
+
+string CCharacter::getTypeName()
+{
+    return "CCharacter";
+}
+
 std::shared_ptr<CGameObject> CCharacter::defaultGetTarget()
 {
     int tmppos;
@@ -28,7 +94,6 @@ std::shared_ptr<CCharacter> loadCharacter(ifstream& is)
 {
     string type;
     is >> type;
-    std::cerr << "Loading character " << type << endl;
     if (type == "CPlayerPaladin")
         return loadPlayerPaladin(is);
     if (type == "CPlayerRogue")
@@ -40,6 +105,6 @@ std::shared_ptr<CCharacter> loadCharacter(ifstream& is)
     if (type == "neukladat")
         return nullptr;
     std::shared_ptr<CCharacter> result;
+
     return result;
-    // TODO
 }

@@ -8,7 +8,6 @@ extern CApplication application;
 CPlayerMage::CPlayerMage(int posY, int posX) : CPlayer(posY, posX)
 {
     m_sharedDerived = std::dynamic_pointer_cast<CPlayerMage> (m_sharedThis);
-    halfdelay(1);
     m_inventorySize = 10;
     m_speed = 1;
     m_health = 90;
@@ -28,9 +27,28 @@ int CPlayerMage::getAction()
 
     if(!isDead())
     {
-        if(!defaultMove(m_move))
-            if(!interactWith())
-                rest();
+        if(m_meditation)
+            meditation();
+
+        if(toupper(m_move) == 'M')
+        {
+            if(!m_meditation)
+            {
+                meditation();
+                return m_move;
+            }
+            else
+            {
+                m_meditation = false;
+                changeForm('^');
+                return m_move;
+            }
+        }
+
+        if(!m_meditation)
+            if(!defaultMove(m_move))
+                if(!interactWith())
+                    rest();
     }
     return m_move;
 }
@@ -74,6 +92,23 @@ bool CPlayerMage::magePrimaryAttack(std::shared_ptr<CGameObject> target)
     return true;
 }
 
+void CPlayerMage::meditation()
+{
+    std::default_random_engine randomGenerator(rand());
+    std::uniform_int_distribution<int> roll(0, 3);
+    m_meditation = true;
+    changeForm('8');
+
+    if(roll(randomGenerator) == 0)
+    {
+        m_currentHealth++;
+        if(m_currentHealth >= m_health)
+            m_currentHealth = m_health;
+    }
+
+    return;
+}
+
 void CPlayerMage::showStats() const
 {
     int height, width;
@@ -84,6 +119,12 @@ void CPlayerMage::showStats() const
     mvwprintw(application.getGame()->getPlayerWindow(), (height - 2) / 2, (width - strlen("Health:    %d/%d") - 2) / 2, "Health:    %d/%d ", m_currentHealth, m_health);
     mvwprintw(application.getGame()->getPlayerWindow(), (height + 2) / 2, (width - strlen("Energy:    %d/%d") - 2) / 2, "Energy:    %d/%d ", m_currentEnergy, m_energy);
     mvwprintw(application.getGame()->getPlayerWindow(), (height + 6) / 2, (width - strlen("Wisdom:     %d") - 1) / 2, "Wisdom:     %d ", m_wisdom);
+
+    if(m_weaponEquiped == nullptr)
+        mvwprintw(application.getGame()->getPlayerWindow(), (height + 10) / 2, (width - strlen("Weapon:     NONE") - 1) / 2, "Weapon:     NONE ");
+    else
+        mvwprintw(application.getGame()->getPlayerWindow(), (height + 10) / 2, (width - strlen("Weapon:     %s") - 1 - m_weaponEquiped->getLabel().length()) / 2, "Weapon:     %s ", m_weaponEquiped->getLabel().c_str());
+
     wrefresh(application.getGame()->getPlayerWindow());
 
     return;
@@ -104,6 +145,11 @@ bool CPlayerMage::acceptSource(std::shared_ptr<CPickup> pickup)
 bool CPlayerMage::acceptTarget(std::shared_ptr<CPickup> pickup)
 {
     return false;
+}
+
+void CPlayerMage::addForce(int added)
+{
+    m_wisdom += added;
 }
 
 std::shared_ptr<CCharacter> loadPlayerMage(ifstream& is)

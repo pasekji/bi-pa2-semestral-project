@@ -2,9 +2,21 @@
 
 CMenu::CMenu()
 {
-    m_width = 14;
+    m_width = 20;
     m_selected = 0;
-    // k save game vypsat hlasku pod moznosti "save as ....txt"
+}
+
+CMenu::~CMenu()
+{
+    if (m_logoWindow) delwin(m_logoWindow);
+    if (m_menuWindow) delwin(m_menuWindow);
+}
+
+unsigned int CMenu::getSelected()
+{
+    unsigned int selected = m_selected;
+    m_selected = 0;
+    return selected;
 }
 
 void CMenu::setOptions(std::vector<std::string> options)

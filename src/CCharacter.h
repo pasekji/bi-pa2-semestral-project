@@ -8,12 +8,32 @@
 #include <memory>
 class CCharacter : public CGameObject
 {
+    public:
+        virtual int getAction() = 0;
+        virtual const int getForce() const = 0;
+        virtual bool interactWith() = 0;
+
+        int getHealth() const;
+
+        virtual const float getChanceOfCriticalAttack() const = 0;
+
+        int getEnergy() const;
+
+        const float getChanceOfBlock() const;
+
+        bool isDead() const override;
+
+        const attack_type getAttackType() const;
+
+        virtual string getTypeName();
+
+        bool isReachable() const;
+
     protected:    
 
-        CCharacter(int posY, int posX) : CGameObject(posY, posX)
-        {}
+        CCharacter(int posY, int posX);
         virtual ~CCharacter() = default;
-
+        bool m_isReachable = true;
         int m_speed;
         int m_currentHealth;
         int m_health;
@@ -24,74 +44,16 @@ class CCharacter : public CGameObject
         float m_chanceOfBlock;
         attack_type m_attackType;
 
-        void rest()
-        {
-            if(m_currentEnergy < m_energy)
-                for(int i = 0; i < m_energyRegain; i++)
-                {
-                    if(m_currentEnergy != m_energy)
-                        m_currentEnergy++;
-                }
+        void rest();
 
-            return;
-        }
+        void takeStep();
 
-        void takeStep()
-        {
-            m_currentEnergy -= m_energyForStep;
-        }
-
-        bool spareEnergyToStep() const
-        {
-            if((m_currentEnergy - m_energyForStep) >= 0)
-                return true;
-            else
-                return false;
-        }
+        bool spareEnergyToStep() const;
 
         virtual bool defaultMove(int move) = 0;
         
         std::shared_ptr<CGameObject> defaultGetTarget();
 
-    public:
-        virtual int getAction() = 0;
-        virtual const int getForce() const = 0;
-        virtual bool interactWith() = 0;
-
-        int getHealth()
-        {
-            return m_currentHealth;
-        }
-
-        virtual const float getChanceOfCriticalAttack() const = 0;
-
-        int getEnergy()
-        {
-            return m_currentEnergy;
-        }
-
-        const float getChanceOfBlock() const
-        {
-            return m_chanceOfBlock;
-        }
-
-        bool isDead() const override
-        {
-            if(m_currentHealth <= 0)
-                return true;
-            else
-                return false;
-        }
-
-        const attack_type getAttackType() const
-        {
-            return m_attackType;
-        }
-
-        virtual string getTypeName()
-        {
-            return "CCharacter";
-        }
 };
 
 std::shared_ptr<CCharacter> loadCharacter(ifstream& is);

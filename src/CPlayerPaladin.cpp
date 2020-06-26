@@ -9,7 +9,6 @@ extern CApplication application;
 CPlayerPaladin::CPlayerPaladin(int posY, int posX) : CPlayer(posY, posX)
 {
     m_sharedDerived = std::dynamic_pointer_cast<CPlayerPaladin> (m_sharedThis);
-    halfdelay(1);
     m_inventorySize = 20;
     m_speed = 1;
     m_health = 100;
@@ -25,15 +24,29 @@ CPlayerPaladin::CPlayerPaladin(int posY, int posX) : CPlayer(posY, posX)
 
 int CPlayerPaladin::getAction()
 {
-    defaultStep(m_move);                  // sprint is not availiable with paladin
+    defaultStep(m_move);
 
     if(!isDead())
     {
         if(toupper(m_move) == 'C')
-            slowTime(m_move);
-        if(!defaultMove(m_move))
-            if(!interactWith())
-                rest();
+        {
+            if(m_isReachable)
+            {
+                hide(m_move);
+                return m_move;
+            }
+            else
+            {
+                m_isReachable = true;
+                changeForm('^');
+                return m_move;
+            }
+        }
+
+        if(m_isReachable)
+            if(!defaultMove(m_move))
+                if(!interactWith())
+                    rest();
     }
     return m_move;
 }
@@ -87,15 +100,21 @@ void CPlayerPaladin::showStats() const
     mvwprintw(application.getGame()->getPlayerWindow(), (height - 2) / 2, (width - strlen("Health:    %d/%d") - 2) / 2, "Health:    %d/%d ", m_currentHealth, m_health);
     mvwprintw(application.getGame()->getPlayerWindow(), (height + 2) / 2, (width - strlen("Energy:    %d/%d") - 2) / 2, "Energy:    %d/%d ", m_currentEnergy, m_energy);
     mvwprintw(application.getGame()->getPlayerWindow(), (height + 6) / 2, (width - strlen("Strength:     %d") - 1) / 2, "Strength:     %d ", m_strength);
+
+    if(m_weaponEquiped == nullptr)
+        mvwprintw(application.getGame()->getPlayerWindow(), (height + 10) / 2, (width - strlen("Weapon:     NONE") - 1) / 2, "Weapon:     NONE ");
+    else
+        mvwprintw(application.getGame()->getPlayerWindow(), (height + 10) / 2, (width - strlen("Weapon:     %s") - 1 - m_weaponEquiped->getLabel().length()) / 2, "Weapon:     %s ", m_weaponEquiped->getLabel().c_str());
+
     wrefresh(application.getGame()->getPlayerWindow());
     return;
 }
 
-void CPlayerPaladin::slowTime(int& move)
-{    
-    while(toupper(move) == 'C')
-        defaultStep(move);
-    changeForm('^');
+void CPlayerPaladin::hide(int& move)
+{
+    m_isReachable = false;
+    changeForm('O');
+    return;
 }
 
 bool CPlayerPaladin::updateSource(std::shared_ptr<CPickup> pickup)
@@ -121,13 +140,37 @@ std::shared_ptr<CCharacter> loadPlayerPaladin(ifstream& is)
     is >> posX;
     int posY;
     is >> posY;
-    /*int experience;
-    is >> experience;
-    int strenght;
-    is >> strenght;*/
 
     std::shared_ptr<CCharacter> result;
     result.reset(new CPlayerPaladin(posY, posX));
     
     return result;
+}
+
+const int CPlayerPaladin::getForce() const
+{
+    return m_strength;
+}
+
+const float CPlayerPaladin::getChanceOfCriticalAttack() const
+{
+    return m_chanceOfCriticalAttack;
+}
+
+void CPlayerPaladin::save(ofstream& os)
+{
+    os << getTypeName() << " ";
+    os << m_posX << " ";
+    os << m_posY;
+    os << endl;
+}
+
+string CPlayerPaladin::getTypeName()
+{
+    return "CPlayerPaladin";
+}
+
+void CPlayerPaladin::addForce(int added)
+{
+    m_strength += added;
 }

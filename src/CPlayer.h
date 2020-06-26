@@ -24,11 +24,7 @@ class CPlayer : public CCharacter
     public:
         CPlayer(int posY, int posX);
 
-        void getLabel(std::string & label) const override
-        {
-            label = "YOU";
-            return;
-        }
+        void getLabel(std::string & label) const;
 
         virtual ~CPlayer() = default;
 
@@ -42,10 +38,7 @@ class CPlayer : public CCharacter
 
         bool updateTarget(std::shared_ptr<CAttack> attack) override;
 
-        std::shared_ptr<CPlayer> getPtr()
-        {
-            return m_sharedThis;
-        }
+        std::shared_ptr<CPlayer> getPtr();
 
         friend class CAttack;
         friend class CPickup;
@@ -76,7 +69,7 @@ class CPlayer : public CCharacter
         unsigned m_inventorySize;
         int m_currentExp = 0; 
         std::shared_ptr<CInventory> m_inventory;
-        std::shared_ptr<CWeapon> m_weaponEquiped;
+        std::shared_ptr<CWeapon> m_weaponEquiped = nullptr;
 
 };
 

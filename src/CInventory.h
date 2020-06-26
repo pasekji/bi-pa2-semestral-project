@@ -24,24 +24,12 @@ class CInventory
         void saveItems();
         void constructFill();
 
-        unsigned getSize() const
-        {
-            return m_size;
-        }
+        unsigned getSize() const;
 
         std::shared_ptr<CItem> emptyItem = nullptr;
-        std::shared_ptr<CItem> getItemAt(unsigned i) const
-        {
-            return m_contents[i]; 
-        }
+        std::shared_ptr<CItem> getItemAt(unsigned i) const;
 
-        void eraseItemAt(unsigned i)
-        {
-            m_contents[i] = emptyItem;
-            std::sort(m_contents.begin(), m_contents.end(), std::greater<std::shared_ptr<CItem>>());
-            if(m_itemCount != 0)
-                m_itemCount--;
-        }
+        void eraseItemAt(unsigned i);
 
         bool getItem(std::shared_ptr<CPlayerRogue> rogue, std::shared_ptr<CPickup> pickup);
         bool getItem(std::shared_ptr<CPlayerPaladin> paladin, std::shared_ptr<CPickup> pickup);

@@ -22,8 +22,7 @@ class CGameObject
     public:
         CGameObject(int posY, int posX);
         CGameObject(int posY, int posX, const char & objectForm);
-        virtual ~CGameObject()
-        {}
+        virtual ~CGameObject() = default;
 
         virtual void showStats() const = 0;
 
@@ -44,11 +43,7 @@ class CGameObject
 
         virtual bool acceptSource(std::shared_ptr<CEquip> equip) = 0;
 
-        virtual bool isDead() const
-        {
-            return true;
-        }
-        
+        virtual bool isDead() const;
         virtual void getLabel(std::string & label) const = 0;
         std::pair<int, int> & getPos();
         virtual void save(std::ofstream & os) = 0;

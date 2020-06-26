@@ -11,11 +11,7 @@
 class CAttack : public CEvent
 {
     public:
-        CAttack(std::shared_ptr<CGameObject> source, std::shared_ptr<CGameObject> target, attack_type attackType) : CEvent(source, target)
-        {
-            m_attackType = attackType;
-            m_chanceOfCritical = 0;
-        }
+        CAttack(std::shared_ptr<CGameObject> source, std::shared_ptr<CGameObject> target, attack_type attackType);
         virtual ~CAttack() = default;
 
         void visitSource(std::shared_ptr<CPlayer> player);
@@ -39,6 +35,7 @@ class CAttack : public CEvent
         int m_healthTarget = 0;
         int m_energySource = 0;
         int m_energyTarget = 0;
+        bool m_targetReachable = false;
 
         int m_forceGiven = 0;
         int m_healthLostTarget = 0;

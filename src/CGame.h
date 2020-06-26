@@ -39,6 +39,7 @@ class CGame
         const int & getXMax() const;
 
         bool is_init = false;
+        bool m_build = false;
 
     private:
         WINDOW* m_Window;                   // player or map window

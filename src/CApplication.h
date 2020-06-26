@@ -8,12 +8,7 @@
 class CApplication
 {
     public:
-        CApplication()
-        {
-            m_mainMenu->setOptions({"New Game", "Continue", "Save Game", "Load Game", "Quit"});
-            m_playerSelect->setOptions({"paladin", "mage", "rogue", "BACK"});
-            m_mapSelect->setOptions({"default world", "BACK"});
-        }
+        CApplication();
         ~CApplication() = default;
 
         bool saveGame();
@@ -25,9 +20,6 @@ class CApplication
 
         const std::shared_ptr<CGame> getGame() const;
         std::shared_ptr<CGame> getGame();
-
-        bool is_new;
-        bool is_loaded;
 
         friend class CGame;
 

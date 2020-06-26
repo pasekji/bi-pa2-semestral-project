@@ -2,14 +2,14 @@
 #include "CApplication.h"
 #include <ctype.h>
 #include <iostream>
+#include <ctime>
 
 extern CApplication application;
 
 void CMap::loadMap()            
 {
     // no predef ROOM_HEIGHT othr. will be used 
-    //spawnPlayer(((int)(application.getGame()->getYMax() * 0.99) - 2) / 2, ((int)(application.getGame()->getXMax() * 0.633) - 2) / 2, m_selectedClass);
-    demo_loadMapOriginal();
+    spawnPlayer(((int)(application.getGame()->getYMax() * 0.99) - 2) / 2, ((int)(application.getGame()->getXMax() * 0.633) - 2) / 2, m_selectedClass);
     return;
 }
 
@@ -33,7 +33,6 @@ bool CMap::collisionDetect(std::pair<int, int> & pair)
 void CMap::demo_loadMapOriginal()
 {
 // no predef ROOM_HEIGHT or othr. will be used 
-    spawnPlayer(((int)(application.getGame()->getYMax() * 0.99) - 2) / 2, ((int)(application.getGame()->getXMax() * 0.633) - 2) / 2, m_selectedClass);
     spawnEnemy(((ROOM_HEIGHT - (ROOM_HEIGHT/5))/2), (ROOM_WIDTH - 2) / 2, BASILISK);
     spawnProp((ROOM_HEIGHT/2), (ROOM_WIDTH - (ROOM_WIDTH/20)), WALL);
     spawnProp((ROOM_HEIGHT/2), (ROOM_WIDTH - (ROOM_WIDTH/20) - 1), WALL);
@@ -44,8 +43,6 @@ void CMap::demo_loadMapOriginal()
     spawnEnemy(((ROOM_HEIGHT - (ROOM_HEIGHT/7))/2), (ROOM_WIDTH - 2) / 2, NOONWRAITH);
     spawnEnemy(((ROOM_HEIGHT - (ROOM_HEIGHT/7))/2), (ROOM_WIDTH - 5) / 2, UNDEAD);
 
-    catchPlayer();
-
     return;
 }
 
@@ -53,16 +50,36 @@ void CMap::demo_loadMapLoading()
 {
     ifstream is;
     is.open("saveGame.txt");
-    std::cerr << "loading file." << std::endl;
-    //loadWOPlayer(is);
     loadWithPlayer(is);
+    catchPlayer();
 }
 
 void CMap::demo_loadMapSave()
 {
     ofstream os;
+
+    time_t t = time(0);
+    struct tm * now = localtime( & t );
+
+     char newFileName[50];
+
+     strftime(newFileName, 50,"%c.txt",now);
+
+     string text = newFileName;
+     std::ofstream saveList;
+     saveList.open("saves-list.txt");
+
+     if(saveList.is_open())
+     {
+         saveList << text << std::endl;
+     }
+
+     saveList.close();
+
     os.open("saveGame.txt");
     saveWithPlayer(os);
+    
+    return;
 }
 
 void CMap::demo_loadMap()
@@ -114,13 +131,23 @@ void CMap::spawnPlayer(int posY, int posX, player_class playerClass)
         case ROGUE:
             m_player = (new CPlayerRogue(posY, posX))->getPtr();
             break;
+        case BUILDER:
+            m_player = (new CBuilder(posY, posX))->getPtr();
         default:
             break;
     }
         
     m_moveableObjects.push_back(m_player);
     m_targets.push_back(m_player);
+
+    if(playerClass == BUILDER)
+        return;
+
+    demo_loadMapOriginal();
+    
     wrefresh(application.getGame()->getWindow());
+    
+    catchPlayer();
 
     return;
 }
@@ -146,6 +173,12 @@ std::shared_ptr<CGameObject> CMap::getTargetObject(std::pair<int, int> & pair) c
 
 void CMap::catchPlayer()
 {
+    if(m_selectedClass == BUILDER)
+    {
+        catchBuilder();
+        return;
+    }
+
     while (toupper(m_player->getAction()) != 'X')    
     {
         m_player->showStats();
@@ -159,8 +192,23 @@ void CMap::catchPlayer()
     clear();
     refresh();
 
-    return;                 // resenim tech vice sracek je ze se mi tady cyklus ve volani void funkci... 
-                            // extern application je třeba používat pouze na get/set
+    return;
+}
+
+void CMap::catchBuilder()
+{
+    while (toupper(m_player->getAction()) != 'X')    
+    {
+        m_player->showStats();
+        renderObjects();
+        wrefresh(application.getGame()->getWindow());
+        wrefresh(application.getGame()->getPlayerWindow());
+    }   
+    
+    clear();
+    refresh();
+
+    return;    
 }
 
 void CMap::spawnEnemy(int posY, int posX, enemy_type type)
@@ -329,13 +377,14 @@ void CMap::loadWithPlayer(ifstream& is)
     m_moveableObjects.push_back(m_player);
     m_targets.push_back(m_player);
     loadWOPlayer(is);
+
+    catchPlayer();
 }
 
 void CMap::loadWOPlayer(ifstream& is)
 {
     size_t moveableObjectsSize;
     is >> moveableObjectsSize;
-    std::cerr << "movable size:" << moveableObjectsSize << std::endl;
     for (unsigned i = 0; i < moveableObjectsSize; i++)
     {
         shared_ptr<CCharacter> obj = loadCharacter(is);
@@ -344,7 +393,6 @@ void CMap::loadWOPlayer(ifstream& is)
     }
     size_t imoveableObjectsSize;
     is >> imoveableObjectsSize;
-    std::cerr << "imovable size:" << imoveableObjectsSize << std::endl;
     for (unsigned i = 0; i < imoveableObjectsSize; i++)
     {
         shared_ptr<CGameObject> obj = loadGameObject(is);
@@ -353,11 +401,19 @@ void CMap::loadWOPlayer(ifstream& is)
     }
     size_t targetsSize;
     is >> targetsSize;
-    std::cerr << "targets size:" << targetsSize << std::endl;
     for (unsigned i = 0; i < targetsSize; i++)
     {
         shared_ptr<CGameObject> obj = loadGameObject(is);
         if (obj != nullptr)
             m_targets.push_back(obj);
     }
+}
+
+void CMap::buildMap()
+{
+    m_selectedClass = BUILDER;
+    spawnPlayer(((int)(application.getGame()->getYMax() * 0.99) - 2) / 2, ((int)(application.getGame()->getXMax() * 0.633) - 2) / 2, m_selectedClass);
+    catchBuilder();
+
+    return;
 }

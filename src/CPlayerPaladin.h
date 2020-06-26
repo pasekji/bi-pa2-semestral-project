@@ -15,28 +15,13 @@ class CPlayerPaladin : public CPlayer
         CPlayerPaladin(int posY, int posX);
         virtual ~CPlayerPaladin() = default;
 
-        const int getForce() const override
-        {
-            return m_strength;
-        }
+        const int getForce() const override;
 
-        const float getChanceOfCriticalAttack() const override
-        {
-            return m_chanceOfCriticalAttack;
-        }
+        const float getChanceOfCriticalAttack() const override;
 
-        void save(ofstream& os) override
-        {
-            os << getTypeName() << " ";
-            os << m_posX << " ";
-            os << m_posY;
-            os << endl;
-        }
+        void save(ofstream& os) override;
 
-        virtual string getTypeName()
-        {
-            return "CPlayerPaladin";
-        }
+        virtual string getTypeName();
 
         bool updateSource(std::shared_ptr<CPickup> pickup) override;
         bool acceptSource(std::shared_ptr<CPickup> pickup) override;
@@ -50,12 +35,8 @@ class CPlayerPaladin : public CPlayer
         friend class CSword;
 
     private:
-        void addForce(int added) override
-        {
-            m_strength += added;
-        }
-
-        void slowTime(int& move);
+        void addForce(int added) override;
+        void hide(int& move);
         std::shared_ptr<CPlayerPaladin> m_sharedDerived;
         bool interactWith() override;
         int m_strength;

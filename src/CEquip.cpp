@@ -16,6 +16,11 @@ CEquip::CEquip(std::shared_ptr<CGameObject> source, std::shared_ptr<CItem> item)
     }
 }
 
+std::shared_ptr<CEquip> CEquip::getPtr()
+{
+    return m_sharedThis;
+}
+
 void CEquip::print()
 {
     if(m_isSomething)

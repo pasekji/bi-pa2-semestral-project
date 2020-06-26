@@ -1,5 +1,12 @@
 #include "CApplication.h"
 
+CApplication::CApplication()
+{
+    m_mainMenu->setOptions({"New Game", "Continue", "Save Game", "Load Game", "Quit"});
+    m_playerSelect->setOptions({"paladin", "mage", "rogue", "BACK"});
+    m_mapSelect->setOptions({"default world", "map builder", "BACK"});
+}
+
 void CApplication::initApplication()
 {
     setlocale(LC_ALL, "");
@@ -9,6 +16,7 @@ void CApplication::initApplication()
     noecho();
     cbreak();
     curs_set(0);
+    halfdelay(1);
 
     // get screen size
     getmaxyx(stdscr, m_yMax, m_xMax);
@@ -143,6 +151,12 @@ void CApplication::initMapSelect()
             break;
 
         case 1:
+            m_game->m_build = true;
+            m_game->run();
+            initMainMenu();
+            break;
+            
+        case 2:
             initPlayerSelect();
             break;
 

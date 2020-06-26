@@ -30,7 +30,7 @@ void CPrimaryAttack::print()
 {
     if(m_canAttack && !m_targetDead)
     {
-        if(m_hit)
+        if(m_hit && m_targetReachable)
         {
             switch(m_attackType)
             {
@@ -60,9 +60,12 @@ void CPrimaryAttack::print()
                 
                 case MELEE:
                     m_phrase = m_sourceLabel + " massacred " + m_targetLabel + ".";
+                    break;
 
                 case SLAP:
                     m_phrase = m_sourceLabel + " slaped " + m_targetLabel + ".";
+                    break;
+                    
                 default:
                     break;
             }
@@ -141,9 +144,14 @@ void CPrimaryAttack::evaluateAttack()       // na secondary attack lze pouzit ji
     return;
 }
 
+std::shared_ptr<CPrimaryAttack> CPrimaryAttack::getPtr()
+{
+    return m_sharedThis;        
+}
+
 void CPrimaryAttack::updateObjects()
 {
-    if(m_canAttack && !m_target->isDead())
+    if(m_canAttack && !m_target->isDead() && m_targetReachable)
     {
         m_source->updateSource(m_sharedThis);
         m_target->updateTarget(m_sharedThis);

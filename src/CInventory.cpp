@@ -25,6 +25,25 @@ void CInventory::constructFill()
     return;
 }
 
+unsigned CInventory::getSize() const
+{
+    return m_size;
+}
+
+std::shared_ptr<CItem> CInventory::getItemAt(unsigned i) const
+{
+    return m_contents[i]; 
+}
+
+void CInventory::eraseItemAt(unsigned i)
+{
+    m_contents[i] = emptyItem;
+    std::sort(m_contents.begin(), m_contents.end(), std::greater<std::shared_ptr<CItem>>());
+    if(m_itemCount != 0)
+        m_itemCount--;
+}
+
+
 bool CInventory::getItem(std::shared_ptr<CPlayerPaladin> paladin, std::shared_ptr<CPickup> pickup) 
 {
     if(!(m_itemCount < m_size))

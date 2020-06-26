@@ -15,6 +15,11 @@ CDiscard::CDiscard(std::shared_ptr<CGameObject> source, std::shared_ptr<CItem> i
         updateObjects();    
 }
 
+std::shared_ptr<CDiscard> CDiscard::getPtr()
+{
+    return m_sharedThis;
+}
+
 void CDiscard::updateObjects()
 {
     print();

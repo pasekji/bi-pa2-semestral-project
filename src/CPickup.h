@@ -25,15 +25,9 @@ class CPickup : public CEvent
         void updateSource(std::shared_ptr<CPlayerMage> mage);
 
 
-        void setItemLabel(std::string label)
-        {
-            m_itemLabel = label;
-        }
+        void setItemLabel(std::string label);
 
-        std::shared_ptr<CPickup> getPtr()
-        {
-            return m_sharedThis;
-        }
+        std::shared_ptr<CPickup> getPtr();
     
     private:
 

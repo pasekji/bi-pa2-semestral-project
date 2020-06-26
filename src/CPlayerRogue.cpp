@@ -9,7 +9,6 @@ extern CApplication application;
 CPlayerRogue::CPlayerRogue(int posY, int posX) : CPlayer(posY, posX)
 {
     m_sharedDerived = std::dynamic_pointer_cast<CPlayerRogue> (m_sharedThis);
-    halfdelay(2);
     m_inventorySize = 10;
     m_speed = 1;
     m_health = 75;
@@ -29,6 +28,12 @@ int CPlayerRogue::getAction()
 
     if(!isDead())
     {
+        if(toupper(m_move) == 'Q')
+        {
+            quickJump();
+            return m_move;
+        }
+
         if(!defaultMove(m_move))
             if(!interactWith())
                 rest();
@@ -76,6 +81,35 @@ bool CPlayerRogue::roguePrimaryAttack(std::shared_ptr<CGameObject> target)
     return true;
 }
 
+void CPlayerRogue::quickJump()
+{
+    switch (m_objectForm)
+    {
+        case '^':
+            for(int i = 0; i < 4; i++) 
+                defaultMove(KEY_UP);
+            break;
+    
+        case 'v':
+            for(int i = 0; i < 4; i++) 
+                defaultMove(KEY_DOWN);
+            break;
+
+        case '<':
+            for(int i = 0; i < 4; i++) 
+                defaultMove(KEY_LEFT);
+            break;
+
+        case '>':
+            for(int i = 0; i < 4; i++) 
+                defaultMove(KEY_RIGHT);
+            break;
+
+        default:
+            break;
+    }
+}
+
 void CPlayerRogue::showStats() const
 {
     int height, width;
@@ -86,6 +120,12 @@ void CPlayerRogue::showStats() const
     mvwprintw(application.getGame()->getPlayerWindow(), (height - 2) / 2, (width - strlen("Health:    %d/%d") - 2) / 2, "Health:    %d/%d ", m_currentHealth, m_health);
     mvwprintw(application.getGame()->getPlayerWindow(), (height + 2) / 2, (width - strlen("Energy:    %d/%d") - 2) / 2, "Energy:    %d/%d ", m_currentEnergy, m_energy);
     mvwprintw(application.getGame()->getPlayerWindow(), (height + 6) / 2, (width - strlen("Agility:     %d") - 1) / 2, "Agility:     %d ", m_agility);
+    
+    if(m_weaponEquiped == nullptr)
+        mvwprintw(application.getGame()->getPlayerWindow(), (height + 10) / 2, (width - strlen("Weapon:     NONE") - 1) / 2, "Weapon:     NONE ");
+    else
+        mvwprintw(application.getGame()->getPlayerWindow(), (height + 10) / 2, (width - strlen("Weapon:     %s") - 1 - m_weaponEquiped->getLabel().length()) / 2, "Weapon:     %s ", m_weaponEquiped->getLabel().c_str());
+    
     wrefresh(application.getGame()->getPlayerWindow());
     return;
 }
@@ -107,16 +147,42 @@ bool CPlayerRogue::acceptTarget(std::shared_ptr<CPickup> pickup)
     return false;
 }
 
+const int CPlayerRogue::getForce() const
+{
+    return m_agility;
+}
+
+const float CPlayerRogue::getChanceOfCriticalAttack() const
+{
+    return m_chanceOfDoubleHit;
+}
+ 
+string CPlayerRogue::getTypeName()
+{
+    return "CPlayerRogue";
+}
+
+void CPlayerRogue::save(ofstream& os)
+{
+    os << getTypeName() << " ";
+    os << m_posX << " ";
+    os << m_posY;
+    os << endl;
+
+    return;
+}
+
+void CPlayerRogue::addForce(int added)
+{
+    m_agility += added;
+}
+
 std::shared_ptr<CCharacter> loadPlayerRogue(ifstream& is)
 {
     int posX;
     is >> posX;
     int posY;
     is >> posY;
-    /*int experience;
-    is >> experience;
-    int strenght;
-    is >> strenght;*/
 
     std::shared_ptr<CCharacter> result;
     result.reset(new CPlayerRogue(posY, posX));

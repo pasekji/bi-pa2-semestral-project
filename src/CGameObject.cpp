@@ -47,11 +47,15 @@ std::pair<int, int> & CGameObject::getPos()
     return pair;
 }
 
+bool CGameObject::isDead() const
+{
+    return true;
+}
+
 std::shared_ptr<CGameObject> loadGameObject(ifstream& is)
 {
     string typeName;
     is >> typeName;
-    std::cerr << "Loading object " << typeName << endl;
     if (typeName == "CProp") {
         return CProp::loadGameObject(is);
     }

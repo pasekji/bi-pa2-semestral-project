@@ -13,6 +13,7 @@
 #include "CPlayerMage.h"
 #include "CEnemy.h"
 #include "CProp.h"
+#include "CBuilder.h"
 #include <fstream>
 
 using namespace std;
@@ -44,14 +45,17 @@ class CMap
         
         void saveWithPlayer(ofstream& os);
 
+        void buildMap();
+
         player_class m_selectedClass;
-        friend class CPlayerPaladin;
+        friend class CBuilder;
 
     private:
         std::shared_ptr<CPlayer> m_player;
         std::vector<std::shared_ptr<CCharacter>> m_moveableObjects;
         std::vector<std::shared_ptr<CGameObject>> m_imoveableObjects;
         std::vector<std::shared_ptr<CGameObject>> m_targets;
+        void catchBuilder();
         void spawnPlayer(int posY, int posX, player_class playerClass);           // (int posY, int posX)
         void spawnEnemy(int posY, int posX, enemy_type type);
         void spawnProp(int posY, int posX, prop_type type);

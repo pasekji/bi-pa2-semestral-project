@@ -496,22 +496,99 @@ void CEnemy::showStats() const
 
 std::shared_ptr<CCharacter> loadEnemy(ifstream& is)
 {
-    // int triggerDistance;
-    // is >> triggerDistance;
-    // bool triggerAttack;
-    // is >> triggerAttack;
     int type;
     is >> type;
-    // int force;
-    // is >> force;
-    // int primaryAttackType;
-    // is >> primaryAttackType;
     int posX;
     is >> posX;
     int posY;
     is >> posY;
     std::shared_ptr<CCharacter> result;
-    // TODO doplnit do CEnemy zbyle udaje
     result.reset(new CEnemy(posY, posX, (enemy_type) type));
     return result;
+}
+
+bool CEnemy::acceptSource(std::shared_ptr<CPickup> pickup)
+{
+    return false;
+}
+
+bool CEnemy::acceptSource(std::shared_ptr<CEquip> equip)
+{
+    return false;
+}
+
+bool CEnemy::acceptTarget(std::shared_ptr<CPickup> pickup)
+{
+    return false;
+}
+
+bool CEnemy::updateSource(std::shared_ptr<CPickup> pickup)
+{
+    return false;
+}
+
+const float CEnemy::getChanceOfCriticalAttack() const
+{
+    return m_chanceOfAttack;
+}
+
+const int CEnemy::getForce() const
+{
+    return m_force;
+}
+
+void CEnemy::triggerAttack()
+{
+    m_triggerAttack = true;
+}
+
+void CEnemy::getLabel(std::string & label) const
+{
+    switch (m_type)
+    {
+        case BASILISK:
+            label = "BASILISK";
+            break;
+        case UNDEAD:
+            label = "UNDEAD";
+            break;
+        case GHOUL:
+            label = "GHOUL";
+            break;
+        case HELLHOUND:
+            label = "HELLHOUND";
+            break;
+        case NOONWRAITH:
+            label = "NOONWRAITH";
+            break;
+        case SIREN:
+            label = "SIREN";
+        default:
+            break;
+    }
+}
+
+string CEnemy::getTypeName()
+{
+    return "CEnemy";
+}
+
+void CEnemy::save(ofstream& os)
+{
+    if(isDead())
+            os << "neukladat" << endl;
+    os << getTypeName() << " ";
+    //os << m_triggerDistance;
+    //os << m_triggerAttack;
+    os << (int)m_type << " ";
+    //os << m_force;
+    //os << (int)m_primaryAttackType;
+    os << m_posX << " ";
+    os << m_posY;
+    os << endl;
+}
+
+std::shared_ptr<CEnemy> CEnemy::getPtr()
+{
+    return m_sharedThis;
 }

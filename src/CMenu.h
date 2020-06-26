@@ -13,11 +13,7 @@ class CMenu
     public:
         CMenu();
 
-        ~CMenu()
-        {
-            if (m_logoWindow) delwin(m_logoWindow);
-            if (m_menuWindow) delwin(m_menuWindow);
-        };
+        ~CMenu();
 
         unsigned int getAction();
 
@@ -26,12 +22,7 @@ class CMenu
         void loadMenu();
             
         
-        unsigned int getSelected()
-        {
-            unsigned int selected = m_selected;
-            m_selected = 0;
-            return selected;
-        }
+        unsigned int getSelected();
 
         bool is_init = false;
 
