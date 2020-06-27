@@ -38,7 +38,6 @@ class CPlayerRogue : public CPlayer
     private:
         void addForce(int added) override;
         void quickJump();
-        CPlayerRogue* m_sharedDerived;
         int m_agility;
         float m_chanceOfDoubleHit;
         attack_type m_primaryAttackType;

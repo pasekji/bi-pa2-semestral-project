@@ -13,9 +13,6 @@ class CSword : public CWeapon
 
         bool itemApply(CPlayer* player) override;
 
-    private:
-        CSword* m_sharedThis;
-
 };
 
 #endif

@@ -8,7 +8,6 @@ extern CApplication application;
 
 CPlayerPaladin::CPlayerPaladin(int posY, int posX) : CPlayer(posY, posX)
 {
-    m_sharedDerived = std::dynamic_pointer_cast<CPlayerPaladin> (m_sharedThis);
     m_inventorySize = 20;
     m_speed = 1;
     m_health = 100;
@@ -19,7 +18,7 @@ CPlayerPaladin::CPlayerPaladin(int posY, int posX) : CPlayer(posY, posX)
     m_energyForStep = 2;
     m_energyRegain = 3;
     m_primaryAttackType = SLASH;
-    m_inventory.reset(new CInventory(m_inventorySize));
+    m_inventory = new CInventory(m_inventorySize);
 }
 
 int CPlayerPaladin::getAction()
@@ -85,7 +84,7 @@ bool CPlayerPaladin::interactWith()
 bool CPlayerPaladin::paladinPrimaryAttack(CGameObject* target)
 {
     CAttack* attack;
-    attack = (new CPrimaryAttack(m_sharedDerived, target, m_primaryAttackType))->getPtr();
+    attack = (new CPrimaryAttack(this, target, m_primaryAttackType))->getPtr();
     application.getGame()->pushEvent(attack);
     return true;
 }
@@ -119,13 +118,13 @@ void CPlayerPaladin::hide(int& move)
 
 bool CPlayerPaladin::updateSource(CPickup* pickup)
 {
-    pickup->updateSource(m_sharedDerived);
+    pickup->updateSource(this);
     return true;
 }
 
 bool CPlayerPaladin::acceptSource(CPickup* pickup)
 {
-    pickup->visitSource(m_sharedDerived);
+    pickup->visitSource(this);
     return true;
 }
 
@@ -142,7 +141,7 @@ CCharacter* loadPlayerPaladin(ifstream& is)
     is >> posY;
 
     CCharacter* result;
-    result.reset(new CPlayerPaladin(posY, posX));
+    result = new CPlayerPaladin(posY, posX);
     
     return result;
 }

@@ -8,7 +8,6 @@ extern CApplication application;
 
 CPlayerRogue::CPlayerRogue(int posY, int posX) : CPlayer(posY, posX)
 {
-    m_sharedDerived = std::dynamic_pointer_cast<CPlayerRogue> (m_sharedThis);
     m_inventorySize = 10;
     m_speed = 1;
     m_health = 75;
@@ -19,7 +18,7 @@ CPlayerRogue::CPlayerRogue(int posY, int posX) : CPlayer(posY, posX)
     m_energyForStep = 2;
     m_energyRegain = 4;
     m_primaryAttackType = MELEE;
-    m_inventory.reset(new CInventory(m_inventorySize));
+    m_inventory = new CInventory(m_inventorySize);
 }
 
 int CPlayerRogue::getAction()
@@ -76,7 +75,7 @@ bool CPlayerRogue::interactWith()
 bool CPlayerRogue::roguePrimaryAttack(CGameObject* target)
 {
     CAttack* attack;
-    attack = (new CPrimaryAttack(m_sharedDerived, target, m_primaryAttackType))->getPtr();
+    attack = (new CPrimaryAttack(this, target, m_primaryAttackType))->getPtr();
     application.getGame()->pushEvent(attack);
     return true;
 }
@@ -132,13 +131,13 @@ void CPlayerRogue::showStats() const
 
 bool CPlayerRogue::updateSource(CPickup* pickup)
 {
-    pickup->updateSource(m_sharedDerived);
+    pickup->updateSource(this);
     return true;
 }
 
 bool CPlayerRogue::acceptSource(CPickup* pickup)
 {
-    pickup->visitSource(m_sharedDerived);
+    pickup->visitSource(this);
     return true;
 }
 
@@ -185,7 +184,7 @@ CCharacter* loadPlayerRogue(ifstream& is)
     is >> posY;
 
     CCharacter* result;
-    result.reset(new CPlayerRogue(posY, posX));
+    result = new CPlayerRogue(posY, posX);
     
     return result;
 }

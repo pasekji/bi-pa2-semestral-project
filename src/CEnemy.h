@@ -48,7 +48,6 @@ class CEnemy : public CCharacter
         bool interactWith() override;
         bool primaryAttack(CGameObject* target);
         bool defaultMove(int move) override;
-        CEnemy* m_sharedThis;
 
         void playerNearby(direction & move);
         void die();

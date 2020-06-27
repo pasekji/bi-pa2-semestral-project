@@ -2,7 +2,6 @@
 
 CDiscard::CDiscard(CGameObject* source, CItem* item) : CEvent(source, nullptr)
 {
-    m_sharedThis.reset(this);
     m_item = item;;
     if(!(m_item == nullptr))
     {
@@ -17,7 +16,7 @@ CDiscard::CDiscard(CGameObject* source, CItem* item) : CEvent(source, nullptr)
 
 CDiscard* CDiscard::getPtr()
 {
-    return m_sharedThis;
+    return this;
 }
 
 void CDiscard::updateObjects()

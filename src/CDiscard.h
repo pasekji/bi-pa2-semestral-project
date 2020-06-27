@@ -16,7 +16,6 @@ class CDiscard : public CEvent
         
     private:
         CItem* m_item;
-        CDiscard* m_sharedThis;
         bool m_success = false;
 
 };

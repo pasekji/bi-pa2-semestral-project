@@ -56,7 +56,6 @@ class CPlayerMage : public CPlayer
         void addForce(int added) override;
         void meditation();
         bool m_meditation = false;
-        CPlayerMage* m_sharedDerived;
         int m_wisdom;
         float m_chanceOfCriticalAttack;
         attack_type m_primaryAttackType;

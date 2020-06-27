@@ -182,7 +182,10 @@ void CGame::printEvents()
     getmaxyx(m_eventWindow, height, width);
 
     if(m_eventQueue.size() == (height - 2))
+    {
+        delete m_eventQueue.front();
         m_eventQueue.pop_front();
+    }
     
     wclear(m_eventWindow);
 

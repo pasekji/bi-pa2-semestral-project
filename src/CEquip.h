@@ -21,7 +21,6 @@ class CEquip : public CEvent
     private:
 
         void evaluateEquip(CPlayer* player);
-        CEquip* m_sharedThis;
         CItem* m_item;
         bool m_success = false;
         bool m_isSomething = false;

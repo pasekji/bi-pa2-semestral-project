@@ -104,7 +104,5 @@ CCharacter* loadCharacter(ifstream& is)
         return loadEnemy(is);
     if (type == "neukladat")
         return nullptr;
-    CCharacter* result;
-
-    return result;
+    throw "unknown character";
 }

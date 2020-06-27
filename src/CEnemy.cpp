@@ -109,8 +109,6 @@ CEnemy::CEnemy(int posY, int posX, enemy_type type) : CCharacter(posY, posX)
         default:
             break;
     }
-
-    m_sharedThis.reset(this);
 }
 
 CEnemy::CEnemy(int posY, int posX) : CCharacter(posY, posX)
@@ -118,13 +116,13 @@ CEnemy::CEnemy(int posY, int posX) : CCharacter(posY, posX)
 
 bool CEnemy::updateSource(CAttack* attack)
 {
-    attack->updateSource(m_sharedThis);
+    attack->updateSource(this);
     return true;
 }
 
 bool CEnemy::updateTarget(CAttack* attack)
 {
-    attack->updateTarget(m_sharedThis);
+    attack->updateTarget(this);
     return true;
 }
 
@@ -434,20 +432,20 @@ bool CEnemy::interactWith()
 bool CEnemy::primaryAttack(CGameObject* target)
 {
     CAttack* attack;
-    attack = (new CPrimaryAttack(m_sharedThis, target, m_primaryAttackType))->getPtr();
+    attack = (new CPrimaryAttack(this, target, m_primaryAttackType))->getPtr();
     application.getGame()->pushEvent(attack);
     return true;
 }
 
 bool CEnemy::acceptSource(CAttack* attack)
 {
-    attack->visitSource(m_sharedThis);
+    attack->visitSource(this);
     return true;
 }
 
 bool CEnemy::acceptTarget(CAttack* attack)
 {
-    attack->visitTarget(m_sharedThis);
+    attack->visitTarget(this);
     return true;
 }
 
@@ -503,7 +501,7 @@ CCharacter* loadEnemy(ifstream& is)
     int posY;
     is >> posY;
     CCharacter* result;
-    result.reset(new CEnemy(posY, posX, (enemy_type) type));
+    result = new CEnemy(posY, posX, (enemy_type) type);
     return result;
 }
 
@@ -590,5 +588,5 @@ void CEnemy::save(ofstream& os)
 
 CEnemy* CEnemy::getPtr()
 {
-    return m_sharedThis;
+    return this;
 }

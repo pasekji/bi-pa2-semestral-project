@@ -4,7 +4,6 @@
 
 CLoot::CLoot(int posY, int posX) : CGameObject(posY, posX)
 {
-    m_sharedThis.reset(this);
     m_objectForm = 'H';
     std::default_random_engine randomGenerator(rand());
     std::uniform_int_distribution<unsigned> rollSize(0, 4);
@@ -13,7 +12,7 @@ CLoot::CLoot(int posY, int posX) : CGameObject(posY, posX)
 
 bool CLoot::acceptTarget(CPickup* pickup)
 {
-    pickup->visitTarget(m_sharedThis);
+    pickup->visitTarget(this);
     return true;
 }
 
@@ -87,7 +86,7 @@ bool CLoot::updateSource(CPickup* pickup)
 
 CLoot* CLoot::getPtr()
 {
-    return m_sharedThis;
+    return this;
 }
 
 void CLoot::save(std::ofstream & os)

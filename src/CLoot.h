@@ -46,7 +46,6 @@ class CLoot : public CGameObject
         virtual void save(std::ofstream & os);
 
     private:
-        CLoot* m_sharedThis;
         unsigned m_items;
 };
 

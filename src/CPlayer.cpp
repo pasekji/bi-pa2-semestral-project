@@ -11,7 +11,6 @@ extern CApplication application;
 
 CPlayer::CPlayer(int posY, int posX) : CCharacter(posY, posX)
 {
-    m_sharedThis.reset(this);
     m_posY_real = posY;
     m_posX_real = posX;
     m_objectForm = '^';
@@ -186,38 +185,38 @@ bool CPlayer::defaultMove(int move)
 bool CPlayer::itemPickup(CGameObject* target)
 {
     CEvent* pickup;
-    pickup = (new CPickup(m_sharedThis, target))->getPtr();
+    pickup = (new CPickup(this, target))->getPtr();
     application.getGame()->pushEvent(pickup);
     return true;
 }
 
 bool CPlayer::acceptSource(CAttack* attack)
 {
-    attack->visitSource(m_sharedThis);
+    attack->visitSource(this);
     return true;
 }   
 
 bool CPlayer::acceptTarget(CAttack* attack)
 {
-    attack->visitTarget(m_sharedThis);
+    attack->visitTarget(this);
     return true;
 }
 
 bool CPlayer::updateSource(CAttack* attack)
 {
-    attack->updateSource(m_sharedThis);
+    attack->updateSource(this);
     return true;
 }
 
 bool CPlayer::updateTarget(CAttack* attack)
 {
-    attack->updateTarget(m_sharedThis);
+    attack->updateTarget(this);
     return true;
 }
 
 bool CPlayer::acceptSource(CEquip* equip)
 {
-    equip->visitSource(m_sharedThis);
+    equip->visitSource(this);
     return true;
 }
 
@@ -310,7 +309,7 @@ void CPlayer::goToInventory()
 bool CPlayer::useItem(CItem* item)
 {
     CEvent* equip;
-    equip = (new CEquip(m_sharedThis, item))->getPtr();
+    equip = (new CEquip(this, item))->getPtr();
     application.getGame()->pushEvent(equip);
     return true;    
 }
@@ -318,7 +317,7 @@ bool CPlayer::useItem(CItem* item)
 bool CPlayer::dumpItem(CItem* item)
 {
     CEvent* discard;
-    discard = (new CDiscard(m_sharedThis, item))->getPtr();
+    discard = (new CDiscard(this, item))->getPtr();
     application.getGame()->pushEvent(discard);
 
     return true;
@@ -332,5 +331,5 @@ void CPlayer::getLabel(std::string & label) const
 
 CPlayer* CPlayer::getPtr()
 {
-    return m_sharedThis;
+    return this;
 }

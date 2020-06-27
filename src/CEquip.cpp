@@ -3,7 +3,6 @@
 
 CEquip::CEquip(CGameObject* source, CItem* item) : CEvent(source, nullptr)
 {
-    m_sharedThis.reset(this);
     m_item = item;
     if(m_item == nullptr)
         print();
@@ -11,14 +10,14 @@ CEquip::CEquip(CGameObject* source, CItem* item) : CEvent(source, nullptr)
     {
         m_isSomething = true;
         m_itemLabel = m_item->getLabel();
-        if(!(m_source->acceptSource(m_sharedThis)))
+        if(!(m_source->acceptSource(this)))
             print();
     }
 }
 
 CEquip* CEquip::getPtr()
 {
-    return m_sharedThis;
+    return this;
 }
 
 void CEquip::print()

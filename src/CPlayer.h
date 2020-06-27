@@ -26,7 +26,11 @@ class CPlayer : public CCharacter
 
         void getLabel(std::string & label) const;
 
-        virtual ~CPlayer() = default;
+        virtual ~CPlayer()
+        {
+            delete m_inventory;
+            delete m_weaponEquiped;
+        }
 
         bool acceptSource(CAttack* attack) override;
 
@@ -57,7 +61,6 @@ class CPlayer : public CCharacter
         void goToInventory();
         virtual void addForce(int added) = 0;
 
-        CPlayer* m_sharedThis;
         bool itemPickup(CGameObject* target);
         bool useItem(CItem* item);
         bool dumpItem(CItem* item);

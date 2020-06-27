@@ -13,8 +13,6 @@ class CWand : public CWeapon
 
         bool itemApply(CPlayer* player) override;
         
-    private:
-        CWand* m_sharedThis;
 };
 
 #endif

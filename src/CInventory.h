@@ -16,7 +16,7 @@ class CInventory
 {
     public:
         CInventory(unsigned size);
-        ~CInventory() = default;
+        ~CInventory();
         void incrementSelected();
         void decrementSelected();
         void useItem();

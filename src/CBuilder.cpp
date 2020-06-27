@@ -11,7 +11,7 @@ CBuilder::CBuilder(int posY, int posX) : CPlayer(posY, posX)
     m_currentHealth = m_health;
     m_speed = 1;
     m_energyForStep = 0;
-    m_inventory.reset(new CInventory(1));
+    m_inventory = new CInventory(1);
 }
 
 int CBuilder::getAction()

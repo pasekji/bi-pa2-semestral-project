@@ -7,9 +7,8 @@ extern CApplication application;
 
 CPrimaryAttack::CPrimaryAttack(CGameObject* source, CGameObject* target, attack_type attackType) : CAttack(source, target, attackType)
 {
-    m_sharedThis.reset(this);
-    source->acceptSource(m_sharedThis);
-    if(!target->acceptTarget(m_sharedThis))
+    source->acceptSource(this);
+    if(!target->acceptTarget(this))
     {
         m_canAttack = false;
         m_targetDead = true;
@@ -146,15 +145,15 @@ void CPrimaryAttack::evaluateAttack()       // na secondary attack lze pouzit ji
 
 CPrimaryAttack* CPrimaryAttack::getPtr()
 {
-    return m_sharedThis;        
+    return this;        
 }
 
 void CPrimaryAttack::updateObjects()
 {
     if(m_canAttack && !m_target->isDead() && m_targetReachable)
     {
-        m_source->updateSource(m_sharedThis);
-        m_target->updateTarget(m_sharedThis);
+        m_source->updateSource(this);
+        m_target->updateTarget(this);
     }
 
     print();

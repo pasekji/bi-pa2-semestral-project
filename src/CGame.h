@@ -14,6 +14,13 @@ class CGame
         CGame() = default;
         ~CGame()
         {
+            while (m_eventQueue.size())
+            {
+                delete m_eventQueue.front();
+                m_eventQueue.pop_front();
+            }
+            delete m_currentMap;
+
             delwin(m_Window);
             delwin(m_eventWindow);
             delwin(m_effectWindow);
@@ -66,7 +73,7 @@ class CGame
         void refreshBars() const;
         void printEvents();
         std::deque<CEvent*> m_eventQueue;
-        CMap* m_currentMap = std::make_shared<CMap>();
+        CMap* m_currentMap = new CMap();
 
 };
 

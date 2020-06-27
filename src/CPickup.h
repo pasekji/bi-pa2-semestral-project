@@ -31,7 +31,6 @@ class CPickup : public CEvent
     
     private:
 
-        CPickup* m_sharedThis;
         void print() override;
         void updateObjects() override;
         bool m_success = false;

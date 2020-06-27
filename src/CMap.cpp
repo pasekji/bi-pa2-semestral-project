@@ -51,6 +51,7 @@ void CMap::demo_loadMapLoading()
     ifstream is;
     is.open("saveGame.txt");
     loadWithPlayer(is);
+    is.close();
     catchPlayer();
 }
 
@@ -61,24 +62,30 @@ void CMap::demo_loadMapSave()
     time_t t = time(0);
     struct tm * now = localtime( & t );
 
-     char newFileName[50];
+    char newFileName[50];
 
-     strftime(newFileName, 50,"%c.txt",now);
+    strftime(newFileName, 50,"%c.txt",now);
 
-     string text = newFileName;
-     std::ofstream saveList;
-     saveList.open("saves-list.txt");
+    string fileName = newFileName;
+    std::ofstream saveList;
+    std::vector<std::string> options = application.loadOptions("saves-list.txt");
+    options.pop_back();
+    options.push_back(fileName);
 
-     if(saveList.is_open())
-     {
-         saveList << text << std::endl;
-     }
+    saveList.open("saves-list.txt");
+    if(saveList.is_open())
+    {
+        saveList << options.size() << std::endl;
+        for (auto i : options)
+            saveList << i << std::endl;
+    }
 
-     saveList.close();
+    saveList.close();
 
-    os.open("saveGame.txt");
+    os.open(fileName);
     saveWithPlayer(os);
     
+    os.close();
     return;
 }
 
@@ -234,7 +241,7 @@ void CMap::spawnProp(int posY, int posX, prop_type type)
         throw std::invalid_argument("received overlapping coordinates with other object");
 
     CProp* prop;
-    prop.reset(new CProp(posY, posX, type));
+    prop = new CProp(posY, posX, type);
     m_imoveableObjects.push_back(prop);
 
     return;
@@ -373,7 +380,7 @@ void CMap::save(ofstream& os)
 
 void CMap::loadWithPlayer(ifstream& is)
 {
-    m_player = std::dynamic_pointer_cast<CPlayer>(loadCharacter(is));
+    m_player = (CPlayer*)(loadCharacter(is));
     m_moveableObjects.push_back(m_player);
     m_targets.push_back(m_player);
     loadWOPlayer(is);
@@ -387,7 +394,7 @@ void CMap::loadWOPlayer(ifstream& is)
     is >> moveableObjectsSize;
     for (unsigned i = 0; i < moveableObjectsSize; i++)
     {
-        shared_ptr<CCharacter> obj = loadCharacter(is);
+        CCharacter* obj = loadCharacter(is);
         if (obj != nullptr)
             m_moveableObjects.push_back(obj);
     }
@@ -395,7 +402,7 @@ void CMap::loadWOPlayer(ifstream& is)
     is >> imoveableObjectsSize;
     for (unsigned i = 0; i < imoveableObjectsSize; i++)
     {
-        shared_ptr<CGameObject> obj = loadGameObject(is);
+        CGameObject* obj = loadGameObject(is);
         if (obj != nullptr)
             m_imoveableObjects.push_back(obj);
     }
@@ -403,7 +410,7 @@ void CMap::loadWOPlayer(ifstream& is)
     is >> targetsSize;
     for (unsigned i = 0; i < targetsSize; i++)
     {
-        shared_ptr<CGameObject> obj = loadGameObject(is);
+        CGameObject* obj = loadGameObject(is);
         if (obj != nullptr)
             m_targets.push_back(obj);
     }

@@ -13,7 +13,6 @@ class CPrimaryAttack : public CAttack
         CPrimaryAttack* getPtr();
         
     protected:
-        CPrimaryAttack* m_sharedThis;
         void updateObjects() override;
         void evaluateAttack() override;
         void print() override;

@@ -1,0 +1,16 @@
+CPlayerPaladin 53 20
+3
+CEnemy 4 76 25
+CEnemy 3 71 24
+CEnemy 0 71 29
+6
+CProp 0 143 32
+CProp 0 142 32
+CProp 0 141 32
+CProp 2 138 32
+CProp 1 136 32
+CProp 3 138 34
+3
+CEnemy 4 76 25
+CEnemy 3 71 24
+CEnemy 0 71 29

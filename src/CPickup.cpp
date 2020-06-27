@@ -7,9 +7,8 @@
 
 CPickup::CPickup(CGameObject* source, CGameObject* target) : CEvent(source, target)
 {
-    m_sharedThis.reset(this);
-    source->acceptSource(m_sharedThis);
-    if(!(target->acceptTarget(m_sharedThis)))
+    source->acceptSource(this);
+    if(!(target->acceptTarget(this)))
         m_accessTarget = false;
     else
         m_accessTarget = true;
@@ -45,7 +44,7 @@ void CPickup::visitSource(CPlayerMage* mage)
 
 void CPickup::updateSource(CPlayerPaladin* paladin)
 {
-    if(paladin->m_inventory->getItem(paladin, m_sharedThis))
+    if(paladin->m_inventory->getItem(paladin, this))
         m_success = true;
     else
         m_success = false;    
@@ -54,7 +53,7 @@ void CPickup::updateSource(CPlayerPaladin* paladin)
 
 void CPickup::updateSource(CPlayerRogue* rogue)
 {
-    if(rogue->m_inventory->getItem(rogue, m_sharedThis))
+    if(rogue->m_inventory->getItem(rogue, this))
         m_success = true;
     else
         m_success = false;    
@@ -63,7 +62,7 @@ void CPickup::updateSource(CPlayerRogue* rogue)
 
 void CPickup::updateSource(CPlayerMage* mage)
 {
-    if(mage->m_inventory->getItem(mage, m_sharedThis))
+    if(mage->m_inventory->getItem(mage, this))
         m_success = true;
     else
         m_success = false;    
@@ -73,7 +72,7 @@ void CPickup::updateSource(CPlayerMage* mage)
 void CPickup::updateObjects()
 {
     if(m_accessTarget && m_canPick)
-        m_source->updateSource(m_sharedThis);
+        m_source->updateSource(this);
 
     print();
     
@@ -109,5 +108,5 @@ void CPickup::setItemLabel(std::string label)
 
 CPickup* CPickup::getPtr()
 {
-    return m_sharedThis;
+    return this;
 }

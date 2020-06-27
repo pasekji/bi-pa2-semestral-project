@@ -29,10 +29,11 @@ class CCharacter : public CGameObject
 
         bool isReachable() const;
 
+        virtual ~CCharacter() = default;
+        
     protected:    
 
         CCharacter(int posY, int posX);
-        virtual ~CCharacter() = default;
         bool m_isReachable = true;
         int m_speed;
         int m_currentHealth;

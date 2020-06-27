@@ -37,7 +37,6 @@ class CPlayerPaladin : public CPlayer
     private:
         void addForce(int added) override;
         void hide(int& move);
-        CPlayerPaladin* m_sharedDerived;
         bool interactWith() override;
         int m_strength;
         float m_chanceOfCriticalAttack;

@@ -4,12 +4,23 @@
 #include "CMenu.h"
 #include "CGame.h"
 #include <memory>
+#include <vector>
+#include <string>
+#include <iostream>
 
 class CApplication
 {
     public:
         CApplication();
-        ~CApplication() = default;
+        ~CApplication()
+        {
+            delete m_mainMenu;
+            delete m_playerSelect;
+            delete m_mapSelect;
+            delete m_loadGames;
+            if(m_game->is_init)
+                delete m_game;
+        }
 
         bool saveGame();
         bool loadGame();
@@ -22,19 +33,24 @@ class CApplication
         CGame* getGame();
 
         friend class CGame;
+        friend class CMap;
 
     private:
         int m_yMax, m_xMax;
-        CMenu* m_mainMenu = std::make_shared<CMenu>();
-        CMenu* m_playerSelect = std::make_shared<CMenu>();
-        CMenu* m_mapSelect = std::make_shared<CMenu>();
-        CMenu* m_loadGames = std::make_shared<CMenu>();
-        CGame* m_game = std::make_shared<CGame>();
+        CMenu* m_mainMenu = new CMenu();
+        CMenu* m_playerSelect = new CMenu();
+        CMenu* m_mapSelect = new CMenu();
+        CMenu* m_loadGames = new CMenu();
+        CGame* m_game = new CGame();
         void initMainMenu();
         void initPlayerSelect();
         void initMapSelect();
         void initLoadGames();
         void initApplication();
+
+        std::vector<std::string> loadOptions(const std::string & filename) const;
+
+        std::vector<std::string> m_loadGameOptions;
 
 
 };

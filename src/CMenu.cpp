@@ -2,7 +2,7 @@
 
 CMenu::CMenu()
 {
-    m_width = 20;
+    m_width = 30;
     m_selected = 0;
 }
 

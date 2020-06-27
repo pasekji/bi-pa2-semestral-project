@@ -73,14 +73,13 @@ void CApplication::initMainMenu()
                 m_game->run();
             initMainMenu();
             break;
-        case 2:
+        case 2:                                                  // save game 
             if(m_game->is_init)
                 m_game->getMap()->demo_loadMapSave();
             initMainMenu();
             break;
-        case 3:
-            if(!m_game->is_init)
-                m_game->getMap()->demo_loadMapLoading();
+        case 3:                                                 // load game
+            initLoadGames();
             initMainMenu();
             break;
         case 4:
@@ -165,4 +164,45 @@ void CApplication::initMapSelect()
     }
 
     return;
+}
+
+void CApplication::initLoadGames()
+{
+    if(!m_loadGames->is_init)
+    {
+        m_loadGames->setOptions(loadOptions("saves-list.txt"));
+        m_loadGames->initMenu();
+    }
+    else
+    {
+        m_loadGames->loadMenu();
+    }
+
+    while(m_loadGames->getAction() == 0);
+
+    clear();
+
+    return;
+}
+
+std::vector<std::string> CApplication::loadOptions(const std::string & filename) const
+{    
+    ifstream is;
+    is.open(filename);
+    size_t optionsSize;
+    is >> optionsSize;
+    is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    
+    std::vector<std::string> options;
+    for (unsigned i = 0; i < optionsSize; i++)
+    {
+        std::string option;
+        std::getline(is, option);
+        options.push_back(option);
+    }
+    
+    options.push_back("BACK");
+    is.close();
+
+    return options;
 }

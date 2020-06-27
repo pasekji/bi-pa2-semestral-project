@@ -16,6 +16,14 @@ CInventory::CInventory(unsigned size) : m_size(size)
     constructFill();
 }
 
+CInventory::~CInventory()
+{
+    for (auto& item : m_contents)
+    {
+        delete item;
+    }
+}
+
 void CInventory::constructFill()
 {
     CItem* item = nullptr;
@@ -37,6 +45,7 @@ CItem* CInventory::getItemAt(unsigned i) const
 
 void CInventory::eraseItemAt(unsigned i)
 {
+    delete m_contents[i];
     m_contents[i] = emptyItem;
     std::sort(m_contents.begin(), m_contents.end(), std::greater<CItem*>());
     if(m_itemCount != 0)
@@ -59,19 +68,19 @@ bool CInventory::getItem(CPlayerPaladin* paladin, CPickup* pickup)
     switch(roll)
     {
         case 0:
-            item = std::make_shared<CSword>();
+            item = new CSword();
             break;
         case 1:
-            item = std::make_shared<CCoffee>();
+            item = new CCoffee();
             break;
         case 2:
-            item = std::make_shared<CApple>();
+            item = new CApple();
             break;
         case 3:
-            item = std::make_shared<CBeer>();
+            item = new CBeer();
             break;
         case 4:
-            item = std::make_shared<CTooth>();
+            item = new CTooth();
             break;
         default:
             break;
@@ -102,19 +111,19 @@ bool CInventory::getItem(CPlayerMage* mage, CPickup* pickup)
     switch(roll)
     {
         case 0:
-            item = std::make_shared<CWand>();
+            item = new CWand();
             break;
         case 1:
-            item = std::make_shared<CCoffee>();
+            item = new CCoffee();
             break;
         case 2:
-            item = std::make_shared<CApple>();
+            item = new CApple();
             break;
         case 3:
-            item = std::make_shared<CBeer>();
+            item = new CBeer();
             break;
         case 4:
-            item = std::make_shared<CTooth>();
+            item = new CTooth();
             break;
         default:
             break;
@@ -145,19 +154,19 @@ bool CInventory::getItem(CPlayerRogue* rogue, CPickup* pickup)
     switch(roll)
     {
         case 0:
-            item = std::make_shared<CDagger>();
+            item = new CDagger();
             break;
         case 1:
-            item = std::make_shared<CCoffee>();
+            item = new CCoffee();
             break;
         case 2:
-            item = std::make_shared<CApple>();
+            item = new CApple();
             break;
         case 3:
-            item = std::make_shared<CBeer>();
+            item = new CBeer();
             break;
         case 4:
-            item = std::make_shared<CTooth>();
+            item = new CTooth();
             break;
         default:
             break;

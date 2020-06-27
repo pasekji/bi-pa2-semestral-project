@@ -102,6 +102,6 @@ CGameObject* CProp::loadGameObject(ifstream& is)
     is >> posY;
 
     CProp* result;
-    result.reset(new CProp(posY, posX, (prop_type)_type));
+    result = new CProp(posY, posX, (prop_type)_type);
     return result;
 }

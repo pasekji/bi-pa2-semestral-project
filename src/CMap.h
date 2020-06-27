@@ -15,6 +15,7 @@
 #include "CProp.h"
 #include "CBuilder.h"
 #include <fstream>
+#include <set>
 
 using namespace std;
 
@@ -22,7 +23,29 @@ class CMap
 {
     public:
         CMap() = default;
-        ~CMap() = default;    
+        ~CMap()
+        {
+            delete m_player;
+            std::set<CGameObject*> mnozina;
+            for(auto i = ++m_moveableObjects.begin(); i != m_moveableObjects.end(); ++i)
+            {
+                mnozina.insert(*i);
+                //delete *i;
+            }
+
+            for(auto i = ++m_targets.begin(); i != m_targets.end(); ++i)
+            {
+                mnozina.insert(*i);
+                //delete *i;
+            }
+
+            for(auto i : m_imoveableObjects)
+                mnozina.insert(i);
+
+            for (auto i : mnozina)
+                delete i;
+
+        }
         void loadMap();                                 // load all objects in map and render
         void demo_loadMap();                            // demo loadMap() for testing only
         void demo_loadMapOriginal();
