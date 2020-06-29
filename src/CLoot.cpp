@@ -32,30 +32,9 @@ unsigned CLoot::getItemsCount() const
     return m_items;
 }
 
-
-bool CLoot::acceptSource(CAttack* attack)
-{
-    return false;
-}
-
-bool CLoot::updateSource(CAttack* attack)
-{
-    return false;
-}
-
-bool CLoot::updateTarget(CAttack* attack)
-{
-    return false;
-}
-
-string CLoot::getTypeName()
+std::string CLoot::getTypeName()
 {
     return "CLoot";
-}
-
-bool CLoot::acceptTarget(CAttack* attack)
-{
-    return false;
 }
 
 void CLoot::getLabel(std::string & label) const
@@ -64,12 +43,22 @@ void CLoot::getLabel(std::string & label) const
     return;
 } 
 
+CLoot* CLoot::getPtr()
+{
+    return this;
+}
+
 void CLoot::showStats() const
 {
     return;
 }
 
 bool CLoot::acceptSource(CPickup* pickup)
+{
+    return false;
+}
+
+bool CLoot::acceptTarget(CAttack* attack)
 {
     return false;
 }
@@ -84,9 +73,19 @@ bool CLoot::updateSource(CPickup* pickup)
     return false;
 }
 
-CLoot* CLoot::getPtr()
+bool CLoot::acceptSource(CAttack* attack)
 {
-    return this;
+    return false;
+}
+
+bool CLoot::updateSource(CAttack* attack)
+{
+    return false;
+}
+
+bool CLoot::updateTarget(CAttack* attack)
+{
+    return false;
 }
 
 void CLoot::save(std::ofstream & os)

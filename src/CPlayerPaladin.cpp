@@ -3,7 +3,6 @@
 #include "CPrimaryAttack.h"
 #include "CPickup.h"
 
-
 extern CApplication application;
 
 CPlayerPaladin::CPlayerPaladin(int posY, int posX) : CPlayer(posY, posX)
@@ -133,17 +132,19 @@ bool CPlayerPaladin::acceptTarget(CPickup* pickup)
     return false;
 }
 
-CCharacter* loadPlayerPaladin(ifstream& is)
+void loadPlayerPaladin(std::ifstream& is)
 {
     int posX;
-    is >> posX;
     int posY;
-    is >> posY;
 
-    CCharacter* result;
-    result = new CPlayerPaladin(posY, posX);
+    if(is.is_open())
+    {
+        if(is.good()) is >> posX;
+        if(is.good()) is >> posY;
+        application.getGame()->getMap()->spawnPlayer(posY, posX, PALADIN);
+    }
     
-    return result;
+    return;
 }
 
 const int CPlayerPaladin::getForce() const
@@ -156,15 +157,20 @@ const float CPlayerPaladin::getChanceOfCriticalAttack() const
     return m_chanceOfCriticalAttack;
 }
 
-void CPlayerPaladin::save(ofstream& os)
+void CPlayerPaladin::save(std::ofstream& os)
 {
-    os << getTypeName() << " ";
-    os << m_posX << " ";
-    os << m_posY;
-    os << endl;
+    if(os.is_open())
+    {
+        if(os.good()) os << getTypeName() << " ";
+        if(os.good()) os << m_posX << " ";
+        if(os.good()) os << m_posY;
+        if(os.good()) os << std::endl;
+    }
+
+    return;
 }
 
-string CPlayerPaladin::getTypeName()
+std::string CPlayerPaladin::getTypeName()
 {
     return "CPlayerPaladin";
 }

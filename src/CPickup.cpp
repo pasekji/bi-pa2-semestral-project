@@ -24,24 +24,6 @@ void CPickup::visitTarget(CLoot* loot)
     return;
 }
 
-void CPickup::visitSource(CPlayerPaladin* paladin)
-{
-    paladin->getLabel(m_sourceLabel);
-    return;
-}
-
-void CPickup::visitSource(CPlayerRogue* rogue)
-{
-    rogue->getLabel(m_sourceLabel);
-    return;
-}
-
-void CPickup::visitSource(CPlayerMage* mage)
-{
-    mage->getLabel(m_sourceLabel);
-    return;
-}
-
 void CPickup::updateSource(CPlayerPaladin* paladin)
 {
     if(paladin->m_inventory->getItem(paladin, this))
@@ -98,6 +80,24 @@ void CPickup::print()
     }
 
     m_phrase = m_sourceLabel + " picked up " + m_itemLabel + " from the " + m_targetLabel + ".";
+    return;
+}
+
+void CPickup::visitSource(CPlayerPaladin* paladin)
+{
+    paladin->getLabel(m_sourceLabel);
+    return;
+}
+
+void CPickup::visitSource(CPlayerRogue* rogue)
+{
+    rogue->getLabel(m_sourceLabel);
+    return;
+}
+
+void CPickup::visitSource(CPlayerMage* mage)
+{
+    mage->getLabel(m_sourceLabel);
     return;
 }
 

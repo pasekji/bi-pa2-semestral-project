@@ -1,17 +1,45 @@
 #include "CGame.h"
 #include <cstring>
 
-void CGame::run() 
+CGame::~CGame()
 {
-    if(!is_init && !m_build)
+    while (m_eventQueue.size())
+    {
+        delete m_eventQueue.front();
+        m_eventQueue.pop_front();
+    }
+    delete m_currentMap;
+
+    delwin(m_Window);
+    delwin(m_eventWindow);
+    delwin(m_effectWindow);
+    delwin(m_objectWindow);
+    delwin(m_playerWindow);
+    delwin(m_inventoryWindow);
+}
+
+void CGame::runNewGame(const std::string & filename) 
+{
+    if(!is_init)
     {
         initSpace();
         initBars();
-        initMap();
+        m_currentMap->loadMap(filename);
         is_init = true;
         endGame();
     }
-    else if(m_build && !is_init)
+    else
+    {
+        loadGame();
+        endGame();
+    }
+
+    return;
+}
+
+void CGame::runNewGame()
+{
+    if(m_build && !is_init)
     {
         initSpace();
         initBars();
@@ -25,22 +53,25 @@ void CGame::run()
         endGame();
     }
 
-    return;
+    return;   
 }
 
-
-
-void CGame::initMap()
+void CGame::runSavedGame(const std::string & filename)
 {
-    // load paramets Y,X if box or not and pass to renderSpace for new WINDOW
-    m_currentMap->loadMap();
+    if(!is_init)
+    {
+        initSpace();
+        initBars();
+        m_currentMap->loadSavedGame(filename);
+        is_init = true;
+        endGame();
+    }
 
     return;
 }
 
 void CGame::initSpace() 
 {
-    // create a window for player
     getmaxyx(stdscr, m_yMax, m_xMax);
     m_Window = newwin((int)(m_yMax * 0.99), (int)(m_xMax * 0.633), (int)((m_yMax - (int)(m_yMax * 0.99)) / 2), (int)((m_xMax - (int)(m_xMax * 0.633)) / 2));
     refresh();
@@ -51,7 +82,6 @@ void CGame::initSpace()
 
 void CGame::initBars()
 {
-    // create action window
     m_eventWindow = newwin((int)(m_yMax * 0.44), (int)(m_xMax * 0.17), (int)((m_yMax - (int)(m_yMax * 0.98)) / 2) + (int)(m_yMax * 0.54), (int)((m_xMax - (int)(m_xMax * 0.63)) / 2) + (int)(m_xMax * 0.63) + (int)(m_xMax * 0.009));
     m_effectWindow = newwin((int)(m_yMax * 0.08), (int)(m_xMax * 0.17), (int)((m_yMax - (int)(m_yMax * 0.98)) / 2) + (int)(m_yMax * 0.45), (int)((m_xMax - (int)(m_xMax * 0.63)) / 2) + (int)(m_xMax * 0.63) + (int)(m_xMax * 0.009));
     m_objectWindow = newwin((int)(m_yMax * 0.44), (int)(m_xMax * 0.17), (int)((m_yMax - (int)(m_yMax * 0.99)) / 2), (int)((m_xMax - (int)(m_xMax * 0.63)) / 2) + (int)(m_xMax * 0.63) + (int)(m_xMax * 0.009));
@@ -68,7 +98,7 @@ void CGame::initBars()
     return;
 }
 
-void CGame::endGame()               // not needed
+void CGame::endGame()
 {
     clear();
     refresh();

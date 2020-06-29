@@ -32,6 +32,45 @@ bool CCharacter::spareEnergyToStep() const
         return false;
 }
 
+CGameObject* CCharacter::defaultGetTarget()
+{
+    int tmppos;
+    CGameObject* target = nullptr;
+    std::pair<int, int> pair;
+
+    target = application.getGame()->getMap()->getTargetObject(pair = std::make_pair(tmppos = m_posY - 1, m_posX));
+
+    if(target == nullptr)
+        target = application.getGame()->getMap()->getTargetObject(pair = std::make_pair(tmppos = m_posY + 1, m_posX));        
+
+    if(target == nullptr)
+        target = application.getGame()->getMap()->getTargetObject(pair = std::make_pair(m_posY, tmppos = m_posX - 1));
+
+    if(target == nullptr)
+        target = application.getGame()->getMap()->getTargetObject(pair = std::make_pair(m_posY, tmppos = m_posX + 1));
+
+    return target;
+}
+
+void loadCharacter(std::ifstream& is)
+{
+    std::string type;
+    if(is.is_open())
+    {
+        if(is.good()) is >> type;
+        if(type == "CPlayerPaladin")
+            loadPlayerPaladin(is);
+        else if(type == "CPlayerRogue")
+            loadPlayerRogue(is);
+        else if(type == "CPlayerMage")
+            loadPlayerMage(is);
+        else if(type == "CEnemy")
+            loadEnemy(is);
+        else throw "unknown character";
+    }
+    return;
+}
+
 int CCharacter::getHealth() const
 {
     return m_currentHealth;
@@ -65,44 +104,7 @@ const attack_type CCharacter::getAttackType() const
     return m_attackType;
 }
 
-string CCharacter::getTypeName()
+std::string CCharacter::getTypeName()
 {
     return "CCharacter";
-}
-
-CGameObject* CCharacter::defaultGetTarget()
-{
-    int tmppos;
-    CGameObject* target = nullptr;
-    std::pair<int, int> pair;
-
-    target = application.getGame()->getMap()->getTargetObject(pair = std::make_pair(tmppos = m_posY - 1, m_posX));
-
-    if(target == nullptr)
-        target = application.getGame()->getMap()->getTargetObject(pair = std::make_pair(tmppos = m_posY + 1, m_posX));        
-
-    if(target == nullptr)
-        target = application.getGame()->getMap()->getTargetObject(pair = std::make_pair(m_posY, tmppos = m_posX - 1));
-
-    if(target == nullptr)
-        target = application.getGame()->getMap()->getTargetObject(pair = std::make_pair(m_posY, tmppos = m_posX + 1));
-
-    return target;
-}
-
-CCharacter* loadCharacter(ifstream& is)
-{
-    string type;
-    is >> type;
-    if (type == "CPlayerPaladin")
-        return loadPlayerPaladin(is);
-    if (type == "CPlayerRogue")
-        return loadPlayerRogue(is);
-    if (type == "CPlayerMage")
-        return loadPlayerMage(is);
-    if (type == "CEnemy")
-        return loadEnemy(is);
-    if (type == "neukladat")
-        return nullptr;
-    throw "unknown character";
 }

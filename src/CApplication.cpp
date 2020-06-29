@@ -5,20 +5,30 @@ CApplication::CApplication()
     m_mainMenu->setOptions({"New Game", "Continue", "Save Game", "Load Game", "Quit"});
     m_playerSelect->setOptions({"paladin", "mage", "rogue", "BACK"});
     m_mapSelect->setOptions({"default world", "map builder", "BACK"});
+
+    m_errorLog.open("error_log.txt");
+}
+
+CApplication::~CApplication()
+{
+    delete m_mainMenu;
+    delete m_playerSelect;
+    delete m_mapSelect;
+    delete m_loadGames;
+    if(m_game->is_init)
+        delete m_game;
+
+    m_errorLog.close();
 }
 
 void CApplication::initApplication()
 {
     setlocale(LC_ALL, "");
-
-    // ncurses start and setting
     initscr();
     noecho();
     cbreak();
     curs_set(0);
     halfdelay(1);
-
-    // get screen size
     getmaxyx(stdscr, m_yMax, m_xMax);
 
     return;
@@ -32,23 +42,13 @@ void CApplication::run()
     return;
 }
 
-void CApplication::endApplication()
+void CApplication::endApplication() const
 {
     curs_set(0);
     refresh();
     endwin();
 
     return;    
-}
-
-const CGame* CApplication::getGame() const
-{
-    return m_game;
-}
-
-CGame* CApplication::getGame()
-{
-    return m_game;
 }
 
 void CApplication::initMainMenu()
@@ -66,20 +66,24 @@ void CApplication::initMainMenu()
     switch(m_mainMenu->getSelected())
     {
         case 0:
-            initPlayerSelect();          
+            if(!m_game->is_init)
+                initPlayerSelect();
+            else
+                initMainMenu();
             break;
         case 1:
             if(m_game->is_init)
-                m_game->run();
+                m_game->runNewGame();
             initMainMenu();
             break;
-        case 2:                                                  // save game 
+        case 2:
             if(m_game->is_init)
-                m_game->getMap()->demo_loadMapSave();
+                m_game->getMap()->saveGame();
             initMainMenu();
             break;
-        case 3:                                                 // load game
-            initLoadGames();
+        case 3:
+            if(!m_game->is_init)
+                initLoadGames();
             initMainMenu();
             break;
         case 4:
@@ -145,13 +149,13 @@ void CApplication::initMapSelect()
     switch(m_mapSelect->getSelected())
     {
         case 0:
-            m_game->run();
+            m_game->runNewGame("examples/default-map.txt");
             initMainMenu();          
             break;
 
         case 1:
             m_game->m_build = true;
-            m_game->run();
+            m_game->runNewGame();
             initMainMenu();
             break;
             
@@ -170,7 +174,7 @@ void CApplication::initLoadGames()
 {
     if(!m_loadGames->is_init)
     {
-        m_loadGames->setOptions(loadOptions("saves-list.txt"));
+        m_loadGames->setOptions(loadOptions("examples/saves-list.txt"));
         m_loadGames->initMenu();
     }
     else
@@ -182,27 +186,46 @@ void CApplication::initLoadGames()
 
     clear();
 
+    if(m_loadGames->getOption() != "BACK")
+    {
+        m_game->runSavedGame(m_loadGames->getOption());
+    }
+
     return;
 }
 
 std::vector<std::string> CApplication::loadOptions(const std::string & filename) const
 {    
-    ifstream is;
+    std::ifstream is;
     is.open(filename);
     size_t optionsSize;
-    is >> optionsSize;
-    is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    
     std::vector<std::string> options;
-    for (unsigned i = 0; i < optionsSize; i++)
-    {
-        std::string option;
-        std::getline(is, option);
-        options.push_back(option);
-    }
     
+    if(is.is_open())
+    {
+        if(is.good()) is >> optionsSize;
+        is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        
+        for (unsigned i = 0; i < optionsSize; i++)
+        {
+            std::string option;
+            std::getline(is, option);
+            options.push_back(option);
+        }
+    }
+
     options.push_back("BACK");
     is.close();
 
     return options;
+}
+
+const CGame* CApplication::getGame() const
+{
+    return m_game;
+}
+
+CGame* CApplication::getGame()
+{
+    return m_game;
 }

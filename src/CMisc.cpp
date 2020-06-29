@@ -1,6 +1,9 @@
 #include "CMisc.h"
 
-bool CMisc::itemApply(CPlayer* player)            // these items can't be applied f.e. - bone 
+/**
+ * these items can't be applied f.e. - tooth 
+ * */
+bool CMisc::itemApply(CPlayer* player) 
 {
     return false;
 }

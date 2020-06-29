@@ -4,7 +4,6 @@
 
 extern CApplication application;
 
-
 CAttack::CAttack(CGameObject* source, CGameObject* target, attack_type attackType) : CEvent(source, target)
 {
     m_attackType = attackType;

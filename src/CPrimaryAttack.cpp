@@ -88,7 +88,7 @@ void CPrimaryAttack::print()
     return;
 }
 
-void CPrimaryAttack::evaluateAttack()       // na secondary attack lze pouzit jinou distrubuci
+void CPrimaryAttack::evaluateAttack()
 {
     if(m_canAttack)
     {

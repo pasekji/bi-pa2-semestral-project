@@ -17,76 +17,165 @@
 #include <fstream>
 #include <set>
 
-using namespace std;
-
+/**
+ * This class represents ingame environment for player interaction.
+ * */
 class CMap
 {
     public:
+        /**
+         * CMap default constructor
+         * */    
         CMap() = default;
-        ~CMap()
-        {
-            delete m_player;
-            std::set<CGameObject*> mnozina;
-            for(auto i = ++m_moveableObjects.begin(); i != m_moveableObjects.end(); ++i)
-            {
-                mnozina.insert(*i);
-                //delete *i;
-            }
 
-            for(auto i = ++m_targets.begin(); i != m_targets.end(); ++i)
-            {
-                mnozina.insert(*i);
-                //delete *i;
-            }
+        /**
+         * CMap destructor
+         * */        
+        ~CMap();
+        
+        /**
+         * used to load map from file, 
+         * without player
+         * */        
+        void loadMap(const std::string & filename);
 
-            for(auto i : m_imoveableObjects)
-                mnozina.insert(i);
+        /**
+         * used to load save game from file, 
+         * with player
+         * */  
+        void loadSavedGame(const std::string & filename);
 
-            for (auto i : mnozina)
-                delete i;
+        /**
+         * used to save current game to new file with player
+         * */  
+        void saveGame();
 
-        }
-        void loadMap();                                 // load all objects in map and render
-        void demo_loadMap();                            // demo loadMap() for testing only
-        void demo_loadMapOriginal();
-        void demo_loadMapLoading();
-        void demo_loadMapSave();
-        bool loadMapFromFile(const std::string & pathToFile);
+        /**
+         * used to detect collision between game objects,
+         * returns true if there is collision
+         * */  
         bool collisionDetect(std::pair<int, int> & pair);
-        void staticCamera(direction & dir, int & steps);
-        int m_width, m_height;
 
+        /**
+         * used for maintaining static camera for player, 
+         * moves all game objects except player in direction by steps
+         * */  
+        void staticCamera(direction & dir, int & steps);
+
+        /**
+         * returns CPlayer* to m_player
+         * */  
         CPlayer* getPlayer() const;
 
+        /**
+         * returns target object at coordinates in parameter
+         * */  
         CGameObject* getTargetObject(std::pair<int, int> & pair) const;
 
+        /**
+         * catches player to game loop
+         * */  
         void catchPlayer();
-        void save(ofstream& os);
-        void loadWithPlayer(ifstream& is);
-        void loadWOPlayer(ifstream& is);
-        CLoot* spawnLoot(int posY, int posX);
-        
-        void saveWithPlayer(ofstream& os);
 
+        /**
+         * writes all game objects in map to file
+         * */  
+        void save(std::ofstream& os);
+
+        /**
+         * reads all game objects from file with player instance
+         * */
+        void loadWithPlayer(std::ifstream& is);
+
+        /**
+         * reads all game objects from file without player instance
+         * */  
+        void loadWOPlayer(std::ifstream& is);
+
+        /**
+         * spawns CLoot at Y, X position and returns it 
+         * */  
+        CLoot* spawnLoot(int posY, int posX);
+
+        /**
+         * writes all game objects to file with player instance
+         * */  
+        void saveWithPlayer(std::ofstream& os);
+
+        /**
+         * runs map builder mode 
+         * */  
         void buildMap();
 
+        // selected player class in player select menu
         player_class m_selectedClass;
-        friend class CBuilder;
+
+        /**
+         * spawns player of playerClass at Y, X position 
+         * */  
+        void spawnPlayer(int posY, int posX, player_class playerClass);
+
+        /**
+         * spawns enemy of type at Y, X position 
+         * */ 
+        void spawnEnemy(int posY, int posX, enemy_type type);
+
+        /**
+         * spawns prop of type at Y, X position 
+         * */ 
+        void spawnProp(int posY, int posX, prop_type type);
 
     private:
-        CPlayer* m_player;
+
+        // player controlled
+        CPlayer* m_player = nullptr;
+
+        // all moveable objects, f.e. CEnemy or CPlayer
         std::vector<CCharacter*> m_moveableObjects;
+
+        // all imoveable objects, f.e. CProp or CLoot
         std::vector<CGameObject*> m_imoveableObjects;
+
+        // all objects that could be interacted with, f.e. CEnemy or CPlayer
         std::vector<CGameObject*> m_targets;
+
+        /**
+         * catches player to game loop in map building mode
+         * */ 
         void catchBuilder();
-        void spawnPlayer(int posY, int posX, player_class playerClass);           // (int posY, int posX)
-        void spawnEnemy(int posY, int posX, enemy_type type);
-        void spawnProp(int posY, int posX, prop_type type);
-        void renderObjects();                           // only new render of objects
-        void moveableDoAction();                        // invoke action to change properties of instance. posX++ (once)
+
+        /**
+         * renders all objects - moveable, imoveable
+         * */
+        void renderObjects();
+
+        /**
+         * invokes actions by all moveable objects
+         * */        
+        void moveableDoAction();
+
+        /**
+         * used for maintaining static camera for player, 
+         * moves all game objects except player up by steps
+         * */  
         void camera_objectsUp(int & steps);
+
+        /**
+         * used for maintaining static camera for player, 
+         * moves all game objects except player down by steps
+         * */  
         void camera_objectsDown(int & steps);
+
+        /**
+         * used for maintaining static camera for player, 
+         * moves all game objects except player left by steps
+         * */ 
         void camera_objectsLeft(int & steps);
+
+        /**
+         * used for maintaining static camera for player, 
+         * moves all game objects except player right by steps
+         * */ 
         void camera_objectsRight(int & steps);
     
 };

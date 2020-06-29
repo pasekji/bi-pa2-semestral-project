@@ -15,11 +15,6 @@ CEquip::CEquip(CGameObject* source, CItem* item) : CEvent(source, nullptr)
     }
 }
 
-CEquip* CEquip::getPtr()
-{
-    return this;
-}
-
 void CEquip::print()
 {
     if(m_isSomething)
@@ -58,4 +53,9 @@ void CEquip::updateObjects()
 {
     print();
     return;
+}
+
+CEquip* CEquip::getPtr()
+{
+    return this;
 }

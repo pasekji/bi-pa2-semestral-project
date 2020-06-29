@@ -2,7 +2,7 @@
 
 CMenu::CMenu()
 {
-    m_width = 30;
+    m_width = 40;
     m_selected = 0;
 }
 
@@ -102,3 +102,7 @@ void CMenu::loadMenu()
     return;
 }
 
+std::string CMenu::getOption() const
+{
+    return m_options[m_selected];      
+}

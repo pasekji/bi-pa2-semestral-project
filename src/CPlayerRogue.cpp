@@ -156,17 +156,20 @@ const float CPlayerRogue::getChanceOfCriticalAttack() const
     return m_chanceOfDoubleHit;
 }
  
-string CPlayerRogue::getTypeName()
+std::string CPlayerRogue::getTypeName()
 {
     return "CPlayerRogue";
 }
 
-void CPlayerRogue::save(ofstream& os)
+void CPlayerRogue::save(std::ofstream& os)
 {
-    os << getTypeName() << " ";
-    os << m_posX << " ";
-    os << m_posY;
-    os << endl;
+    if(os.is_open())
+    {
+        if(os.good()) os << getTypeName() << " ";
+        if(os.good()) os << m_posX << " ";
+        if(os.good()) os << m_posY;
+        if(os.good()) os << std::endl;
+    }
 
     return;
 }
@@ -176,15 +179,17 @@ void CPlayerRogue::addForce(int added)
     m_agility += added;
 }
 
-CCharacter* loadPlayerRogue(ifstream& is)
+void loadPlayerRogue(std::ifstream& is)
 {
     int posX;
-    is >> posX;
     int posY;
-    is >> posY;
 
-    CCharacter* result;
-    result = new CPlayerRogue(posY, posX);
+    if(is.is_open())
+    {
+        if(is.good()) is >> posX;
+        if(is.good()) is >> posY;
+        application.getGame()->getMap()->spawnPlayer(posY, posX, ROGUE);
+    }
     
-    return result;
+    return;
 }

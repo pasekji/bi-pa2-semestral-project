@@ -15,14 +15,17 @@ std::string CCoffee::getLabel() const
 bool CCoffee::itemApply(CPlayer* player)
 {
     player->m_currentEnergy += m_energySource;
+
     if(player->m_currentEnergy > player->m_energy)
         player->m_currentEnergy = player->m_energy;    
+
     player->m_currentHealth += m_healthSource;
+
     if(player->m_currentHealth > player->m_health)
         player->m_currentHealth = player->m_health;
 
     m_used = true;
-
     player->m_energyRegain += m_energyRegainAdd;
+    
     return true;
 }

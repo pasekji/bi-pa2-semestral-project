@@ -11,19 +11,23 @@ extern CApplication application;
 
 CPlayer::CPlayer(int posY, int posX) : CCharacter(posY, posX)
 {
-    m_posY_real = posY;
-    m_posX_real = posX;
     m_objectForm = '^';
     m_speed = 1;
-    m_sprint = false;
     keypad(application.getGame()->getWindow(), true);
 }
+
+CPlayer::~CPlayer()
+{
+    delete m_inventory;
+    delete m_weaponEquiped;
+}
+
 void CPlayer::changeForm(const char & objectForm)
 {
     m_objectForm = objectForm;
 }
 
-void CPlayer::defaultStep(int & move)       // basic player movement, every class has it..
+void CPlayer::defaultStep(int & move)
 {
     int tmpmove;
     int delay = 0;
@@ -76,8 +80,6 @@ CGameObject* CPlayer::directionGetTarget()
 
 bool CPlayer::defaultMove(int move)
 {
-    // if default speed and delay move up, down etc...
-
     int tmppos, tmpstep;
     direction tmpdir;
     std::pair<int, int> pair;
@@ -100,7 +102,6 @@ bool CPlayer::defaultMove(int move)
 
             takeStep();
             moveUp(tmpstep);
-            m_posY_real -= tmpstep;
             application.getGame()->getMap()->staticCamera(tmpdir = UP, tmpstep);
             changeForm('^');
             used = true;
@@ -121,7 +122,6 @@ bool CPlayer::defaultMove(int move)
 
             takeStep();
             moveDown(tmpstep);
-            m_posY_real += tmpstep;
             application.getGame()->getMap()->staticCamera(tmpdir = DOWN, tmpstep);
             changeForm('v');
             used = true;
@@ -142,7 +142,6 @@ bool CPlayer::defaultMove(int move)
 
             takeStep();
             moveLeft(tmpstep);
-            m_posX_real -= tmpstep;
             application.getGame()->getMap()->staticCamera(tmpdir = LEFT, tmpstep);
             changeForm('<');
             used = true;
@@ -163,7 +162,6 @@ bool CPlayer::defaultMove(int move)
 
             takeStep();
             moveRight(tmpstep);
-            m_posX_real += tmpstep;
             application.getGame()->getMap()->staticCamera(tmpdir = RIGHT, tmpstep);
             changeForm('>');
             used = true;
@@ -180,44 +178,6 @@ bool CPlayer::defaultMove(int move)
     }
 
     return used;
-}
-
-bool CPlayer::itemPickup(CGameObject* target)
-{
-    CEvent* pickup;
-    pickup = (new CPickup(this, target))->getPtr();
-    application.getGame()->pushEvent(pickup);
-    return true;
-}
-
-bool CPlayer::acceptSource(CAttack* attack)
-{
-    attack->visitSource(this);
-    return true;
-}   
-
-bool CPlayer::acceptTarget(CAttack* attack)
-{
-    attack->visitTarget(this);
-    return true;
-}
-
-bool CPlayer::updateSource(CAttack* attack)
-{
-    attack->updateSource(this);
-    return true;
-}
-
-bool CPlayer::updateTarget(CAttack* attack)
-{
-    attack->updateTarget(this);
-    return true;
-}
-
-bool CPlayer::acceptSource(CEquip* equip)
-{
-    equip->visitSource(this);
-    return true;
 }
 
 void CPlayer::goToInventory()
@@ -276,7 +236,7 @@ void CPlayer::goToInventory()
             useItem(item);
             if(item != nullptr)
                 if(item->m_used)
-                    m_inventory->eraseItemAt(selected);
+                    m_inventory->eraseItemAt(selected, this);
 
             wattroff(application.getGame()->getInventoryWindow(), A_REVERSE);
             werase(application.getGame()->getInventoryWindow());
@@ -289,7 +249,7 @@ void CPlayer::goToInventory()
         {
             dumpItem(item);
             if(item != nullptr)
-                m_inventory->eraseItemAt(selected);
+                m_inventory->eraseItemAt(selected, this);
 
             wattroff(application.getGame()->getInventoryWindow(), A_REVERSE);
             werase(application.getGame()->getInventoryWindow());
@@ -304,6 +264,44 @@ void CPlayer::goToInventory()
     wrefresh(application.getGame()->getInventoryWindow());
 
     return;
+}
+
+bool CPlayer::itemPickup(CGameObject* target)
+{
+    CEvent* pickup;
+    pickup = (new CPickup(this, target))->getPtr();
+    application.getGame()->pushEvent(pickup);
+    return true;
+}
+
+bool CPlayer::acceptSource(CAttack* attack)
+{
+    attack->visitSource(this);
+    return true;
+}   
+
+bool CPlayer::acceptTarget(CAttack* attack)
+{
+    attack->visitTarget(this);
+    return true;
+}
+
+bool CPlayer::updateSource(CAttack* attack)
+{
+    attack->updateSource(this);
+    return true;
+}
+
+bool CPlayer::updateTarget(CAttack* attack)
+{
+    attack->updateTarget(this);
+    return true;
+}
+
+bool CPlayer::acceptSource(CEquip* equip)
+{
+    equip->visitSource(this);
+    return true;
 }
 
 bool CPlayer::useItem(CItem* item)

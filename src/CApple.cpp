@@ -15,9 +15,12 @@ std::string CApple::getLabel() const
 bool CApple::itemApply(CPlayer* player)
 {
     player->m_currentEnergy += m_energySource;
+    
     if(player->m_currentEnergy > player->m_energy)
-        player->m_currentEnergy = player->m_energy;    
+        player->m_currentEnergy = player->m_energy;   
+
     player->m_currentHealth += m_healthSource;
+
     if(player->m_currentHealth > player->m_health)
         player->m_currentHealth = player->m_health;
     

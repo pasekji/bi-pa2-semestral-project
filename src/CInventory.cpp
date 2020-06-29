@@ -8,6 +8,7 @@
 #include "CBeer.h"
 #include "CTooth.h"
 #include "CPickup.h"
+#include "CPlayer.h"
 
 
 CInventory::CInventory(unsigned size) : m_size(size)
@@ -33,25 +34,16 @@ void CInventory::constructFill()
     return;
 }
 
-unsigned CInventory::getSize() const
+void CInventory::eraseItemAt(unsigned i, CPlayer* owner)
 {
-    return m_size;
-}
-
-CItem* CInventory::getItemAt(unsigned i) const
-{
-    return m_contents[i]; 
-}
-
-void CInventory::eraseItemAt(unsigned i)
-{
+    if(owner->m_weaponEquiped == m_contents[i])
+        owner->m_weaponEquiped = nullptr;
     delete m_contents[i];
     m_contents[i] = emptyItem;
     std::sort(m_contents.begin(), m_contents.end(), std::greater<CItem*>());
     if(m_itemCount != 0)
         m_itemCount--;
 }
-
 
 bool CInventory::getItem(CPlayerPaladin* paladin, CPickup* pickup) 
 {
@@ -180,4 +172,14 @@ bool CInventory::getItem(CPlayerRogue* rogue, CPickup* pickup)
     }
 
     return true;
-} 
+}
+
+unsigned CInventory::getSize() const
+{
+    return m_size;
+}
+
+CItem* CInventory::getItemAt(unsigned i) const
+{
+    return m_contents[i]; 
+}

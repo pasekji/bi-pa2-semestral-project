@@ -4,14 +4,28 @@
 #include "CItem.h"
 #include <memory>
 
-class CConsumable : public CItem        // could be stackable
+/**
+ * This abstract class is used for consumable items representation in game,
+ * CConsumable inherits form CItem.
+ * */
+class CConsumable : public CItem
 {
     public:
+        /**
+         * CConsumable default constructor
+         * */
         CConsumable() = default;
+
+        /**
+         * CConsumable default destructor
+         * */
         virtual ~CConsumable() = default;
 
     protected:
+        // health value provided
         int m_healthSource = 0;
+
+        // energy value provided
         int m_energySource = 0;
 
 };

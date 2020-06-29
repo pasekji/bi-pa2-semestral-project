@@ -52,20 +52,26 @@ bool CGameObject::isDead() const
     return true;
 }
 
-CGameObject* loadGameObject(ifstream& is)
+void loadGameObject(std::ifstream& is)
 {
-    string typeName;
-    is >> typeName;
-    if (typeName == "CProp") {
-        return CProp::loadGameObject(is);
-    }
-    else if (typeName == "CEnemy")
+    std::string typeName;
+    if(is.is_open())
     {
-        return loadEnemy(is);
+        if(is.good()) is >> typeName;
+        if (typeName == "CProp")
+        {
+            return loadProp(is);
+        }
+        else if (typeName == "CEnemy")
+        {
+            return loadEnemy(is);
+        }
+        else if (typeName == "CPlayerMage")
+        {
+            return loadPlayerMage(is);
+        }
+        else throw "undefined object type";
     }
-    else if (typeName == "CPlayerMage")
-    {
-        return loadPlayerMage(is);
-    }
-    else throw "neznamy typ objektu";
+    
+    return;
 }

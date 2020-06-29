@@ -91,18 +91,13 @@ void CBuilder::showStats() const
     return;    
 }
 
-string CBuilder::getTypeName() const
-{
-    return "CBuilder";
-}
-
 bool CBuilder::spawnSomething(std::pair<int, int> position)
 {
     switch (m_move)
     {
         case 'e':
         case 'E':
-            application.getGame()->getMap()->spawnProp(position.first, position.second, WALL);      // tady position misto pair 
+            application.getGame()->getMap()->spawnProp(position.first, position.second, WALL);
             break;
 
         case 'r':
@@ -160,4 +155,52 @@ bool CBuilder::spawnSomething(std::pair<int, int> position)
     }
 
     return true;
+}
+
+void CBuilder::save(std::ofstream& os)
+{
+    if(os.is_open())
+    {
+        if(os.good()) os << getTypeName() << " ";
+        if(os.good()) os << m_posX << " ";
+        if(os.good()) os << m_posY;
+        if(os.good()) os << std::endl;
+    }
+
+    return;
+}
+
+bool CBuilder::updateSource(CPickup* pickup)
+{
+    return false;
+}
+
+bool CBuilder::acceptSource(CPickup* pickup)
+{
+    return false;
+}
+
+bool CBuilder::acceptTarget(CPickup* pickup)
+{
+    return false;
+}
+
+const int CBuilder::getForce() const
+{
+    return 0;
+}
+
+const float CBuilder::getChanceOfCriticalAttack() const
+{
+    return 0;
+}
+
+void CBuilder::addForce(int added)
+{
+    return;
+}
+
+std::string CBuilder::getTypeName() const
+{
+    return "CBuilder";
 }

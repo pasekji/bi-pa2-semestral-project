@@ -14,6 +14,16 @@ CDiscard::CDiscard(CGameObject* source, CItem* item) : CEvent(source, nullptr)
         updateObjects();    
 }
 
+void CDiscard::print()
+{
+    if(m_success)
+        m_phrase = m_sourceLabel + " threw away " + m_itemLabel + "!";
+    else
+        m_phrase = "Nothing to threw away!";
+
+    return;
+}
+
 CDiscard* CDiscard::getPtr()
 {
     return this;
@@ -22,16 +32,5 @@ CDiscard* CDiscard::getPtr()
 void CDiscard::updateObjects()
 {
     print();
-
-    return;
-}
-
-void CDiscard::print()
-{
-    if(m_success)
-        m_phrase = m_sourceLabel + " threw away " + m_itemLabel + "!";
-    else
-        m_phrase = "Nothing to threw away!";
-
     return;
 }

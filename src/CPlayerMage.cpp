@@ -151,14 +151,45 @@ void CPlayerMage::addForce(int added)
     m_wisdom += added;
 }
 
-CCharacter* loadPlayerMage(ifstream& is)
+void loadPlayerMage(std::ifstream& is)
 {
     int posX;
-    is >> posX;
     int posY;
-    is >> posY;
 
-    CCharacter* result;
-    result = new CPlayerMage(posY, posX);
-    return result;
+    if(is.is_open())
+    {
+        if(is.good()) is >> posX;
+        if(is.good()) is >> posY;
+        application.getGame()->getMap()->spawnPlayer(posY, posX, MAGE);
+    }
+    
+    return;
+}
+
+const int CPlayerMage::getForce() const
+{
+    return m_wisdom;
+}
+
+const float CPlayerMage::getChanceOfCriticalAttack() const
+{
+    return m_chanceOfCriticalAttack;
+}
+
+std::string CPlayerMage::getTypeName()
+{
+    return "CPlayerMage";
+}
+
+void CPlayerMage::save(std::ofstream& os)
+{
+    if(os.is_open())
+    {
+        if(os.good()) os << getTypeName() << " ";
+        if(os.good()) os << m_posX << " ";
+        if(os.good()) os << m_posY;
+        if(os.good()) os << std::endl;
+    }
+
+    return;
 }

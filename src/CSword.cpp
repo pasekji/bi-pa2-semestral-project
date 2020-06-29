@@ -20,7 +20,7 @@ bool CSword::itemApply(CPlayer* player)
         player->m_weaponEquiped = this;
         player->addForce(m_damage);
         player->m_chanceOfBlock += m_chance_of_block;
-        m_used = true;
+        m_used = false;
         return true;
     }
     else

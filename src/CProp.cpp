@@ -1,4 +1,7 @@
 #include "CProp.h"
+#include "CApplication.h"
+
+extern CApplication application;
 
 CProp::CProp(int posY, int posX, prop_type type) : CGameObject(posY, posX)
 {
@@ -79,29 +82,44 @@ void CProp::getLabel(std::string & label) const
     return;
 } 
 
-string CProp::getTypeName()
+std::string CProp::getTypeName()
 {
     return "CProp";
 }
 
-void CProp::save(ofstream& os)
+void CProp::save(std::ofstream& os)
 {
-    os << getTypeName() << " ";
-    os << (int)m_type << " ";
-    os << m_posX << " ";
-    os << m_posY << endl;
+    if(os.is_open())
+    {
+        if(os.good()) os << getTypeName() << " ";
+        if(os.good()) os << (int)m_type << " ";
+        if(os.good()) os << m_posX << " ";
+        if(os.good()) os << m_posY << std::endl;
+    }
+
+    return;
 }
 
-CGameObject* CProp::loadGameObject(ifstream& is)
+CProp* CProp::getPtr()
 {
-    int _type;
-    is >> _type;
+    return this;
+}
+
+void loadProp(std::ifstream& is)
+{
+    int type;
     int posX;
     int posY;
-    is >> posX;
-    is >> posY;
 
-    CProp* result;
-    result = new CProp(posY, posX, (prop_type)_type);
-    return result;
+    if(is.is_open())
+    {
+        if(is.good()) is >> type;
+        if(is.good()) is >> posX;
+        if(is.good()) is >> posY;
+
+        if((prop_type)type == WALL || (prop_type)type == TREE || (prop_type)type == BUSH || (prop_type)type == STONE || (prop_type)type == VOID)
+            application.getGame()->getMap()->spawnProp(posY, posX, (prop_type)type);
+    }
+    
+    return;
 }

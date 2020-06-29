@@ -3,7 +3,6 @@
 #include "CAttack.h"
 #include "CPrimaryAttack.h"
 
-
 extern CApplication application;
 
 CEnemy::CEnemy(int posY, int posX, enemy_type type) : CCharacter(posY, posX)
@@ -110,22 +109,6 @@ CEnemy::CEnemy(int posY, int posX, enemy_type type) : CCharacter(posY, posX)
             break;
     }
 }
-
-CEnemy::CEnemy(int posY, int posX) : CCharacter(posY, posX)
-{}
-
-bool CEnemy::updateSource(CAttack* attack)
-{
-    attack->updateSource(this);
-    return true;
-}
-
-bool CEnemy::updateTarget(CAttack* attack)
-{
-    attack->updateTarget(this);
-    return true;
-}
-
 
 const float CEnemy::getDistance(std::pair<int, int> & thisPos, std::pair<int, int> & playerPos) const
 {
@@ -352,7 +335,7 @@ void CEnemy::die()
     return;
 }
 
-int CEnemy::getAction()     // just demo testing - TODO - AI 
+int CEnemy::getAction()
 {
     if(isDead())
     {
@@ -437,18 +420,6 @@ bool CEnemy::primaryAttack(CGameObject* target)
     return true;
 }
 
-bool CEnemy::acceptSource(CAttack* attack)
-{
-    attack->visitSource(this);
-    return true;
-}
-
-bool CEnemy::acceptTarget(CAttack* attack)
-{
-    attack->visitTarget(this);
-    return true;
-}
-
 void CEnemy::showStats() const
 {
     int height, width;
@@ -492,52 +463,23 @@ void CEnemy::showStats() const
     return;
 }
 
-CCharacter* loadEnemy(ifstream& is)
+void loadEnemy(std::ifstream& is)
 {
     int type;
-    is >> type;
     int posX;
-    is >> posX;
     int posY;
-    is >> posY;
-    CCharacter* result;
-    result = new CEnemy(posY, posX, (enemy_type) type);
-    return result;
-}
 
-bool CEnemy::acceptSource(CPickup* pickup)
-{
-    return false;
-}
+    if(is.is_open())
+    {
+        if(is.good()) is >> type;
+        if(is.good()) is >> posX;
+        if(is.good()) is >> posY;
 
-bool CEnemy::acceptSource(CEquip* equip)
-{
-    return false;
-}
-
-bool CEnemy::acceptTarget(CPickup* pickup)
-{
-    return false;
-}
-
-bool CEnemy::updateSource(CPickup* pickup)
-{
-    return false;
-}
-
-const float CEnemy::getChanceOfCriticalAttack() const
-{
-    return m_chanceOfAttack;
-}
-
-const int CEnemy::getForce() const
-{
-    return m_force;
-}
-
-void CEnemy::triggerAttack()
-{
-    m_triggerAttack = true;
+        if((enemy_type)type == BASILISK || (enemy_type)type == UNDEAD || (enemy_type)type == GHOUL || (enemy_type)type == NOONWRAITH || (enemy_type)type == HELLHOUND || (enemy_type)type == SIREN)
+            application.getGame()->getMap()->spawnEnemy(posY, posX, (enemy_type) type);
+    }
+    
+    return;
 }
 
 void CEnemy::getLabel(std::string & label) const
@@ -566,27 +508,85 @@ void CEnemy::getLabel(std::string & label) const
     }
 }
 
-string CEnemy::getTypeName()
+void CEnemy::save(std::ofstream& os)
 {
-    return "CEnemy";
+    if(os.is_open())
+    {
+        if(os.good()) os << getTypeName() << " ";
+        if(os.good()) os << (int)m_type << " ";
+        if(os.good()) os << m_posX << " ";
+        if(os.good()) os << m_posY;
+        if(os.good()) os << std::endl;
+    }
+
+    return;
 }
 
-void CEnemy::save(ofstream& os)
+std::string CEnemy::getTypeName()
 {
-    if(isDead())
-            os << "neukladat" << endl;
-    os << getTypeName() << " ";
-    //os << m_triggerDistance;
-    //os << m_triggerAttack;
-    os << (int)m_type << " ";
-    //os << m_force;
-    //os << (int)m_primaryAttackType;
-    os << m_posX << " ";
-    os << m_posY;
-    os << endl;
+    return "CEnemy";
 }
 
 CEnemy* CEnemy::getPtr()
 {
     return this;
+}
+
+const float CEnemy::getChanceOfCriticalAttack() const
+{
+    return m_chanceOfAttack;
+}
+
+const int CEnemy::getForce() const
+{
+    return m_force;
+}
+
+void CEnemy::triggerAttack()
+{
+    m_triggerAttack = true;
+}
+
+bool CEnemy::acceptSource(CAttack* attack)
+{
+    attack->visitSource(this);
+    return true;
+}
+
+bool CEnemy::acceptTarget(CAttack* attack)
+{
+    attack->visitTarget(this);
+    return true;
+}
+
+bool CEnemy::updateSource(CAttack* attack)
+{
+    attack->updateSource(this);
+    return true;
+}
+
+bool CEnemy::updateTarget(CAttack* attack)
+{
+    attack->updateTarget(this);
+    return true;
+}
+
+bool CEnemy::acceptSource(CPickup* pickup)
+{
+    return false;
+}
+
+bool CEnemy::acceptSource(CEquip* equip)
+{
+    return false;
+}
+
+bool CEnemy::acceptTarget(CPickup* pickup)
+{
+    return false;
+}
+
+bool CEnemy::updateSource(CPickup* pickup)
+{
+    return false;
 }
