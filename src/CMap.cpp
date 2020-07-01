@@ -389,12 +389,9 @@ void CMap::save(std::ofstream& os)
         {
             m_imoveableObjects[i]->save(os);
         }
-        if(os.good()) os << m_targets.size()-1 << std::endl;
-        for (unsigned i = 1; i < m_targets.size(); i++)
-        {
-            m_targets[i]->save(os);
-        }
     }
+
+    return;
 }
 
 void CMap::loadWithPlayer(std::ifstream& is)
@@ -417,11 +414,6 @@ void CMap::loadWOPlayer(std::ifstream& is)
         size_t imoveableObjectsSize;
         if(is.good()) is >> imoveableObjectsSize;
         for (unsigned i = 0; i < imoveableObjectsSize; i++)
-            loadGameObject(is);
-
-        size_t targetsSize;
-        if(is.good()) is >> targetsSize;
-        for (unsigned i = 0; i < targetsSize; i++)
             loadGameObject(is);
     }
     
